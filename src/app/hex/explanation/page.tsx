@@ -2,6 +2,6 @@
 
 export default function Page() {
 	return <>
-		<h1>SubHex</h1>
+		<h1>Explanation</h1>
 	</>;
 }
