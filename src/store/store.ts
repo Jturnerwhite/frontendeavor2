@@ -1,11 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit'
-import Counter from '@/store/features/counterSlice'
+import Alchemy from '@/store/features/alchemySlice'
 
 export const store = configureStore({
-  reducer: {
-    // Add reducers here
-	counter: Counter.reducer
-  },
+	reducer: {
+		Alchemy: Alchemy.reducer
+	},
 })
 
 export type RootState = ReturnType<typeof store.getState>

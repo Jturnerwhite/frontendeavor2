@@ -1,5 +1,5 @@
 import { ALCH_ELEMENT, SHAPE_NAME, ITEM_TAG } from '@/app/hex/architecture/enums'
-
+import { HexTile } from './interfaces'
 
 /**
  * The alchemical components of an item (ingredient or concoction).
@@ -17,6 +17,13 @@ export type Ingredient = {
 	name: string,
 	comps: AlchComponent[],
 	types: ITEM_TAG[]
+}
+
+export type Item = {
+	name: string,
+	comps: AlchComponent[],
+	types: ITEM_TAG[]
+	ingredients: Ingredient[]
 }
 
 /**

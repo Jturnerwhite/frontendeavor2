@@ -17,4 +17,8 @@ interface HexTile {
 	};
 }
 
-export type { Position, HexTile };
+interface HexMap {
+	[key: string]: HexTile
+}
+
+export type { Position, HexTile, HexMap};
