@@ -13,10 +13,21 @@ export type AlchComponent = {
 	linkSpots?: number[]
 }
 
-export type Ingredient = {
+export type IngredientCompSpec = {
+	element: ALCH_ELEMENT,
+	possibleShapes: Array<SHAPE_NAME>,
+	chance?: number // If not defined, assumed to be 100%
+}
+
+export type IngredientBase = {
 	name: string,
-	comps: AlchComponent[],
 	types: ITEM_TAG[]
+	possibleComps: Array<IngredientCompSpec|AlchComponent>
+}
+
+export type Ingredient = {
+	base: IngredientBase
+	comps: AlchComponent[],
 }
 
 export type Item = {
@@ -44,7 +55,7 @@ export type Recipe = {
 	id: string,
 	description: string,
 	types: ITEM_TAG[],
-	requiredIngredients: Array<Ingredient|ITEM_TAG>,
-	requirements: RecipeRequirement[],
-	forbidden: RecipeRequirement[],
+	requiredIngredients?: Array<Ingredient|ITEM_TAG>,
+	requirements?: RecipeRequirement[],
+	forbidden?: RecipeRequirement[],
 }

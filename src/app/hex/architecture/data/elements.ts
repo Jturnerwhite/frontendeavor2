@@ -63,7 +63,3 @@ export const AlchemicalElements:Record<ALCH_ELEMENT, AlchEleData> = {
 		iconClass: `typeicon-${ALCH_ELEMENT.CHAOS}`
 	} 
 }
-
-export const Recipies = [
-	{}
-];

@@ -1,4 +1,5 @@
 import { HexMap, HexTile, Position } from "@/app/hex/architecture/interfaces";
+import { Ingredient, IngredientBase, IngredientCompSpec, AlchComponent } from "./typings";
 
 function GetApothem(radius: number): number {
 	return radius * Math.sqrt(3) / 2;
@@ -53,9 +54,10 @@ function GetHexId(pos: Position):string {
 function CreateHexGrid(center:Position, radius:number, layers:number):HexMap {
 	const centerX = center.x;
 	const centerY = center.y;
-	// Offset for adjacent hexagons based on trigonometric calculations
-	const hexagonOffsetX = (1.5 * radius);						// Distance between hexagons horizontally
-	const hexagonOffsetY = (radius * Math.cos(Math.PI / 6));	// Distance vertically to align with overlap
+
+	// Offset for adjacent hexagons based on trig calculations
+	const hexagonOffsetX = Math.floor(1.5 * radius);
+	const hexagonOffsetY = Math.floor(radius * Math.cos(Math.PI / 6));
 
 	let hexMap = {} as HexMap;
 
@@ -136,4 +138,35 @@ function CreateHexGrid(center:Position, radius:number, layers:number):HexMap {
 	return hexMap;
 }
 
-export { GetApothem, GetStarPoints, GetHexPointPos, GetHexId, GetOppositeDirection, CreateHexGrid };
+function CreateIngredient(ingBase:IngredientBase):Ingredient {
+	let newIng = {
+		base:ingBase,
+		comps: [],
+	} as Ingredient;
+
+	ingBase.possibleComps.forEach(compSpec => {
+		let newComp = null as AlchComponent|null;
+		if ('possibleShapes' in compSpec) { // It's an IngredientCompSpec
+			if(compSpec.chance == undefined || compSpec.chance > 0 || ((Math.random() * 100) <= compSpec.chance)) {
+				const shapeIndex = Math.floor(Math.random() * compSpec.possibleShapes.length);
+				newComp = {
+					element: compSpec.element,
+					shape: compSpec.possibleShapes[shapeIndex],
+				};
+				newIng.comps.push(newComp);
+			}
+		} else { // It's already an AlchComponent
+			newComp = {
+				element: compSpec.element,
+				shape: compSpec.shape,
+				linkSpots: compSpec.linkSpots ? compSpec.linkSpots.slice() : undefined,
+			};
+			newIng.comps.push(newComp);
+		}
+	});
+
+
+	return newIng;
+}
+
+export { GetApothem, GetStarPoints, GetHexPointPos, GetHexId, GetOppositeDirection, CreateHexGrid, CreateIngredient };

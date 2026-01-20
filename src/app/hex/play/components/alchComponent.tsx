@@ -2,9 +2,10 @@
 import type { AlchComponent } from '@/app/hex/architecture/typings';
 import type { Position } from '@/app/hex/architecture/interfaces';
 import { ALCH_ELEMENT, COMPONENT_SHAPE_VALUES } from '@/app/hex/architecture/enums';
-import { AlchemicalElements } from '@/app/hex/architecture/data';
-import type { AlchEleData } from '@/app/hex/architecture/data';
+import { AlchemicalElements } from '@/app/hex/architecture/data/elements';
 import * as Helpers from '@/app/hex/architecture/helpers';
+import { useDispatch } from 'react-redux';
+import AlchemyStoreSlice from '@/store/features/alchemySlice';
 
 interface NodeProps {
 	index: number;
@@ -69,9 +70,10 @@ interface CompProps {
 	alchData: AlchComponent;
 	position: Position;
 	size: number;
+	rotation: number;
 }
 
-const AlchComponentDisplay: React.FC<CompProps> = ({alchData, position, size}): JSX.Element => {
+const AlchComponentDisplay: React.FC<CompProps> = ({alchData, position, size, rotation}): JSX.Element => {
 	const nodeComps = [];
 	const lines = [];
 	const shapeValue = COMPONENT_SHAPE_VALUES[alchData.shape];
@@ -126,11 +128,31 @@ const AlchComponentDisplay: React.FC<CompProps> = ({alchData, position, size}): 
 			}
 		}
 	}
-
-	return <>
+	return <g transform={`rotate(${rotation} ${position.x} ${position.y})`}>
 		{lines}
 		{nodeComps}
-	</>;
+	</g>;
 }
 
-export default AlchComponentDisplay;
+const PlaceableAlchComponent: React.FC<CompProps> = ({alchData, position, size, rotation}): JSX.Element => {
+	const dispatch = useDispatch();
+	const handleClick = () => {
+		dispatch(AlchemyStoreSlice.actions.setCursorComponent(alchData));
+	};
+	return (
+		<g>
+			<AlchComponentDisplay alchData={alchData} position={position} size={size} rotation={rotation} />
+			<rect
+                x={position.x - ((size * 3.25)/2)}
+                y={position.y - ((size * 3.25)/2)}
+                width={size * 3.25}
+                height={size * 3.25}
+                fill="transparent"
+                cursor="pointer"
+				onClick={handleClick}
+			/>
+		</g>
+	);
+}
+
+export {AlchComponentDisplay, PlaceableAlchComponent};

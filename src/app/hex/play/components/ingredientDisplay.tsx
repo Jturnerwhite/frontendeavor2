@@ -7,16 +7,10 @@ interface ItemDisplayProps {
 }
 
 const ItemDisplay: React.FC<ItemDisplayProps> = ({ item }): JSX.Element => {
-	const displayTypes = item.types.map((type) => {
-		return (
-			<small>{ type }</small>
-		);
-	});
-
 	return (
 		<div>
 			<label>{ item.name }</label>
-			{ displayTypes }
+			{item.types.map((type) => <small>{ type }</small>)}
 		</div>
 	);
 }
