@@ -3,19 +3,20 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from 'next/navigation'
 import { RootState } from "@/store/store";
+import AlchemyStoreSlice from '@/store/features/alchemySlice';
+import { AlchComponent } from '@/app/hex/architecture/typings';	
 import HexGrid from '@/app/hex/play/components/hexGrid';
 import { HexTile, Position } from '@/app/hex/architecture/interfaces';
 import { ALCH_ELEMENT, SHAPE_NAME, ITEM_TAG } from '@/app/hex/architecture/enums';
-import { IngedientBases} from '@/app/hex/architecture/data/ingedientBases';
 import * as Helpers from '@/app/hex/architecture/helpers';
 import {AlchComponentDisplay, PlaceableAlchComponent} from '@/app/hex/play/components/alchComponent';
-import AlchemyStoreSlice from '@/store/features/alchemySlice';
-import { AlchComponent } from '@/app/hex/architecture/typings';	
+import ComponentCursorGhost from '@/app/hex/play/components/cursor';
 
 export default function Page() {
 	const dispatch = useDispatch();
 	const params = useSearchParams();
 	const playGrid = useSelector((state: RootState) => state.Alchemy.playGrid);
+	const cursorState = useSelector((state: RootState) => state.Alchemy.cursor);
 
 	const testLayers = 6;
 	const size = 20;
@@ -108,18 +109,25 @@ export default function Page() {
 		return () => clearInterval(interval);
 	}, []);
 
+	useEffect(() => {
+		console.log("Cursor state changed:", cursorState);
+	}, [cursorState]);
+
 	return <>
 		{playGrid && <>
-			<svg width={windowSize.width} height={windowSize.height} style={{ position: "absolute" }}>
-				<g transform={`translate(${gridCenter.x} ${gridCenter.y})`}>
-					<HexGrid hexMap={playGrid} radius={size} />
+			<svg width={windowSize.width} height={600} style={{pointerEvents:"none" }} pointerEvents="none">
+				<g transform={`translate(${gridCenter.x} 300)`}>
+					<HexGrid hexMap={playGrid} radius={size} displayIndex={true} preventHexHover={false} />
+					{/* <AlchComponentDisplay alchData={alchData} position={{x: 0, y:0}} size={alchCompSize} rotation={rotation} /> */}
 				</g>
-				<AlchComponentDisplay alchData={alchData} position={gridCenter} size={alchCompSize} rotation={rotation} />
 			</svg>
 		</>}
-		<svg width="800" height="800" style={{ position: "absolute", top: "400px" }}>
-			<HexGrid hexMap={Helpers.CreateHexGrid(gridCenter, size, 2)} radius={size} />
-			<PlaceableAlchComponent alchData={staticAlcDataTest} position={gridCenter} size={alchCompSize} rotation={30} />
+		<svg width={windowSize.width} height="600" style={{  }}>
+			<g transform={`translate(0 -300)`}>
+				<HexGrid hexMap={Helpers.CreateHexGrid(gridCenter, size, 2)} radius={size}  displayIndex={false} preventHexHover={true}/>
+				<PlaceableAlchComponent alchData={staticAlcDataTest} position={gridCenter} size={alchCompSize} rotation={30} />
+			</g>
 		</svg>
+		{/* <ComponentCursorGhost /> */}
 	</>;
 }

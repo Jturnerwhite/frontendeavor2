@@ -86,7 +86,7 @@ const AlchComponentDisplay: React.FC<CompProps> = ({alchData, position, size, ro
 			x2={nextPos.x} 
 			y2={nextPos.y} 
 			stroke={AlchemicalElements[alchData.element].colorHex} 
-			strokeWidth={size/6} />;
+			strokeWidth={size/3} />;
 	}
 
 	// draw each node
@@ -137,6 +137,7 @@ const AlchComponentDisplay: React.FC<CompProps> = ({alchData, position, size, ro
 const PlaceableAlchComponent: React.FC<CompProps> = ({alchData, position, size, rotation}): JSX.Element => {
 	const dispatch = useDispatch();
 	const handleClick = () => {
+		console.log("clicky", alchData);
 		dispatch(AlchemyStoreSlice.actions.setCursorComponent(alchData));
 	};
 	return (

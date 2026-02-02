@@ -22,9 +22,7 @@ export default function Page() {
 		let output:Array<JSX.Element> = [];
 		IngedientBases.forEach((base:IngredientBase) => {
 			let comps:Array<JSX.Element> = [];
-			//console.log(base.name, base);
 			base.possibleComps.forEach((compOrSpec, compIndex) => {
-				//console.log(compOrSpec);
 				if ('possibleShapes' in compOrSpec && compOrSpec.possibleShapes !== undefined && compOrSpec.possibleShapes.length > 0) { // It's an IngredientCompSpec
 					let alchData = {
 						element: compOrSpec.element,
@@ -65,7 +63,5 @@ export default function Page() {
 				<small>derpderp all derps and derps @ 2024</small>
 			</footer>
 		</div>
-	</>;
-	return <>
 	</>;
 }
