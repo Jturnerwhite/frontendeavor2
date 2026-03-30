@@ -60,7 +60,7 @@ const ComponentCursorGhost: React.FC<ComponentCursorGhostProps> = ({ defaultRota
 					alchData={cursorState.selectedComponent}
 					position={{ x: 50, y: 50 }}
 					size={34.64}
-					rotation={defaultRotation + ((cursorState.rotation) * 60)}
+					rotation={defaultRotation + (cursorState.rotation)}
 				/>
 			</svg>
 		</div>

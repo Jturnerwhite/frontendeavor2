@@ -13,6 +13,7 @@ interface CursorState {
 interface AlchemyState {
 	currentRecipe?: string;
 	playGrid?: HexMap;
+	placedComponents?: Array<{comp: AlchComponent, position: Position, rotation: number, centerHexId: string}>;
 	cursor: CursorState
 }
 
@@ -51,18 +52,29 @@ const alchemySlice = createSlice({
 		// Grid
 		setPlayGrid: (state, action: PayloadAction<{ pos: Position, size: number, layers: number }>) => {
 			const newGrid = Helpers.CreateHexGrid(action.payload.pos, action.payload.size, action.payload.layers);
-			console.log(newGrid);
 			state.playGrid = newGrid;
+			state.placedComponents = new Array<{comp: AlchComponent, position: Position, rotation: number, centerHexId: string}>();
 		},
 		clearPlayGrid: (state) => {
 			state.playGrid = undefined;
+			state.placedComponents = undefined;
 		},
-		occupyHexes: (state, action: PayloadAction<string[]>) => {
-			if (!state.playGrid) return;
-			for (const id of action.payload) {
-				const tile = state.playGrid[id];
-				if (tile) tile.occupied = true;
-			}
+		addPlacedComponent: (state, action: PayloadAction<HexTile>) => {
+			if (!state.placedComponents) 
+				state.placedComponents = new Array<{comp: AlchComponent, position: Position, rotation: number, centerHexId: string}>();
+
+			state.placedComponents.push({
+				comp: state.cursor.selectedComponent!, 
+				position: action.payload.position,
+				rotation: state.cursor.rotation,
+				centerHexId: action.payload.id 
+			});
+			Helpers.OccupyHexes(state.playGrid!, state.cursor.selectedComponent!, state.cursor.rotation, action.payload.id);
+			state.cursor = initialState.cursor;
+		},
+		removePlacedComponent: (state, action: PayloadAction<string>) => {
+			if (!state.placedComponents) return;
+			//delete state.placedComponents[action.payload];
 		},
 		// Recipe
 		setCurrentRecipe: (state, action: PayloadAction<string>) => {

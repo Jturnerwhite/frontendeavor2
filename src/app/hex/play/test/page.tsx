@@ -16,11 +16,13 @@ export default function Page() {
 	const dispatch = useDispatch();
 	const params = useSearchParams();
 	const playGrid = useSelector((state: RootState) => state.Alchemy.playGrid);
+	const placedComponents = useSelector((state: RootState) => state.Alchemy.placedComponents);
 	const cursorState = useSelector((state: RootState) => state.Alchemy.cursor);
 
-	const testLayers = 6;
+	const gridLayers = 6;
 	const size = 20;
 	const alchCompSize = 2 * Helpers.GetApothem(size);
+
 	const [rotation, setRotation] = useState(30);
 	const [alchData, setAlchData] = useState({
 		shapeId: 0,
@@ -30,7 +32,7 @@ export default function Page() {
 		element: ALCH_ELEMENT.EARTH
 	});
 	const staticAlcDataTest = {
-		shape: SHAPE_NAME.CLAW,
+		shape: SHAPE_NAME.CIRCLE,
 		linkSpots: [0, 1, 0, 0, 0, 0, 0],
 		element: ALCH_ELEMENT.EARTH
 	} as AlchComponent;
@@ -45,9 +47,27 @@ export default function Page() {
 		y: window.innerHeight / 2
 	} as Position);
 
+	function hexClick(hex: HexTile, validTileHover: boolean) {
+		if(!validTileHover) return;
+		if(cursorState.isPlacing && cursorState.selectedComponent) {
+			dispatch(AlchemyStoreSlice.actions.addPlacedComponent(hex));
+		}
+	}
+
+	function renderPlacedComponents() {
+		return placedComponents?.map((component, index) => {
+			return <AlchComponentDisplay 
+				key={"comp" + index} 
+				alchData={component.comp} 
+				position={component.position}
+				size={alchCompSize} 
+				rotation={component.rotation} />
+		});
+	}
+
 	useEffect(() => {
 		if (playGrid === undefined) {
-			dispatch(AlchemyStoreSlice.actions.setPlayGrid({ pos: { x:0, y:0 }, size, layers: testLayers }));
+			dispatch(AlchemyStoreSlice.actions.setPlayGrid({ pos: { x:0, y:0 }, size, layers: gridLayers }));
 		}
 	}, []);
 
@@ -69,6 +89,7 @@ export default function Page() {
 		return () => window.removeEventListener('resize', handleResize);
 	}, []);
 
+	// Test Code to rotate alch data
 	useEffect(() => {
 		const interval = setInterval(() => {
 			setRotation(prev => prev + 60);
@@ -77,6 +98,7 @@ export default function Page() {
 		return () => clearInterval(interval);
 	}, []);
 
+	// Test data to cycle through all shapes and elements
 	useEffect(() => {
 		const interval = setInterval(() => {
 			// cycle through all shapes and elements
@@ -109,10 +131,6 @@ export default function Page() {
 		return () => clearInterval(interval);
 	}, []);
 
-	useEffect(() => {
-		console.log("Cursor state changed:", cursorState);
-	}, [cursorState]);
-
 	return <>
 		{playGrid && <>
 			<svg 
@@ -126,11 +144,13 @@ export default function Page() {
 					<HexGrid 
 						hexMap={playGrid} 
 						radius={size} 
+						onHexClick={hexClick}
 						displayIndex={true} 
 						preventHexHover={false} 
 						preventHexPlacementHover={true}
 					/>
 					{/* <AlchComponentDisplay alchData={alchData} position={{x: 0, y:0}} size={alchCompSize} rotation={rotation} /> */}
+					{renderPlacedComponents()}
 				</g>
 			</svg>
 		</>}

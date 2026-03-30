@@ -74,16 +74,16 @@ const Hex: React.FC<HexProps> = ({
 				<>
 					<text
 						x={x}
-						y={y-3}
+						y={y+1}
 						pointerEvents="none"
 						textAnchor="middle"
 						dominantBaseline="middle"
 						fill="white"
 						fontSize={radius / 2}
-						fontWeight="bold"
 					>
 						{hexData.index}
 					</text>
+					{/*
 					<text
 						x={x}
 						y={y+6}
@@ -93,6 +93,7 @@ const Hex: React.FC<HexProps> = ({
 						fill="white"
 						fontSize={radius / 3}
 					>{hexData.position.x},{hexData.position.y}</text>
+					*/}
 				</>
 			}
 		</>

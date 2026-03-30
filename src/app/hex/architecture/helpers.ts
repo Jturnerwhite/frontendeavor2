@@ -1,5 +1,6 @@
 import { HexMap, HexTile, Position } from "@/app/hex/architecture/interfaces";
 import { Ingredient, IngredientBase, IngredientCompSpec, AlchComponent } from "./typings";
+import { COMPONENT_SHAPE_VALUES } from "./enums";
 
 function GetApothem(radius: number): number {
 	return radius * Math.sqrt(3) / 2;
@@ -68,15 +69,7 @@ function GetPlacementHexIds(
 ): string[] | null {
 	const k = (rotation % 6);
 	const ids = new Set<string>();
-
-	console.log("Checking for placement hex ids:");
-	console.log("Anchor hex:", anchorHex);
-	console.log("Shape mask:", shapeMask);
-	console.log("Rotation:", rotation);
-	console.log("Hex map:", hexMap);
-
 	const rotatedMask = GetRotatedMask(shapeMask, rotation);
-	console.log("rotatedMask mask:", rotatedMask);
 
 	for (let j = 0; j < 7 && j < rotatedMask.length; j++) {
 		if (!rotatedMask[j]) continue;
@@ -118,20 +111,9 @@ function CreateHexGrid(center:Position, radius:number, layers:number):HexMap {
 			position: pos,
 			neighbors: [] as string[],
 			id,
-			index: count
+			index: count,
+			occupied: false
 		};
-
-		// Calculate potential neighbor positions
-		/*
-		const neighborPositions = {
-			topLeft: { x: pos.x - hexagonOffsetX, y: pos.y - hexagonOffsetY },
-			topRight: { x: pos.x + hexagonOffsetX, y: pos.y - hexagonOffsetY },
-			right: { x: pos.x + hexagonOffsetX * 2, y: pos.y },
-			bottomRight: { x: pos.x + hexagonOffsetX, y: pos.y + hexagonOffsetY },
-			bottomLeft: { x: pos.x - hexagonOffsetX, y: pos.y + hexagonOffsetY },
-			left: { x: pos.x - hexagonOffsetX * 2, y: pos.y }
-		};
-		*/
 		// Calculate potential neighbor positions
 		const neighborPositions = new Array<Position|null>();
 		neighborPositions[0] = null;
@@ -198,6 +180,16 @@ function CreateHexGrid(center:Position, radius:number, layers:number):HexMap {
 	return hexMap;
 }
 
+function OccupyHexes(hexMap: HexMap, newComponent: AlchComponent, rotation: number, centerHexId: string) {
+	const shapeMask = COMPONENT_SHAPE_VALUES[newComponent.shape];
+	const hexIds = GetPlacementHexIds(hexMap[centerHexId], shapeMask, rotation, hexMap);
+	if (hexIds) {
+		for (const id of hexIds) {
+			hexMap[id].occupied = true;
+		}
+	}
+}
+
 function CreateIngredient(ingBase:IngredientBase):Ingredient {
 	let newIng = {
 		base:ingBase,
@@ -237,5 +229,6 @@ export {
 	GetOppositeDirection,
 	CreateHexGrid,
 	CreateIngredient,
-	GetPlacementHexIds
+	GetPlacementHexIds,
+	OccupyHexes
 };

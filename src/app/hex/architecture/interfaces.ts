@@ -15,7 +15,7 @@ interface HexTile {
 	index: number;
 	position: Position;
 	/** True when an alchemical component occupies this hex (placement logic). */
-	occupied?: boolean;
+	occupied: boolean;
 	neighbors: string[];
 }
 

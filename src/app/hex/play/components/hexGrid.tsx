@@ -12,6 +12,9 @@ import AlchemyStoreSlice from '@/store/features/alchemySlice';
 interface HexGridProps {
 	hexMap: HexMap;
 	radius: number;
+	onHexEnter?: Function;
+	onHexLeave?: Function;
+	onHexClick?: Function;
 	displayIndex?: boolean;
 	preventHexHover?: boolean;
 	preventHexPlacementHover?: boolean;
@@ -19,7 +22,7 @@ interface HexGridProps {
 
 const PREVIEW_ROTATION_BASE = 30;
 
-const HexGrid: React.FC<HexGridProps> = ({ hexMap, radius, displayIndex = false, preventHexHover = false, preventHexPlacementHover = false }): JSX.Element => {
+const HexGrid: React.FC<HexGridProps> = ({ hexMap, radius, onHexEnter, onHexLeave, onHexClick, displayIndex = false, preventHexHover = false, preventHexPlacementHover = false }): JSX.Element => {
 	const dispatch = useDispatch();
 	const cursorState = useSelector((state: RootState) => state.Alchemy.cursor);
 	const [hexHovered, setHexHovered] = useState<HexTile|null>(null);
@@ -52,34 +55,17 @@ const HexGrid: React.FC<HexGridProps> = ({ hexMap, radius, displayIndex = false,
 
 	function hexEnter(hex: HexTile) {
 		setHexHovered(hex);
+		if(onHexEnter)
+			onHexEnter(hex, validTileHover);
 	}
 	function hexLeave() {
-
+		if(onHexLeave)
+			onHexLeave(hexHovered);
 	}
 	function hexClick(clickedHex: HexTile) {
 		if (!cursorState.isPlacing || !cursorState.selectedComponent) return;
-		/*
-		const shapeMask = COMPONENT_SHAPE_VALUES[cursorState.selectedComponent.shape];
-		const hexIds = Helpers.GetPlacementHexIds(
-			clickedHex,
-			shapeMask,
-			cursorState.rotation,
-			hexMap
-		);
-
-		if(!hexIds) {
-			setValidTileHover(false);
-		} else {
-			setValidTileHover(true);
-		}
-			*/
-		// Outside grid / missing neighbor
-		//if (!hexIds) return;
-		//if (!hexIds.every((id) => !hexMap[id].occupied)) return;
-
-		//dispatch(AlchemyStoreSlice.actions.occupyHexes(hexIds));
-		//dispatch(AlchemyStoreSlice.actions.resetCursor());
-		//setPreviewPosition(null);
+		if(onHexClick)
+			onHexClick(clickedHex, validTileHover);
 	}
 
 	useEffect(() => {

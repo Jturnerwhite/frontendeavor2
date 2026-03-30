@@ -128,7 +128,7 @@ const AlchComponentDisplay: React.FC<CompProps> = ({alchData, position, size, ro
 			}
 		}
 	}
-	return <g transform={`rotate(${rotation} ${position.x} ${position.y})`}>
+	return <g transform={`rotate(${rotation * 60} ${position.x} ${position.y})`}>
 		{lines}
 		{nodeComps}
 	</g>;
