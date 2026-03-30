@@ -12,8 +12,8 @@ function GetHexPointPos(point: number, x: number, y: number, r: number): Positio
 	const angle = (Math.PI / 3) * (point - 1);
 
 	return {
-		x: x + r * Math.cos(angle),
-		y: y + r * Math.sin(angle)
+		x: x + r * Math.sin(angle),
+		y: y - r * Math.cos(angle)
 	};
 }
 
@@ -35,21 +35,68 @@ function GetStarPoints(cx: number, cy: number, radius: number): string {
 	return points.join(' ');
 };
 
-function GetOppositeDirection(direction: keyof HexTile['neighbors']): keyof HexTile['neighbors'] {
-	const opposites: Record<string, keyof HexTile['neighbors']> = {
-		topLeft: 'bottomRight',
-		topRight: 'bottomLeft',
-		right: 'left',
-		bottomRight: 'topLeft',
-		bottomLeft: 'topRight',
-		left: 'right'
-	};
-	return opposites[direction];
+function GetOppositeDirection(direction: number): number {
+	return [0, 4, 5, 6, 1, 2, 3][direction];
 };
 
 function GetHexId(pos: Position):string {
 	return `${pos.x},${pos.y}`
 };
+
+function GetRotatedMask(mask: number[], rotation: number): number[] {
+	const k = (rotation % 6);
+	const rotatedMask = new Array<number>(mask.length);
+	rotatedMask[0] = mask[0];
+	for (let j = 1; j < mask.length; j++) {
+		let priorIndex = ((j - k) % 6) < 0 ? 6 + ((j - k) % 6) : ((j - k) % 6);
+		rotatedMask[j] = (mask[priorIndex]);
+	}
+	rotatedMask[0] = mask[0];
+	return rotatedMask;
+}
+
+/**
+ * Resolves hex tile ids that would be occupied by a component anchored at anchorHex,
+ * using shape mask (COMPONENT_SHAPE_VALUES entry) and discrete clockwise 60° steps (cursor rotation).
+ * Returns null if any node would lie outside the grid.
+ */
+function GetPlacementHexIds(
+	anchorHex: HexTile,
+	shapeMask: number[],
+	rotation: number,
+	hexMap: HexMap
+): string[] | null {
+	const k = (rotation % 6);
+	const ids = new Set<string>();
+
+	console.log("Checking for placement hex ids:");
+	console.log("Anchor hex:", anchorHex);
+	console.log("Shape mask:", shapeMask);
+	console.log("Rotation:", rotation);
+	console.log("Hex map:", hexMap);
+
+	const rotatedMask = GetRotatedMask(shapeMask, rotation);
+	console.log("rotatedMask mask:", rotatedMask);
+
+	for (let j = 0; j < 7 && j < rotatedMask.length; j++) {
+		if (!rotatedMask[j]) continue;
+
+		let hexId: string;
+		if (j === 0) {
+			hexId = anchorHex.id;
+		} else {
+			//const neighborToCheck = (j + k) % 6;
+			const neighborId = anchorHex.neighbors[j];
+			if (!neighborId) return null;
+			hexId = neighborId;
+		}
+
+		if (!hexMap[hexId]) return null;
+		ids.add(hexId);
+	}
+
+	return Array.from(ids);
+}
 
 function CreateHexGrid(center:Position, radius:number, layers:number):HexMap {
 	const centerX = center.x;
@@ -69,12 +116,13 @@ function CreateHexGrid(center:Position, radius:number, layers:number):HexMap {
 
 		const newHex: HexTile = {
 			position: pos,
-			neighbors: {},
+			neighbors: [] as string[],
 			id,
 			index: count
 		};
 
 		// Calculate potential neighbor positions
+		/*
 		const neighborPositions = {
 			topLeft: { x: pos.x - hexagonOffsetX, y: pos.y - hexagonOffsetY },
 			topRight: { x: pos.x + hexagonOffsetX, y: pos.y - hexagonOffsetY },
@@ -83,15 +131,27 @@ function CreateHexGrid(center:Position, radius:number, layers:number):HexMap {
 			bottomLeft: { x: pos.x - hexagonOffsetX, y: pos.y + hexagonOffsetY },
 			left: { x: pos.x - hexagonOffsetX * 2, y: pos.y }
 		};
+		*/
+		// Calculate potential neighbor positions
+		const neighborPositions = new Array<Position|null>();
+		neighborPositions[0] = null;
+		neighborPositions[1] = { x: pos.x, y: pos.y - hexagonOffsetY * 2 };
+		neighborPositions[2] = { x: pos.x + hexagonOffsetX, y: pos.y - hexagonOffsetY };
+		neighborPositions[3] = { x: pos.x + hexagonOffsetX, y: pos.y + hexagonOffsetY };
+		neighborPositions[4] = { x: pos.x, y: pos.y + hexagonOffsetY * 2 };
+		neighborPositions[5] = { x: pos.x - hexagonOffsetX, y: pos.y + hexagonOffsetY };
+		neighborPositions[6] = { x: pos.x - hexagonOffsetX, y: pos.y - hexagonOffsetY };
 
 		// Connect existing neighbors
-		Object.entries(neighborPositions).forEach(([direction, neighborPos]) => {
+		neighborPositions.map((neighborPos, direction) => {
+			if(neighborPos === null) return;
+
 			const neighborId = GetHexId(neighborPos);
 			const neighbor = hexMap[neighborId];
 			if (neighbor) {
-				newHex.neighbors[direction as keyof typeof newHex.neighbors] = neighborId;
+				newHex.neighbors[direction] = neighborId;
 				// Add reverse connection
-				const reverseDirection = GetOppositeDirection(direction as keyof typeof newHex.neighbors);
+				const reverseDirection = GetOppositeDirection(direction);
 				neighbor.neighbors[reverseDirection] = id;
 			}
 		});
@@ -169,4 +229,13 @@ function CreateIngredient(ingBase:IngredientBase):Ingredient {
 	return newIng;
 }
 
-export { GetApothem, GetStarPoints, GetHexPointPos, GetHexId, GetOppositeDirection, CreateHexGrid, CreateIngredient };
+export {
+	GetApothem,
+	GetStarPoints,
+	GetHexPointPos,
+	GetHexId,
+	GetOppositeDirection,
+	CreateHexGrid,
+	CreateIngredient,
+	GetPlacementHexIds
+};

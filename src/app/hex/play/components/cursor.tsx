@@ -1,10 +1,16 @@
 'use client'
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/store/store';
-import { AlchComponentDisplay } from '@/app/hex/play/components/alchComponent';
 import { useEffect, useState } from 'react';
+import { AlchComponentDisplay } from '@/app/hex/play/components/alchComponent';
+import AlchemyStoreSlice from '@/store/features/alchemySlice';
 
-const ComponentCursorGhost: React.FC = (): JSX.Element => {
+interface ComponentCursorGhostProps {
+	defaultRotation?: number;
+}
+
+const ComponentCursorGhost: React.FC<ComponentCursorGhostProps> = ({ defaultRotation = 0 }): JSX.Element => {
+	const dispatch = useDispatch();
 	const cursorState = useSelector((state: RootState) => state.Alchemy.cursor);
 	const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
 
@@ -17,6 +23,23 @@ const ComponentCursorGhost: React.FC = (): JSX.Element => {
 
 		return () => {
 			window.removeEventListener('mousemove', handleMouseMove);
+		};
+	}, []);
+
+	useEffect(() => {
+		const handleRotate = (event: MouseEvent) => {
+			if(event.button === 2) {
+				event.preventDefault();
+				event.stopPropagation();
+				event.stopImmediatePropagation();
+				dispatch(AlchemyStoreSlice.actions.setCursorRotation());
+			}
+		};
+
+		window.addEventListener('mouseup', handleRotate);
+
+		return () => {
+			window.removeEventListener('mouseup', handleRotate);
 		};
 	}, []);
 
@@ -37,7 +60,7 @@ const ComponentCursorGhost: React.FC = (): JSX.Element => {
 					alchData={cursorState.selectedComponent}
 					position={{ x: 50, y: 50 }}
 					size={34.64}
-					rotation={cursorState.rotation}
+					rotation={defaultRotation + ((cursorState.rotation) * 60)}
 				/>
 			</svg>
 		</div>

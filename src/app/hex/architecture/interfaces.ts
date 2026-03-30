@@ -3,18 +3,20 @@ interface Position {
 	y: number;
 }
 
+//      1
+//   /     \
+//  6       2
+//  |   0   |
+//  5       3
+//   \     /
+//      4
 interface HexTile {
 	id: string;
 	index: number;
 	position: Position;
-	neighbors: {
-		topLeft?: string;
-		topRight?: string;
-		right?: string;
-		bottomRight?: string;
-		bottomLeft?: string;
-		left?: string;
-	};
+	/** True when an alchemical component occupies this hex (placement logic). */
+	occupied?: boolean;
+	neighbors: string[];
 }
 
 interface HexMap {

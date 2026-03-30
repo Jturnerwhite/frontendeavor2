@@ -15,6 +15,7 @@ interface AlchemyState {
 	playGrid?: HexMap;
 	cursor: CursorState
 }
+
 const initialState: AlchemyState = {
 	currentRecipe: undefined,
 	playGrid: undefined,
@@ -22,7 +23,7 @@ const initialState: AlchemyState = {
 		isPlacing: false,
 		selectedComponent: null,
 		position: { x: 0, y: 0 },
-		rotation: 30
+		rotation: 0
 	}
 };
 
@@ -41,8 +42,8 @@ const alchemySlice = createSlice({
 		setCursorPosition: (state, action: PayloadAction<Position>) => {
 			state.cursor.position = action.payload;
 		},
-		setCursorRotation: (state, action: PayloadAction<number>) => {
-			state.cursor.rotation = action.payload;
+		setCursorRotation: (state, action: PayloadAction<undefined>) => {
+			state.cursor.rotation = state.cursor.rotation + 1;
 		},
 		resetCursor: (state) => {
 			state.cursor = initialState.cursor;
@@ -55,6 +56,13 @@ const alchemySlice = createSlice({
 		},
 		clearPlayGrid: (state) => {
 			state.playGrid = undefined;
+		},
+		occupyHexes: (state, action: PayloadAction<string[]>) => {
+			if (!state.playGrid) return;
+			for (const id of action.payload) {
+				const tile = state.playGrid[id];
+				if (tile) tile.occupied = true;
+			}
 		},
 		// Recipe
 		setCurrentRecipe: (state, action: PayloadAction<string>) => {

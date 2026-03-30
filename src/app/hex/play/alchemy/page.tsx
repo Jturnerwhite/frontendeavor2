@@ -115,19 +115,31 @@ export default function Page() {
 
 	return <>
 		{playGrid && <>
-			<svg width={windowSize.width} height={600} style={{pointerEvents:"none" }} pointerEvents="none">
-				<g transform={`translate(${gridCenter.x} 300)`}>
-					<HexGrid hexMap={playGrid} radius={size} displayIndex={true} preventHexHover={false} />
+			<svg 
+				width={windowSize.width} 
+				height={600} 
+				style={{pointerEvents:"none" }} 
+				pointerEvents="none">
+				<g 
+					onContextMenu={(e:any) => e.preventDefault()}
+					transform={`translate(${gridCenter.x} 300)`}>
+					<HexGrid 
+						hexMap={playGrid} 
+						radius={size} 
+						displayIndex={true} 
+						preventHexHover={false} 
+						preventHexPlacementHover={true}
+					/>
 					{/* <AlchComponentDisplay alchData={alchData} position={{x: 0, y:0}} size={alchCompSize} rotation={rotation} /> */}
 				</g>
 			</svg>
 		</>}
 		<svg width={windowSize.width} height="600" style={{  }}>
 			<g transform={`translate(0 -300)`}>
-				<HexGrid hexMap={Helpers.CreateHexGrid(gridCenter, size, 2)} radius={size}  displayIndex={false} preventHexHover={true}/>
-				<PlaceableAlchComponent alchData={staticAlcDataTest} position={gridCenter} size={alchCompSize} rotation={30} />
+				<HexGrid hexMap={Helpers.CreateHexGrid(gridCenter, size, 2)} radius={size}  displayIndex={true} preventHexHover={true} preventHexPlacementHover={true}	/>
+				<PlaceableAlchComponent alchData={staticAlcDataTest} position={gridCenter} size={alchCompSize} rotation={0} />
 			</g>
 		</svg>
-		{/* <ComponentCursorGhost /> */}
+		<ComponentCursorGhost />
 	</>;
 }

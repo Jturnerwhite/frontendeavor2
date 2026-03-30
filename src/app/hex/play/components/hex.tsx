@@ -10,9 +10,19 @@ interface HexProps {
 	onHexClick?: Function;
 	displayIndex?: boolean;
 	preventHover?: boolean
+	isValidHover?: boolean;
 }
 
-const Hex: React.FC<HexProps> = ({ radius, hexData, onEnter, onLeave, onHexClick, displayIndex = false, preventHover = false }): JSX.Element => {
+const Hex: React.FC<HexProps> = ({ 
+	radius, 
+	hexData, 
+	onEnter, 
+	onLeave, 
+	onHexClick,
+	displayIndex = false, 
+	preventHover = false, 
+	isValidHover = false }): JSX.Element => {
+
 	let { x, y } = hexData.position;
 	// Calculate the points for a hexagon centered at (x, y)
 	// Each point is calculated using the radius and the angle (in radians) from the center
@@ -40,11 +50,20 @@ const Hex: React.FC<HexProps> = ({ radius, hexData, onEnter, onLeave, onHexClick
 		onHexClick ? onHexClick(hexData) : null;
 	}
 
+	let fillColor = "none";
+	if(isHovered && !preventHover) {
+		if(isValidHover) {
+			fillColor = "green";
+		} else {
+			fillColor = "red";
+		}
+	}
+
 	return (
 		<>
 			<polygon
 				points={points}
-				fill={(isHovered && !preventHover) ? "green" : "none"}
+				fill={fillColor}
 				stroke="white"
 				strokeWidth={2}
 				pointerEvents="fill"
@@ -52,17 +71,29 @@ const Hex: React.FC<HexProps> = ({ radius, hexData, onEnter, onLeave, onHexClick
 				onMouseLeave={hexLeave}
 				onClick={hexClick} />
 			{displayIndex &&
-				<text
-					x={x}
-					y={y}
-					pointerEvents="none"
-					textAnchor="middle"
-					dominantBaseline="middle"
-					fill="white"
-					fontSize={radius / 2}
-				>
-					{hexData.index}
-				</text>
+				<>
+					<text
+						x={x}
+						y={y-3}
+						pointerEvents="none"
+						textAnchor="middle"
+						dominantBaseline="middle"
+						fill="white"
+						fontSize={radius / 2}
+						fontWeight="bold"
+					>
+						{hexData.index}
+					</text>
+					<text
+						x={x}
+						y={y+6}
+						pointerEvents="none"
+						textAnchor="middle"
+						dominantBaseline="middle"
+						fill="white"
+						fontSize={radius / 3}
+					>{hexData.position.x},{hexData.position.y}</text>
+				</>
 			}
 		</>
 	);
