@@ -12,6 +12,7 @@ interface CursorState {
 
 interface AlchemyState {
 	currentRecipe?: string;
+	ingredients?: Array<string>;
 	playGrid?: HexMap;
 	placedComponents?: Array<{comp: AlchComponent, position: Position, rotation: number, centerHexId: string}>;
 	cursor: CursorState
@@ -19,6 +20,7 @@ interface AlchemyState {
 
 const initialState: AlchemyState = {
 	currentRecipe: undefined,
+	ingredients: undefined,
 	playGrid: undefined,
 	cursor: {
 		isPlacing: false,

@@ -28,15 +28,9 @@ const HexGrid: React.FC<HexGridProps> = ({ hexMap, radius, onHexEnter, onHexLeav
 	const [hexHovered, setHexHovered] = useState<HexTile|null>(null);
 	const [validTileHover, setValidTileHover] = useState<boolean | undefined>();
 
-	const alchCompSize = 2 * Helpers.GetApothem(radius);
-
-	let [previewPosition, setPreviewPosition] = useState<Position|null>(null);
-
 	function calcIsValidHover(hex: HexTile|null) {
 		if(!hex) return;
-		if(cursorState.isPlacing && cursorState.selectedComponent) {
-			setPreviewPosition(hex.position);
-	
+		if(cursorState.isPlacing && cursorState.selectedComponent) {	
 			const shapeMask = COMPONENT_SHAPE_VALUES[cursorState.selectedComponent.shape];
 			const hexIds = Helpers.GetPlacementHexIds(
 				hex,
@@ -88,13 +82,6 @@ const HexGrid: React.FC<HexGridProps> = ({ hexMap, radius, onHexEnter, onHexLeav
 					isValidHover={validTileHover}/>
 				);
 			})}
-			{cursorState.isPlacing && cursorState.selectedComponent && previewPosition !== null && !preventHexPlacementHover &&
-				<AlchComponentDisplay 
-					alchData={cursorState.selectedComponent} 
-					position={previewPosition} 
-					size={alchCompSize} 
-					rotation={PREVIEW_ROTATION_BASE + cursorState.rotation * 60}/>
-			}
 		</>
 	);
 }

@@ -6,7 +6,8 @@ export default function Page() {
 			<main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
 				<h1>Alchahexy</h1>
 				<Link href="/hex/play/test" className="hover:underline"><h1>Testing</h1></Link>
-				<Link href="/hex/play/alchemy" className="hover:underline"><h1>Play</h1></Link>
+				<Link href="/hex/play/alchemy" className="hover:underline"><h1>Farm</h1></Link>
+				<Link href="/hex/play/alchemy" className="hover:underline"><h1>Craft</h1></Link>
 				<Link href="/hex/encyclopedia" className="hover:underline"><h1>Encyclopedia</h1></Link>
 				<button>History</button>
 				<button>Explanation</button>
