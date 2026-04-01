@@ -8,7 +8,7 @@ export const IngedientBases:Array<IngredientBase> = [
 		possibleComps: [
 			{
 				element: ALCH_ELEMENT.FIRE,
-				possibleShapes: [SHAPE_NAME.HALFLINE, SHAPE_NAME.LINE, SHAPE_NAME.FINGER, SHAPE_NAME.CLAW]
+				possibleShapes: [SHAPE_NAME.HALFLINE],//, SHAPE_NAME.LINE, SHAPE_NAME.FINGER, SHAPE_NAME.CLAW]
 			},
 			{
 				element: ALCH_ELEMENT.FIRE,

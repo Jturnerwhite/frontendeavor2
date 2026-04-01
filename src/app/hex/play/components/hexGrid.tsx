@@ -18,11 +18,22 @@ interface HexGridProps {
 	displayIndex?: boolean;
 	preventHexHover?: boolean;
 	preventHexPlacementHover?: boolean;
+	flashOccupied?: boolean;
 }
 
 const PREVIEW_ROTATION_BASE = 30;
 
-const HexGrid: React.FC<HexGridProps> = ({ hexMap, radius, onHexEnter, onHexLeave, onHexClick, displayIndex = false, preventHexHover = false, preventHexPlacementHover = false }): JSX.Element => {
+const HexGrid: React.FC<HexGridProps> = ({
+	hexMap,
+	radius,
+	onHexEnter,
+	onHexLeave,
+	onHexClick,
+	displayIndex = false,
+	preventHexHover = false,
+	preventHexPlacementHover = false,
+	flashOccupied = false,
+}): JSX.Element => {
 	const dispatch = useDispatch();
 	const cursorState = useSelector((state: RootState) => state.Alchemy.cursor);
 	const [hexHovered, setHexHovered] = useState<HexTile|null>(null);
@@ -85,7 +96,9 @@ const HexGrid: React.FC<HexGridProps> = ({ hexMap, radius, onHexEnter, onHexLeav
 					onHexClick={hexClick}
 					displayIndex={displayIndex}
 					preventHover={preventHexHover||!cursorState.isPlacing}
-					isValidHover={validTileHover}/>
+					isValidHover={validTileHover}
+					flashOccupied={flashOccupied}
+				/>
 				);
 			})}
 			{cursorState.isPlacing && cursorState.selectedComponent && previewPosition !== null && !preventHexPlacementHover &&

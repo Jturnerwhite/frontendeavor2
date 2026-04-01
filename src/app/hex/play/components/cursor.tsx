@@ -6,10 +6,11 @@ import { AlchComponentDisplay } from '@/app/hex/play/components/alchComponent';
 import AlchemyStoreSlice from '@/store/features/alchemySlice';
 
 interface ComponentCursorGhostProps {
+	displaySize: number;
 	defaultRotation?: number;
 }
 
-const ComponentCursorGhost: React.FC<ComponentCursorGhostProps> = ({ defaultRotation = 0 }): JSX.Element => {
+const ComponentCursorGhost: React.FC<ComponentCursorGhostProps> = ({ displaySize = 30, defaultRotation = 0 }): JSX.Element => {
 	const dispatch = useDispatch();
 	const cursorState = useSelector((state: RootState) => state.Alchemy.cursor);
 	const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
@@ -53,13 +54,15 @@ const ComponentCursorGhost: React.FC<ComponentCursorGhostProps> = ({ defaultRota
 		  left: cursorPosition.x,
 		  top: cursorPosition.y,
 		  pointerEvents: 'none',
-		  transform: 'translate(-50%, -50%)'
+		  transform: 'translate(-50%, -50%)',
+		  width: displaySize * 4,
+		  height: displaySize * 4,
 		}}>
-			<svg width="100" height="100">
+			<svg width={displaySize * 4} height={displaySize * 4}>
 				<AlchComponentDisplay 
 					alchData={cursorState.selectedComponent}
-					position={{ x: 50, y: 50 }}
-					size={34.64}
+					position={{ x: displaySize*2, y: displaySize*2 }}
+					size={displaySize}
 					rotation={defaultRotation + (cursorState.rotation)}
 				/>
 			</svg>

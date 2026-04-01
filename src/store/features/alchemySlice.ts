@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { HexTile, HexMap, Position } from '@/app/hex/architecture/interfaces';
 import * as Helpers from '@/app/hex/architecture/helpers';
-import { AlchComponent } from '@/app/hex/architecture/typings';
+import { AlchComponent, Ingredient } from '@/app/hex/architecture/typings';
 
 interface CursorState {
 	isPlacing: boolean;
@@ -13,13 +13,21 @@ interface CursorState {
 interface AlchemyState {
 	currentRecipe?: string;
 	playGrid?: HexMap;
-	placedComponents?: Array<{comp: AlchComponent, position: Position, rotation: number, centerHexId: string}>;
+	ingredients: Array<Ingredient>;
+	placedComponents: Array<{
+		comp: AlchComponent;
+		position: Position;
+		rotation: number;
+		centerHexId: string;
+	}>;
 	cursor: CursorState
 }
 
 const initialState: AlchemyState = {
 	currentRecipe: undefined,
 	playGrid: undefined,
+	ingredients: [],
+	placedComponents: [],
 	cursor: {
 		isPlacing: false,
 		selectedComponent: null,
@@ -53,27 +61,43 @@ const alchemySlice = createSlice({
 		setPlayGrid: (state, action: PayloadAction<{ pos: Position, size: number, layers: number }>) => {
 			const newGrid = Helpers.CreateHexGrid(action.payload.pos, action.payload.size, action.payload.layers);
 			state.playGrid = newGrid;
-			state.placedComponents = new Array<{comp: AlchComponent, position: Position, rotation: number, centerHexId: string}>();
+			state.placedComponents = new Array<{
+				comp: AlchComponent;
+				position: Position;
+				rotation: number;
+				centerHexId: string;
+			}>();
 		},
 		clearPlayGrid: (state) => {
 			state.playGrid = undefined;
-			state.placedComponents = undefined;
+			state.placedComponents = [];
+			state.ingredients = [];
+		},
+		addIngredients: (state, action: PayloadAction<Array<Ingredient>>) => {
+			state.ingredients.push(...action.payload);
+		},
+		addIngredient: (state, action: PayloadAction<Ingredient>) => {
+			state.ingredients.push(action.payload);
+		},
+		removeIngredient: (state, action: PayloadAction<string>) => {
+			state.ingredients = state.ingredients.filter(ingredient => ingredient.id !== action.payload);
 		},
 		addPlacedComponent: (state, action: PayloadAction<HexTile>) => {
-			if (!state.placedComponents) 
-				state.placedComponents = new Array<{comp: AlchComponent, position: Position, rotation: number, centerHexId: string}>();
-
 			state.placedComponents.push({
-				comp: state.cursor.selectedComponent!, 
+				comp: {...state.cursor.selectedComponent!},
 				position: action.payload.position,
 				rotation: state.cursor.rotation,
-				centerHexId: action.payload.id 
+				centerHexId: action.payload.id
+			} as {
+				comp: AlchComponent;
+				position: Position;
+				rotation: number;
+				centerHexId: string;
 			});
 			Helpers.OccupyHexes(state.playGrid!, state.cursor.selectedComponent!, state.cursor.rotation, action.payload.id);
 			state.cursor = initialState.cursor;
 		},
 		removePlacedComponent: (state, action: PayloadAction<string>) => {
-			if (!state.placedComponents) return;
 			//delete state.placedComponents[action.payload];
 		},
 		// Recipe

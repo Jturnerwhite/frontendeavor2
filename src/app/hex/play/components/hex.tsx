@@ -9,19 +9,23 @@ interface HexProps {
 	onLeave?: Function;
 	onHexClick?: Function;
 	displayIndex?: boolean;
-	preventHover?: boolean
+	preventHover?: boolean;
 	isValidHover?: boolean;
+	/** When true, occupied tiles render a red fill (e.g. brief debug flash). */
+	flashOccupied?: boolean;
 }
 
-const Hex: React.FC<HexProps> = ({ 
-	radius, 
-	hexData, 
-	onEnter, 
-	onLeave, 
+const Hex: React.FC<HexProps> = ({
+	radius,
+	hexData,
+	onEnter,
+	onLeave,
 	onHexClick,
-	displayIndex = false, 
-	preventHover = false, 
-	isValidHover = false }): JSX.Element => {
+	displayIndex = false,
+	preventHover = false,
+	isValidHover = false,
+	flashOccupied = false,
+}): JSX.Element => {
 
 	let { x, y } = hexData.position;
 	// Calculate the points for a hexagon centered at (x, y)
@@ -50,12 +54,14 @@ const Hex: React.FC<HexProps> = ({
 		onHexClick ? onHexClick(hexData) : null;
 	}
 
-	let fillColor = "none";
-	if(isHovered && !preventHover) {
-		if(isValidHover) {
-			fillColor = "green";
+	let fillColor = 'none';
+	if (flashOccupied && hexData.occupied) {
+		fillColor = '#e53935';
+	} else if (isHovered && !preventHover) {
+		if (isValidHover) {
+			fillColor = 'green';
 		} else {
-			fillColor = "red";
+			fillColor = 'red';
 		}
 	}
 

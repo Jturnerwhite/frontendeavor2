@@ -10,7 +10,9 @@ import { HexTile } from './interfaces'
 export type AlchComponent = {
 	element: ALCH_ELEMENT,
 	shape: SHAPE_NAME,
-	linkSpots?: number[]
+	linkSpots?: number[],
+	sourceIngredientId?: string
+	ingredientIndex?: number
 }
 
 export type IngredientCompSpec = {
@@ -26,6 +28,7 @@ export type IngredientBase = {
 }
 
 export type Ingredient = {
+	id: string,
 	base: IngredientBase
 	comps: AlchComponent[],
 }

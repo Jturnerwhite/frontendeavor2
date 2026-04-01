@@ -1,3 +1,5 @@
+import { AlchComponent } from "./typings";
+
 interface Position {
 	x: number;
 	y: number;
@@ -14,8 +16,7 @@ interface HexTile {
 	id: string;
 	index: number;
 	position: Position;
-	/** True when an alchemical component occupies this hex (placement logic). */
-	occupied: boolean;
+	occupied: { index: number, alchComponent: AlchComponent } | undefined;
 	neighbors: string[];
 }
 

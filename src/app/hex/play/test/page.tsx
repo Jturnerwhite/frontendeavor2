@@ -160,6 +160,6 @@ export default function Page() {
 				<PlaceableAlchComponent alchData={staticAlcDataTest} position={gridCenter} size={alchCompSize} rotation={0} />
 			</g>
 		</svg>
-		<ComponentCursorGhost />
+		<ComponentCursorGhost displaySize={30} />
 	</>;
 }

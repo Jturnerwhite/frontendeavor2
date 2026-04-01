@@ -2,6 +2,21 @@ import { HexMap, HexTile, Position } from "@/app/hex/architecture/interfaces";
 import { Ingredient, IngredientBase, IngredientCompSpec, AlchComponent } from "./typings";
 import { COMPONENT_SHAPE_VALUES } from "./enums";
 
+let tempIdSeq = 0;
+
+/**
+ * Short unique id for keys, temporary DOM ids, and other non-persistent uses.
+ * Uses `crypto.randomUUID()` when available; otherwise a time- and counter-based fallback.
+ * Not cryptographically strong; do not use for security-sensitive tokens.
+ */
+function GenerateTempId(): string {
+	if (typeof globalThis.crypto !== 'undefined' && typeof globalThis.crypto.randomUUID === 'function') {
+		return globalThis.crypto.randomUUID();
+	}
+	tempIdSeq += 1;
+	return `t-${Date.now().toString(36)}-${tempIdSeq.toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
 function GetApothem(radius: number): number {
 	return radius * Math.sqrt(3) / 2;
 };
@@ -47,9 +62,19 @@ function GetHexId(pos: Position):string {
 function GetRotatedMask(mask: number[], rotation: number): number[] {
 	const k = (rotation % 6);
 	const rotatedMask = new Array<number>(mask.length);
-	rotatedMask[0] = mask[0];
+	if(rotation === 0) {
+		return mask;
+	}
+
 	for (let j = 1; j < mask.length; j++) {
-		let priorIndex = ((j - k) % 6) < 0 ? 6 + ((j - k) % 6) : ((j - k) % 6);
+		let priorIndex = 0;
+		if(((j - k) % 6) <= 0) {
+			priorIndex = 6 + ((j - k) % 6)
+		} else if(((j - k) % 6) > 5) {
+			priorIndex = (j - k) % 6 - 6;
+		} else {
+			priorIndex = (j - k) % 6;
+		}
 		rotatedMask[j] = (mask[priorIndex]);
 	}
 	rotatedMask[0] = mask[0];
@@ -70,6 +95,8 @@ function GetPlacementHexIds(
 	const k = (rotation % 6);
 	const ids = new Set<string>();
 	const rotatedMask = GetRotatedMask(shapeMask, rotation);
+	console.log("shapeMask", shapeMask);
+	console.log("rotatedMask", rotatedMask);
 
 	for (let j = 0; j < 7 && j < rotatedMask.length; j++) {
 		if (!rotatedMask[j]) continue;
@@ -88,6 +115,7 @@ function GetPlacementHexIds(
 		ids.add(hexId);
 	}
 
+	console.log("GetPlacementHexIds", Array.from(ids));
 	return Array.from(ids);
 }
 
@@ -112,7 +140,7 @@ function CreateHexGrid(center:Position, radius:number, layers:number):HexMap {
 			neighbors: [] as string[],
 			id,
 			index: count,
-			occupied: false
+			occupied: undefined
 		};
 		// Calculate potential neighbor positions
 		const neighborPositions = new Array<Position|null>();
@@ -184,19 +212,20 @@ function OccupyHexes(hexMap: HexMap, newComponent: AlchComponent, rotation: numb
 	const shapeMask = COMPONENT_SHAPE_VALUES[newComponent.shape];
 	const hexIds = GetPlacementHexIds(hexMap[centerHexId], shapeMask, rotation, hexMap);
 	if (hexIds) {
-		for (const id of hexIds) {
-			hexMap[id].occupied = true;
-		}
+		hexIds.forEach((id, index) => {
+			hexMap[id].occupied = { index: index, alchComponent: newComponent };
+		});
 	}
 }
 
 function CreateIngredient(ingBase:IngredientBase):Ingredient {
 	let newIng = {
+		id: GenerateTempId(),
 		base:ingBase,
 		comps: [],
 	} as Ingredient;
 
-	ingBase.possibleComps.forEach(compSpec => {
+	ingBase.possibleComps.forEach((compSpec, index) => {
 		let newComp = null as AlchComponent|null;
 		if ('possibleShapes' in compSpec) { // It's an IngredientCompSpec
 			if(compSpec.chance == undefined || compSpec.chance > 0 || ((Math.random() * 100) <= compSpec.chance)) {
@@ -204,6 +233,8 @@ function CreateIngredient(ingBase:IngredientBase):Ingredient {
 				newComp = {
 					element: compSpec.element,
 					shape: compSpec.possibleShapes[shapeIndex],
+					sourceIngredientId: newIng.id,
+					ingredientIndex: index
 				};
 				newIng.comps.push(newComp);
 			}
@@ -212,11 +243,12 @@ function CreateIngredient(ingBase:IngredientBase):Ingredient {
 				element: compSpec.element,
 				shape: compSpec.shape,
 				linkSpots: compSpec.linkSpots ? compSpec.linkSpots.slice() : undefined,
+				sourceIngredientId: newIng.id,
+				ingredientIndex: index
 			};
 			newIng.comps.push(newComp);
 		}
 	});
-
 
 	return newIng;
 }
@@ -226,6 +258,7 @@ export {
 	GetStarPoints,
 	GetHexPointPos,
 	GetHexId,
+	GenerateTempId,
 	GetOppositeDirection,
 	CreateHexGrid,
 	CreateIngredient,
