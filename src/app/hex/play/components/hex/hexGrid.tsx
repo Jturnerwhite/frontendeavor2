@@ -1,13 +1,14 @@
-'use client'
+'use client';
+
 import { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/store/store";
-import Hex from '@/app/hex/play/components/hex';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store/store';
+import Hex from './hex';
+import './hex.css';
 import { Position, HexTile, HexMap } from '@/app/hex/architecture/interfaces';
 import * as Helpers from '@/app/hex/architecture/helpers';
 import { COMPONENT_SHAPE_VALUES } from '@/app/hex/architecture/enums';
 import { AlchComponentDisplay } from '@/app/hex/play/components/alchComponent';
-import AlchemyStoreSlice from '@/store/features/alchemySlice';
 
 interface HexGridProps {
 	hexMap: HexMap;
@@ -34,20 +35,19 @@ const HexGrid: React.FC<HexGridProps> = ({
 	preventHexPlacementHover = false,
 	flashOccupied = false,
 }): JSX.Element => {
-	const dispatch = useDispatch();
 	const cursorState = useSelector((state: RootState) => state.Alchemy.cursor);
-	const [hexHovered, setHexHovered] = useState<HexTile|null>(null);
+	const [hexHovered, setHexHovered] = useState<HexTile | null>(null);
 	const [validTileHover, setValidTileHover] = useState<boolean | undefined>();
 
 	const alchCompSize = 2 * Helpers.GetApothem(radius);
 
-	let [previewPosition, setPreviewPosition] = useState<Position|null>(null);
+	const [previewPosition, setPreviewPosition] = useState<Position | null>(null);
 
-	function calcIsValidHover(hex: HexTile|null) {
-		if(!hex) return;
-		if(cursorState.isPlacing && cursorState.selectedComponent) {
+	function calcIsValidHover(hex: HexTile | null) {
+		if (!hex) return;
+		if (cursorState.isPlacing && cursorState.selectedComponent) {
 			setPreviewPosition(hex.position);
-	
+
 			const shapeMask = COMPONENT_SHAPE_VALUES[cursorState.selectedComponent.shape];
 			const hexIds = Helpers.GetPlacementHexIds(
 				hex,
@@ -55,8 +55,8 @@ const HexGrid: React.FC<HexGridProps> = ({
 				cursorState.rotation,
 				hexMap
 			);
-	
-			if(!hexIds || (!hexIds.every((id) => !hexMap[id].occupied))) {
+
+			if (!hexIds || !hexIds.every((id) => !hexMap[id].occupied)) {
 				setValidTileHover(false);
 			} else {
 				setValidTileHover(true);
@@ -66,17 +66,14 @@ const HexGrid: React.FC<HexGridProps> = ({
 
 	function hexEnter(hex: HexTile) {
 		setHexHovered(hex);
-		if(onHexEnter)
-			onHexEnter(hex, validTileHover);
+		if (onHexEnter) onHexEnter(hex, validTileHover);
 	}
 	function hexLeave() {
-		if(onHexLeave)
-			onHexLeave(hexHovered);
+		if (onHexLeave) onHexLeave(hexHovered);
 	}
 	function hexClick(clickedHex: HexTile) {
 		if (!cursorState.isPlacing || !cursorState.selectedComponent) return;
-		if(onHexClick)
-			onHexClick(clickedHex, validTileHover);
+		if (onHexClick) onHexClick(clickedHex, validTileHover);
 	}
 
 	useEffect(() => {
@@ -84,32 +81,37 @@ const HexGrid: React.FC<HexGridProps> = ({
 	}, [cursorState.rotation, hexHovered]);
 
 	return (
-		<>
+		<g className="hex-grid">
 			{Object.keys(hexMap).map((id) => {
 				const hex = hexMap[id];
-				return (<Hex 
-					key={hex.id} 
-					hexData={hex} 
-					radius={radius} 
-					onEnter={hexEnter}
-					onLeave={hexLeave}
-					onHexClick={hexClick}
-					displayIndex={displayIndex}
-					preventHover={preventHexHover||!cursorState.isPlacing}
-					isValidHover={validTileHover}
-					flashOccupied={flashOccupied}
-				/>
+				return (
+					<Hex
+						key={hex.id}
+						hexData={hex}
+						radius={radius}
+						onEnter={hexEnter}
+						onLeave={hexLeave}
+						onHexClick={hexClick}
+						displayIndex={displayIndex}
+						preventHover={preventHexHover || !cursorState.isPlacing}
+						isValidHover={validTileHover}
+						flashOccupied={flashOccupied}
+					/>
 				);
 			})}
-			{cursorState.isPlacing && cursorState.selectedComponent && previewPosition !== null && !preventHexPlacementHover &&
-				<AlchComponentDisplay 
-					alchData={cursorState.selectedComponent} 
-					position={previewPosition} 
-					size={alchCompSize} 
-					rotation={PREVIEW_ROTATION_BASE + cursorState.rotation * 60}/>
-			}
-		</>
+			{cursorState.isPlacing &&
+				cursorState.selectedComponent &&
+				previewPosition !== null &&
+				!preventHexPlacementHover && (
+					<AlchComponentDisplay
+						alchData={cursorState.selectedComponent}
+						position={previewPosition}
+						size={alchCompSize}
+						rotation={PREVIEW_ROTATION_BASE + cursorState.rotation * 60}
+					/>
+				)}
+		</g>
 	);
-}
+};
 
 export default HexGrid;

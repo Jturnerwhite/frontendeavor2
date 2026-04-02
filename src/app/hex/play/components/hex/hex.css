@@ -1,0 +1,34 @@
+/**
+ * Hex grid + tile — global prefixed classes (no CSS modules).
+ */
+
+.hex-grid {
+	pointer-events: none;
+}
+
+/* Tile polygon — base + state modifiers */
+.hex-tile {
+	fill: none;
+	stroke: #e8dcc8;
+	stroke-width: 2;
+}
+
+.hex-tile--flash-occupied {
+	fill: #e53935;
+	stroke: #ffcdd2;
+}
+
+.hex-tile--hover-valid {
+	fill: #2e7d32;
+	stroke: #a5d6a7;
+}
+
+.hex-tile--hover-invalid {
+	fill: #c62828;
+	stroke: #ffcdd2;
+}
+
+.hex-index-text {
+	fill: #e8dcc8;
+	pointer-events: none;
+}

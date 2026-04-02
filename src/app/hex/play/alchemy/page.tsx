@@ -4,12 +4,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import AlchemyStoreSlice from '@/store/features/alchemySlice';
 import { AlchComponent, Ingredient, IngredientBase } from '@/app/hex/architecture/typings';	
-import HexGrid from '@/app/hex/play/components/hexGrid';
+import HexGrid from '@/app/hex/play/components/hex/hexGrid';
 import * as Helpers from '@/app/hex/architecture/helpers';
 import ComponentCursorGhost from '@/app/hex/play/components/cursor';
 import { IngedientBases } from '@/app/hex/architecture/data/ingedientBases';
 import IngredientDisplay from '../components/ingredientDisplay';
-import styles from './page.module.css';
+import './alchemy.css';
 import { HexTile, Position } from '../../architecture/interfaces';
 import { AlchComponentDisplay } from '../components/alchComponent';
 
@@ -23,12 +23,6 @@ export default function Page() {
 	const [centerHexGridX, setCenterHexGridX] = useState<number>((window.innerWidth * 0.6) / 2);
 	const [centerHexGridY, setCenterHexGridY] = useState<number>(window.innerHeight / 2);
 	const [flashOccupied, setFlashOccupied] = useState(false);
-
-	// To track window resize with React hooks
-	const [windowSize, setWindowSize] = useState({
-		width: window.innerWidth,
-		height: window.innerHeight
-	});
 
 	const testLayers = 6;
 	const size = 40;
@@ -80,10 +74,6 @@ export default function Page() {
 
 	useEffect(() => {
 		const handleResize = () => {
-			setWindowSize({
-				width: window.innerWidth,
-				height: window.innerHeight
-			});
 			setCenterHexGridY(window.innerHeight / 2);
 			setCenterHexGridX((window.innerWidth * 0.6) / 2);
 		};
@@ -93,29 +83,30 @@ export default function Page() {
 	}, []);
 
 	return (
-		<div className={styles.layout}>
-			<aside className={styles.leftPanel} onContextMenu={(e: React.MouseEvent) => e.preventDefault()}>
-				{ingredients.length > 0 && ingredients.map((ingredient: Ingredient) => (
-					<IngredientDisplay
-						key={ingredient.base.name}
-						ingredient={ingredient}
-						displaySize={alchCompSize / 2}
-						usePlaceable={true}
-						compPlaced={getCompPlaced(ingredient)}
-					/>
-				))}
+		<div className="alchemy-layout">
+			<aside className="alchemy-left-panel" onContextMenu={(e: React.MouseEvent) => {}}>
+				{ingredients.length > 0 &&
+					ingredients.map((ingredient: Ingredient) => (
+						<IngredientDisplay
+							key={ingredient.base.name}
+							ingredient={ingredient}
+							displaySize={alchCompSize / 2}
+							usePlaceable={true}
+							compPlaced={getCompPlaced(ingredient)}
+						/>
+					))}
 				<button
 					type="button"
-					className={styles.flashOccupiedButton}
+					className="alchemy-flash-occupied-button"
 					onClick={flashOccupiedTiles}
 				>
 					DEBUG:Flash occupied
 				</button>
 			</aside>
-			<main className={styles.mainPanel} onContextMenu={(e: React.MouseEvent) => {}}>
+			<main className="alchemy-main-panel" onContextMenu={(e: React.MouseEvent) => e.preventDefault()}>
 				{playGrid && (
 					<svg
-						className={styles.hexSvg}
+						className="alchemy-hex-svg"
 						width="100%"
 						height="100%"
 						pointerEvents="none"
@@ -136,7 +127,7 @@ export default function Page() {
 				)}
 				<ComponentCursorGhost displaySize={alchCompSize} />
 			</main>
-			<aside className={styles.rightPanel} onContextMenu={(e: React.MouseEvent) => e.preventDefault()}>
+			<aside className="alchemy-right-panel" onContextMenu={(e: React.MouseEvent) => e.preventDefault()}>
 			</aside>
 		</div>
 	);

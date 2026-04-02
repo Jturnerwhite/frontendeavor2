@@ -1,0 +1,110 @@
+/**
+ * Alchemy play route — global prefixed classes (no CSS modules).
+ * Scope: only use these under the alchemy page root `.alchemy-layout`.
+ */
+
+.alchemy-layout {
+	--alchemy-parchment: #f0e6d2;
+	--alchemy-parchment-dark: #d4c4a8;
+	--alchemy-ink: #2c1f14;
+	--alchemy-ink-muted: #5c4a3a;
+	--alchemy-wood: #4c331e;
+	--alchemy-wood-light: #3d2e22;
+	--alchemy-wood-mid: #32261c;
+	--alchemy-accent: #8b6914;
+	--alchemy-accent-hover: #a67c18;
+	--alchemy-frame: #5c4033;
+
+	display: flex;
+	width: 100%;
+	min-height: 100vh;
+	box-sizing: border-box;
+	font-family: Georgia, 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+	color: var(--alchemy-ink);
+	background: linear-gradient(
+		180deg,
+		var(--alchemy-wood-light) 0%,
+		var(--alchemy-wood) 45%,
+		var(--alchemy-wood-mid) 100%
+	);
+}
+
+.alchemy-left-panel {
+	width: 20%;
+	flex-shrink: 0;
+	box-sizing: border-box;
+	padding: 16px 18px;
+	overflow-y: auto;
+	background: var(--alchemy-parchment);
+	color: var(--alchemy-ink);
+	border-right: 2px solid var(--alchemy-frame);
+	box-shadow: inset -4px 0 12px rgba(44, 31, 20, 0.06);
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.alchemy-right-panel {
+	width: 20%;
+	flex-shrink: 0;
+	box-sizing: border-box;
+	padding: 16px 18px;
+	overflow-y: auto;
+	background: var(--alchemy-parchment);
+	color: var(--alchemy-ink);
+	border-left: 2px solid var(--alchemy-frame);
+	box-shadow: inset 4px 0 12px rgba(44, 31, 20, 0.06);
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.alchemy-main-panel {
+	flex: 1;
+	min-width: 0;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	background: linear-gradient(
+		180deg,
+		var(--alchemy-wood-mid) 0%,
+		var(--alchemy-wood) 35%,
+		#231a14 100%
+	);
+	box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.25);
+}
+
+.alchemy-hex-svg {
+	flex: 1;
+	min-height: 0;
+	height: 100%;
+	pointer-events: none;
+	display: block;
+	max-width: 100%;
+}
+
+.alchemy-flash-occupied-button {
+	align-self: flex-start;
+	margin-top: 4px;
+	padding: 8px 14px;
+	font-size: 0.8125rem;
+	font-family: inherit;
+	cursor: pointer;
+	border-radius: 6px;
+	border: 1px solid var(--alchemy-frame);
+	background: linear-gradient(180deg, #e8dcc8 0%, #d8c8a8 100%);
+	color: var(--alchemy-ink);
+	box-shadow: 0 1px 3px rgba(44, 31, 20, 0.12);
+}
+
+.alchemy-flash-occupied-button:hover {
+	background: linear-gradient(180deg, #efe4d0 0%, #e0d2b4 100%);
+	border-color: var(--alchemy-accent);
+	color: var(--alchemy-ink);
+}
+
+.alchemy-flash-occupied-button:focus-visible {
+	outline: 2px solid var(--alchemy-accent);
+	outline-offset: 2px;
+}

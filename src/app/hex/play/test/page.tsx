@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { RootState } from "@/store/store";
 import AlchemyStoreSlice from '@/store/features/alchemySlice';
 import { AlchComponent } from '@/app/hex/architecture/typings';	
-import HexGrid from '@/app/hex/play/components/hexGrid';
+import HexGrid from '@/app/hex/play/components/hex/hexGrid';
 import { HexTile, Position } from '@/app/hex/architecture/interfaces';
 import { ALCH_ELEMENT, SHAPE_NAME, ITEM_TAG } from '@/app/hex/architecture/enums';
 import * as Helpers from '@/app/hex/architecture/helpers';

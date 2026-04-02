@@ -1,6 +1,8 @@
-'use client'
+'use client';
+
 import { HexTile } from '@/app/hex/architecture/interfaces';
 import { useState } from 'react';
+import './hex.css';
 
 interface HexProps {
 	radius: number;
@@ -15,6 +17,22 @@ interface HexProps {
 	flashOccupied?: boolean;
 }
 
+function tileClassName(
+	flashOccupied: boolean,
+	occupied: HexTile['occupied'],
+	isHovered: boolean,
+	preventHover: boolean,
+	isValidHover: boolean
+): string {
+	if (flashOccupied && occupied) {
+		return 'hex-tile hex-tile--flash-occupied';
+	}
+	if (isHovered && !preventHover) {
+		return `hex-tile ${isValidHover ? 'hex-tile--hover-valid' : 'hex-tile--hover-invalid'}`;
+	}
+	return 'hex-tile';
+}
+
 const Hex: React.FC<HexProps> = ({
 	radius,
 	hexData,
@@ -26,21 +44,17 @@ const Hex: React.FC<HexProps> = ({
 	isValidHover = false,
 	flashOccupied = false,
 }): JSX.Element => {
-
-	let { x, y } = hexData.position;
-	// Calculate the points for a hexagon centered at (x, y)
-	// Each point is calculated using the radius and the angle (in radians) from the center
-	// The angles used are 0, 60, 120, 180, 240, and 300 degrees converted to radians
+	const { x, y } = hexData.position;
 	const points = [
 		`${x + radius},${y}`,
 		`${x + radius * Math.cos(Math.PI / 3)},${y + radius * Math.sin(Math.PI / 3)}`,
 		`${x + radius * Math.cos((2 * Math.PI) / 3)},${y + radius * Math.sin((2 * Math.PI) / 3)}`,
 		`${x - radius},${y}`,
 		`${x + radius * Math.cos((4 * Math.PI) / 3)},${y + radius * Math.sin((4 * Math.PI) / 3)}`,
-		`${x + radius * Math.cos((5 * Math.PI) / 3)},${y + radius * Math.sin((5 * Math.PI) / 3)}`
+		`${x + radius * Math.cos((5 * Math.PI) / 3)},${y + radius * Math.sin((5 * Math.PI) / 3)}`,
 	].join(' ');
 
-	let [isHovered, setHovered] = useState(false);
+	const [isHovered, setHovered] = useState(false);
 
 	function hexEnter() {
 		setHovered(true);
@@ -54,56 +68,36 @@ const Hex: React.FC<HexProps> = ({
 		onHexClick ? onHexClick(hexData) : null;
 	}
 
-	let fillColor = 'none';
-	if (flashOccupied && hexData.occupied) {
-		fillColor = '#e53935';
-	} else if (isHovered && !preventHover) {
-		if (isValidHover) {
-			fillColor = 'green';
-		} else {
-			fillColor = 'red';
-		}
-	}
-
 	return (
 		<>
 			<polygon
+				className={tileClassName(
+					flashOccupied,
+					hexData.occupied,
+					isHovered,
+					preventHover,
+					isValidHover
+				)}
 				points={points}
-				fill={fillColor}
-				stroke="white"
-				strokeWidth={2}
 				pointerEvents="fill"
 				onMouseEnter={hexEnter}
 				onMouseLeave={hexLeave}
-				onClick={hexClick} />
-			{displayIndex &&
-				<>
-					<text
-						x={x}
-						y={y+1}
-						pointerEvents="none"
-						textAnchor="middle"
-						dominantBaseline="middle"
-						fill="white"
-						fontSize={radius / 2}
-					>
-						{hexData.index}
-					</text>
-					{/*
-					<text
-						x={x}
-						y={y+6}
-						pointerEvents="none"
-						textAnchor="middle"
-						dominantBaseline="middle"
-						fill="white"
-						fontSize={radius / 3}
-					>{hexData.position.x},{hexData.position.y}</text>
-					*/}
-				</>
-			}
+				onClick={hexClick}
+			/>
+			{displayIndex && (
+				<text
+					className="hex-index-text"
+					x={x}
+					y={y + 1}
+					textAnchor="middle"
+					dominantBaseline="middle"
+					fontSize={radius / 2}
+				>
+					{hexData.index}
+				</text>
+			)}
 		</>
 	);
-}
+};
 
 export default Hex;

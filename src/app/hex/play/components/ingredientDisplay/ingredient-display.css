@@ -1,0 +1,71 @@
+/**
+ * Ingredient list card — global prefixed classes (no CSS modules).
+ */
+
+.ingredient-display {
+	--ingredient-comp-container: #392d23;
+	--ingredient-comp-container-light: #635552;
+
+	box-sizing: border-box;
+	background: linear-gradient(
+		165deg,
+		rgba(255, 252, 245, 0.65) 0%,
+		rgba(240, 230, 210, 0.9) 100%
+	);
+	border: 1px solid #d4c4a8;
+	border-radius: 8px;
+	padding: 12px 14px;
+	box-shadow:
+		0 2px 8px rgba(44, 31, 20, 0.08),
+		inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.ingredient-display label {
+	display: block;
+	font-weight: 600;
+	font-size: 1rem;
+	letter-spacing: 0.02em;
+	color: #2c1f14;
+	margin-bottom: 4px;
+}
+
+.ingredient-display small {
+	color: #5c4a3a;
+	font-size: 0.75rem;
+	letter-spacing: 0.04em;
+	text-transform: capitalize;
+}
+
+.ingredient-display-separator {
+	border: none;
+	border-top: 1px solid #d4c4a8;
+	margin-bottom: 0;
+}
+
+.ingredient-display-comps {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-top: 8px;
+}
+
+.ingredient-display-alch-comp {
+	background-color: var(--ingredient-comp-container);
+	border: 1px solid #d4c4a8;
+	border-radius: 8px;
+	box-shadow:
+		0 2px 8px rgba(44, 31, 20, 0.08),
+		inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+/* Nested mini hex grid inside placeable comp preview */
+.ingredient-display .hex-grid {
+	pointer-events: none;
+	fill: var(--ingredient-comp-container-light);
+}
+
+.ingredient-display .hex-grid .hex-tile {
+	pointer-events: none;
+	stroke: var(--ingredient-comp-container);
+	fill: var(--ingredient-comp-container-light);
+}
