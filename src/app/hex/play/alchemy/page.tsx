@@ -20,7 +20,8 @@ export default function Page() {
 	const ingredients = useSelector((state: RootState) => state.Alchemy.ingredients);
 	const cursorState = useSelector((state: RootState) => state.Alchemy.cursor);
 
-	const [centerHexGrid, setCenterHexGrid] = useState<number>(window.innerHeight / 2);
+	const [centerHexGridX, setCenterHexGridX] = useState<number>((window.innerWidth * 0.6) / 2);
+	const [centerHexGridY, setCenterHexGridY] = useState<number>(window.innerHeight / 2);
 	const [flashOccupied, setFlashOccupied] = useState(false);
 
 	// To track window resize with React hooks
@@ -32,9 +33,6 @@ export default function Page() {
 	const testLayers = 6;
 	const size = 40;
 	const alchCompSize = 2 * Helpers.GetApothem(size);
-
-	const hexAreaWidth = windowSize.width * 0.7;
-	const hexAreaCenterX = hexAreaWidth / 2;
 
 	function hexClick(hex: HexTile, validTileHover: boolean) {
 		if(!validTileHover) return;
@@ -86,7 +84,8 @@ export default function Page() {
 				width: window.innerWidth,
 				height: window.innerHeight
 			});
-			setCenterHexGrid(window.innerHeight / 2);
+			setCenterHexGridY(window.innerHeight / 2);
+			setCenterHexGridX((window.innerWidth * 0.6) / 2);
 		};
 
 		window.addEventListener('resize', handleResize);
@@ -95,7 +94,7 @@ export default function Page() {
 
 	return (
 		<div className={styles.layout}>
-			<aside className={styles.asidePanel} onContextMenu={(e: React.MouseEvent) => e.preventDefault()}>
+			<aside className={styles.leftPanel} onContextMenu={(e: React.MouseEvent) => e.preventDefault()}>
 				{ingredients.length > 0 && ingredients.map((ingredient: Ingredient) => (
 					<IngredientDisplay
 						key={ingredient.base.name}
@@ -113,14 +112,15 @@ export default function Page() {
 					DEBUG:Flash occupied
 				</button>
 			</aside>
-			<main className={styles.mainPanel} onContextMenu={(e: React.MouseEvent) => e.preventDefault()}>
+			<main className={styles.mainPanel} onContextMenu={(e: React.MouseEvent) => {}}>
 				{playGrid && (
 					<svg
 						className={styles.hexSvg}
-						width={hexAreaWidth}
+						width="100%"
+						height="100%"
 						pointerEvents="none"
 					>
-						<g transform={`translate(${hexAreaCenterX} ${centerHexGrid})`}>
+						<g transform={`translate(${centerHexGridX} ${centerHexGridY})`}>
 							<HexGrid
 								hexMap={playGrid}
 								radius={size}
@@ -136,6 +136,8 @@ export default function Page() {
 				)}
 				<ComponentCursorGhost displaySize={alchCompSize} />
 			</main>
+			<aside className={styles.rightPanel} onContextMenu={(e: React.MouseEvent) => e.preventDefault()}>
+			</aside>
 		</div>
 	);
 }
