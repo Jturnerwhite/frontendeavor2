@@ -1,5 +1,5 @@
 import { HexMap, HexTile, LinkedComponents, PlacedComponent, Position } from "@/app/hex/architecture/interfaces";
-import { Ingredient, IngredientBase, IngredientCompSpec, AlchComponent } from "./typings";
+import { Ingredient, IngredientBase, IngredientCompSpec, AlchComponent, Recipe, RecipeElementScore } from "./typings";
 import { ALCH_ELEMENT, COMPONENT_SHAPE_VALUES } from "./enums";
 
 let tempIdSeq = 0;
@@ -228,9 +228,8 @@ function GetNeighbors(hexMap: HexMap, hexId: string, component: AlchComponent, i
 		return neighbors;
 	}
 
-	// TODO HANDLE LINK SPOTS ROTATED
-
 	return hexMap[hexId].neighbors.reduce((acc: HexTile[], id: string, index: number) => {
+		if(id === null) return acc;
 		const neighborsOccupied = hexMap[id].occupied;
 		if(hexMap[id] === undefined || 
 			(ignoreSelf && neighborsOccupied?.alchComponent.id === component.id) ||
@@ -365,6 +364,24 @@ function CalculateLinksInComponent(component: AlchComponent): number {
 	return output;
 }
 
+function CalculateQuality(recipe: Recipe, elementScores: Record<ALCH_ELEMENT, {nodes: number, links: number}>): number {
+	let output = 0;
+	const nodeScaling = 2;
+	const linkScaling = 4;
+	const excessElementsScaling = -1;
+	console.log(recipe.elementScores)
+	Object.keys(elementScores).forEach((element: string) => {
+		console.log(element)
+		console.log(elementScores[element as ALCH_ELEMENT])
+		const isValidElement = recipe.elementScores.some((e: RecipeElementScore) => e.element === element as ALCH_ELEMENT);
+		if(isValidElement)
+			output += elementScores[element as ALCH_ELEMENT].nodes * nodeScaling + elementScores[element as ALCH_ELEMENT].links * linkScaling;
+		else
+			output += (excessElementsScaling * elementScores[element as ALCH_ELEMENT].nodes);
+	});
+	return output;
+}
+
 export {
 	GetApothem,
 	GetStarPoints,
@@ -379,5 +396,6 @@ export {
 	GetLinks,
 	CompilePlacedComponent,
 	GetSVGLine,
-	CalculateLinksInComponent
+	CalculateLinksInComponent,
+	CalculateQuality
 };

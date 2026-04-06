@@ -9,10 +9,11 @@ import { ALCH_ELEMENT } from '@/app/hex/architecture/enums';
 
 interface RecipeDisplayProps {
 	recipe: Recipe;
+	quality?: number;
 	currentElementScores?: Record<ALCH_ELEMENT, {nodes: number, links: number}>;
 }
 
-const RecipeDisplay: React.FC<RecipeDisplayProps> = ({recipe, currentElementScores}): JSX.Element => {
+const RecipeDisplay: React.FC<RecipeDisplayProps> = ({recipe, quality, currentElementScores}): JSX.Element => {
 	function getCurrentElementScore(element: ALCH_ELEMENT): JSX.Element {
 		const eleToCheck = recipe.elementScores.find((elementScore: RecipeElementScore) => elementScore.element === element);
 		if(eleToCheck === undefined || (currentElementScores !== undefined && currentElementScores?.[element] === undefined)) {
@@ -49,13 +50,15 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({recipe, currentElementScor
 	return (
 		<div className="recipe-display">
 			<div className="recipe-display-header">
-				<h1>Recipe</h1>
+				<h1>{recipe.description}</h1>
 			</div>
 			<div className="recipe-display-content">
-				<div className="recipe-completion-line">
-					<label>Quality: </label>
-					<label>0</label>
-				</div>
+				{quality !== undefined && (
+					<div className="recipe-completion-line">
+						<label>Quality: </label>
+						<label>{quality}</label>
+					</div>
+				)}
 				{getElementScores()}
 			</div>
 		</div>

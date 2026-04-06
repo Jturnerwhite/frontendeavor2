@@ -95,9 +95,6 @@ export default function Page() {
 			[ALCH_ELEMENT.CHAOS]: {nodes: 0, links: 0},
 		};
 
-		if(placedComponents.length > 0)
-			console.log(Helpers.CalculateLinksInComponent(placedComponents[0].comp));
-
 		placedComponents.forEach((component: {
 			comp: AlchComponent;
 			position: Position;
@@ -112,6 +109,7 @@ export default function Page() {
 			output[link.element].links++;
 		});
 
+		console.log(output)
 		return output;
 	}
 
@@ -143,7 +141,6 @@ export default function Page() {
 		if(placedComponents.length === 0) return;
 		if(placedComponents.length > lastPlacedCompCount) {
 			const newLinks = Helpers.GetLinks(playGrid!, placedComponents[placedComponents.length - 1]);
-			console.log(newLinks);
 			setLinks(newLinks);
 			setLastPlacedCompCount(placedComponents.length);
 		} else { // Remove links for the removed components
@@ -212,7 +209,7 @@ export default function Page() {
 				<ComponentCursorGhost displaySize={alchCompSize} />
 			</main>
 			<aside className="alchemy-right-panel" onContextMenu={(e: React.MouseEvent) => {}}>
-				<RecipeDisplay recipe={recipe} currentElementScores={getCurrentElementScores()} />
+				<RecipeDisplay recipe={recipe} quality={Helpers.CalculateQuality(recipe, getCurrentElementScores())} currentElementScores={getCurrentElementScores()} />
 			</aside>
 		</div>
 	);
