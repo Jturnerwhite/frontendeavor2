@@ -282,6 +282,8 @@ function CreateIngredient(ingBase:IngredientBase):Ingredient {
 	} as Ingredient;
 	ingBase.possibleComps.forEach((compSpec, index) => {
 		let newComp = null as AlchComponent|null;
+		//compSpec.linkSpots = [1,1,1,1,1,1,1]; for debugging
+
 		if ('possibleShapes' in compSpec) { // It's an IngredientCompSpec
 			if(compSpec.chance == undefined || compSpec.chance > 0 || ((Math.random() * 100) <= compSpec.chance)) {
 				const shapeIndex = Math.floor(Math.random() * compSpec.possibleShapes.length);
@@ -289,7 +291,7 @@ function CreateIngredient(ingBase:IngredientBase):Ingredient {
 					id: GenerateTempId(),
 					element: compSpec.element,
 					shape: compSpec.possibleShapes[shapeIndex],
-					linkSpots: compSpec.linkSpots ? Object.values(COMPONENT_SHAPE_VALUES[compSpec.possibleShapes[shapeIndex]]).map((a, i) => a & compSpec.linkSpots![i]) : undefined,
+					linkSpots:  compSpec.linkSpots ? Object.values(COMPONENT_SHAPE_VALUES[compSpec.possibleShapes[shapeIndex]]).map((a, i) => a & compSpec.linkSpots![i]) : undefined,
 					sourceIngredientId: newIng.id,
 					ingredientIndex: index
 				};
@@ -343,6 +345,26 @@ function GetSVGLine(key: string, classString: string, pos: Position, nextPos: Po
 	/>
 };
 
+function CalculateLinksInComponent(component: AlchComponent): number {
+	let output = 0;
+
+	if(component.linkSpots === undefined)
+		return output;
+
+	for(let i = 1; i < 7; i++) {
+		if(component.linkSpots[i] === 1) {
+			if(component.linkSpots[0] === 1)
+				output++;
+			
+			if((i+1 < 7 && component.linkSpots[i+1] === 1) || 
+				(i+1 == 7 && component.linkSpots[1] === 1))
+				output++;
+		}
+	}
+
+	return output;
+}
+
 export {
 	GetApothem,
 	GetStarPoints,
@@ -356,5 +378,6 @@ export {
 	OccupyHexes,
 	GetLinks,
 	CompilePlacedComponent,
-	GetSVGLine
+	GetSVGLine,
+	CalculateLinksInComponent
 };

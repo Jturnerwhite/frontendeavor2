@@ -8,12 +8,12 @@ export const IngedientBases:Record<string, IngredientBase> = {
 		possibleComps: [
 			{
 				element: ALCH_ELEMENT.FIRE,
-				possibleShapes: [SHAPE_NAME.CLAW],//[SHAPE_NAME.HALFLINE, SHAPE_NAME.LINE, SHAPE_NAME.FINGER, SHAPE_NAME.CLAW],
+				possibleShapes: [SHAPE_NAME.HALFLINE, SHAPE_NAME.LINE, SHAPE_NAME.FINGER, SHAPE_NAME.CLAW],
 				linkSpots: [1, 0, 1, 0, 0, 0, 0]
 			},
 			{
 				element: ALCH_ELEMENT.FIRE,
-				possibleShapes: [SHAPE_NAME.CLAW],//[SHAPE_NAME.DOT,SHAPE_NAME.LINE, SHAPE_NAME.CLAW, SHAPE_NAME.UMBRELLA],
+				possibleShapes: [SHAPE_NAME.DOT,SHAPE_NAME.LINE, SHAPE_NAME.CLAW, SHAPE_NAME.UMBRELLA],
 				linkSpots: [0, 1, 0, 1, 0, 0, 0]
 			},
 			{

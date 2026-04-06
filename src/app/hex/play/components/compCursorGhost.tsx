@@ -28,8 +28,13 @@ const ComponentCursorGhost: React.FC<ComponentCursorGhostProps> = ({ displaySize
 	}, []);
 
 	useEffect(() => {
-		const handleRotate = (event: MouseEvent) => {
-			if(event.button === 2) {
+		const handleMouseBtn = (event: MouseEvent) => {
+			if(event.button === 1) {
+				event.preventDefault();
+				event.stopPropagation();
+				event.stopImmediatePropagation();
+				dispatch(AlchemyStoreSlice.actions.resetCursor());
+			}else if(event.button === 2) {
 				event.preventDefault();
 				event.stopPropagation();
 				event.stopImmediatePropagation();
@@ -37,10 +42,10 @@ const ComponentCursorGhost: React.FC<ComponentCursorGhostProps> = ({ displaySize
 			}
 		};
 
-		window.addEventListener('mouseup', handleRotate);
+		window.addEventListener('mouseup', handleMouseBtn);
 
 		return () => {
-			window.removeEventListener('mouseup', handleRotate);
+			window.removeEventListener('mouseup', handleMouseBtn);
 		};
 	}, []);
 

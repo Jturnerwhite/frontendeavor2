@@ -6,7 +6,7 @@ import AlchemyStoreSlice from '@/store/features/alchemySlice';
 import { AlchComponent, Ingredient, IngredientBase } from '@/app/hex/architecture/typings';	
 import HexGrid from '@/app/hex/play/components/hex/hexGrid';
 import * as Helpers from '@/app/hex/architecture/helpers';
-import ComponentCursorGhost from '@/app/hex/play/components/cursor';
+import ComponentCursorGhost from '@/app/hex/play/components/compCursorGhost';
 import { IngedientBases } from '@/app/hex/architecture/data/ingedientBases';
 import IngredientDisplay from '../components/ingredientDisplay';
 import './alchemy.css';
@@ -91,6 +91,9 @@ export default function Page() {
 			[ALCH_ELEMENT.CHAOS]: {nodes: 0, links: 0},
 		};
 
+		if(placedComponents.length > 0)
+			console.log(Helpers.CalculateLinksInComponent(placedComponents[0].comp));
+
 		placedComponents.forEach((component: {
 			comp: AlchComponent;
 			position: Position;
@@ -98,6 +101,11 @@ export default function Page() {
 			centerHexId: string;
 		}) => {
 			output[component.comp.element].nodes+= COMPONENT_SHAPE_VALUES[component.comp.shape].reduce((acc, curr) => acc + curr, 0);
+			output[component.comp.element].links+= Helpers.CalculateLinksInComponent(component.comp);
+		});
+
+		crossComponentLinks.forEach((link: LinkedComponents) => {
+			output[link.element].links++;
 		});
 
 		return output;
@@ -141,6 +149,9 @@ export default function Page() {
 			setLastPlacedCompCount(placedComponents.length);
 		}
 	}, [placedComponents]);
+
+	useEffect(() => {
+	}, []);
 
 	return (
 		<div className="alchemy-layout">
