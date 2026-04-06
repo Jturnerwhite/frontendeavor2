@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { RootState } from "@/store/store";
 import AlchemyStoreSlice from '@/store/features/alchemySlice';
 import PlayerStoreSlice from '@/store/features/playerSlice';
+import HistoryStoreSlice from '@/store/features/historySlice';
 import { AlchComponent, Ingredient, Item } from '@/app/hex/architecture/typings';	
 import HexGrid from '@/app/hex/play/components/hex/hexGrid';
 import * as Helpers from '@/app/hex/architecture/helpers';
@@ -34,7 +35,7 @@ export default function Page() {
 	const [lastPlacedCompCount, setLastPlacedCompCount] = useState(0);
 	const [crossComponentLinks, setLinks] = useState<LinkedComponents[]>([]);
 
-	const testLayers = 6;
+	const playGridLayers = 4;
 	const size = 40;
 	const alchCompSize = 2 * Helpers.GetApothem(size);
 
@@ -86,7 +87,7 @@ export default function Page() {
 		});
 	}
 
-	const currentElementScores = useMemo((): Record<ALCH_ELEMENT, { nodes: number; links: number }> => {
+	function getCurrentElementScores(): Record<ALCH_ELEMENT, { nodes: number; links: number }> {
 		const output = {
 			[ALCH_ELEMENT.EARTH]: { nodes: 0, links: 0 },
 			[ALCH_ELEMENT.WIND]: { nodes: 0, links: 0 },
@@ -111,12 +112,7 @@ export default function Page() {
 		});
 
 		return output;
-	}, [placedComponents, crossComponentLinks]);
-
-	const recipeQuality = useMemo(() => {
-		if (!recipe) return 0;
-		return Helpers.CalculateQuality(recipe, currentElementScores);
-	}, [recipe, currentElementScores]);
+	}
 
 	const canComplete = useMemo(
 		() =>
@@ -127,26 +123,29 @@ export default function Page() {
 
 	const handleComplete = useCallback(() => {
 		if (!recipe || !canComplete) return;
+		const elementScores = getCurrentElementScores();
+		const quality = Helpers.CalculateQuality(recipe, elementScores);
 		const item: Item = {
 			name: recipe.description,
 			comps: placedComponents.map((p) => ({ ...p.comp })),
 			types: [...recipe.types],
-			quality: recipeQuality,
+			quality,
 			ingredients: structuredClone(ingredients),
 		};
+		dispatch(PlayerStoreSlice.actions.completeCraft({ item }));
 		dispatch(
-			PlayerStoreSlice.actions.completeCraft({
+			HistoryStoreSlice.actions.recordCompletedCraft({
 				item,
 				recipe,
-				elementScores: currentElementScores,
+				elementScores,
 			}),
 		);
 		router.push('/hex/play/alchemy/complete');
-	}, [recipe, canComplete, placedComponents, ingredients, dispatch, router, currentElementScores, recipeQuality]);
+	}, [recipe, canComplete, placedComponents, ingredients, dispatch, router, crossComponentLinks]);
 
 	useEffect(() => {
 		if (playGrid === undefined) {
-			dispatch(AlchemyStoreSlice.actions.setPlayGrid({ pos: { x:0, y:0 }, size, layers: testLayers }));
+			dispatch(AlchemyStoreSlice.actions.setPlayGrid({ pos: { x:0, y:0 }, size, layers: playGridLayers }));
 		}
 	}, []);
 
@@ -172,7 +171,7 @@ export default function Page() {
 		if(placedComponents.length === 0) return;
 		if(placedComponents.length > lastPlacedCompCount) {
 			const newLinks = Helpers.GetLinks(playGrid!, placedComponents[placedComponents.length - 1]);
-			setLinks(newLinks);
+			setLinks((prev) => [...prev, ...newLinks]);
 			setLastPlacedCompCount(placedComponents.length);
 		} else { // Remove links for the removed components
 			const updatedLinks = crossComponentLinks.filter((link) => {
@@ -184,6 +183,9 @@ export default function Page() {
 			setLastPlacedCompCount(placedComponents.length);
 		}
 	}, [placedComponents]);
+
+	const currentElementScores = getCurrentElementScores();
+	const recipeQuality = recipe ? Helpers.CalculateQuality(recipe, currentElementScores) : 0;
 
 	if (!recipe) {
 		return null;

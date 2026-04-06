@@ -7,7 +7,7 @@ export default function Page() {
 				<h1>Alchahexy</h1>
 				<Link href="/hex/play/alchemy/selectRecipe" className="hover:underline"><h1>Play</h1></Link>
 				<Link href="/hex/encyclopedia" className="hover:underline"><h1>Encyclopedia</h1></Link>
-				<button>History</button>
+				<Link href="/hex/history" className="hover:underline"><h1>History</h1></Link>
 				<button>Explanation</button>
 			</main>
 			<footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">

@@ -86,6 +86,7 @@ const Hex: React.FC<HexProps> = ({
 			/>
 			{displayIndex && (
 				<>
+				{/*
 				<text
 					className="hex-index-text"
 					x={x}
@@ -96,6 +97,7 @@ const Hex: React.FC<HexProps> = ({
 				>
 					{hexData.index}
 				</text>
+				*/}
 				{/*
 				<text
 					className="hex-index-text"

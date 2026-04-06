@@ -7,7 +7,7 @@ import RecipeDisplay from '@/app/hex/play/components/recipeDisplay';
 import '../alchemy.css';
 
 export default function AlchemyCompletePage() {
-	const last = useSelector((state: RootState) => state.Player.lastCompletedCraft);
+	const last = useSelector((state: RootState) => state.History.lastCompletedCraft);
 
 	if (!last) {
 		return (
