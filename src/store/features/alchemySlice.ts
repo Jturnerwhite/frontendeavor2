@@ -18,7 +18,10 @@ interface AlchemyState {
 	cursor: CursorState
 }
 
-const initialState: AlchemyState = {
+/** Serializable slice of alchemy state (everything except transient cursor UI). */
+export type PersistedAlchemyState = Omit<AlchemyState, 'cursor'>;
+
+export const initialAlchemyState: AlchemyState = {
 	currentRecipe: undefined,
 	playGrid: undefined,
 	ingredients: [],
@@ -33,8 +36,15 @@ const initialState: AlchemyState = {
 
 const alchemySlice = createSlice({
 	name: 'alchemy',
-	initialState,
+	initialState: initialAlchemyState,
 	reducers: {
+		hydrateFromStorage: (state, action: PayloadAction<PersistedAlchemyState>) => {
+			state.currentRecipe = action.payload.currentRecipe;
+			state.playGrid = action.payload.playGrid;
+			state.ingredients = action.payload.ingredients;
+			state.placedComponents = action.payload.placedComponents;
+			state.cursor = initialAlchemyState.cursor;
+		},
 		// Cursor
 		setCursorPlacing: (state, action: PayloadAction<boolean>) => {
 			state.cursor.isPlacing = action.payload;
@@ -50,7 +60,7 @@ const alchemySlice = createSlice({
 			state.cursor.rotation = state.cursor.rotation + 1;
 		},
 		resetCursor: (state) => {
-			state.cursor = initialState.cursor;
+			state.cursor = initialAlchemyState.cursor;
 		},
 		// Grid
 		setPlayGrid: (state, action: PayloadAction<{ pos: Position, size: number, layers: number }>) => {
@@ -77,7 +87,7 @@ const alchemySlice = createSlice({
 			const newPlacedComponent = Helpers.CompilePlacedComponent(state.playGrid!, action.payload, action.payload.position, state.cursor.rotation, state.cursor.selectedComponent!);
 			state.placedComponents.push(newPlacedComponent);
 			Helpers.OccupyHexes(state.playGrid!, newPlacedComponent);
-			state.cursor = initialState.cursor;
+			state.cursor = initialAlchemyState.cursor;
 		},
 		removePlacedComponent: (state, action: PayloadAction<string>) => {
 			//delete state.placedComponents[action.payload];

@@ -115,10 +115,12 @@ export default function Page() {
 		if (playGrid === undefined) {
 			dispatch(AlchemyStoreSlice.actions.setPlayGrid({ pos: { x:0, y:0 }, size, layers: testLayers }));
 		}
+		/*
 		if (ingredients.length === 0) {
-			let ingredients = Object.values(IngedientBases).map((base:IngredientBase) => Helpers.CreateIngredient(base));
-			dispatch(AlchemyStoreSlice.actions.addIngredients(ingredients));
+			let newIng = Object.values(IngedientBases).map((base:IngredientBase) => Helpers.CreateIngredient(base));
+			dispatch(AlchemyStoreSlice.actions.addIngredients(newIng));
 		}
+			*/
 	}, []);
 
 	useEffect(() => {

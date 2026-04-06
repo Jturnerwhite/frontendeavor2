@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Provider } from "react-redux";
 import { store } from "@/store/store";
+import { AlchemyRehydrate } from "@/store/alchemyRehydrate";
 import { AlchemicalElements, type AlchEleData } from "@/app/hex/architecture/data/elements";
 import type { ALCH_ELEMENT } from "@/app/hex/architecture/enums";
 import "./globals.css";
@@ -39,6 +40,7 @@ const metadata: Metadata = {
 function Providers({ children }: { children: React.ReactNode }) {
 	return (
 		<Provider store={store}>
+			<AlchemyRehydrate />
 			{children}
 		</Provider>
 	);
