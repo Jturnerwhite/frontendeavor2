@@ -38,8 +38,9 @@ export type Ingredient = {
 export type Item = {
 	name: string,
 	comps: AlchComponent[],
-	types: ITEM_TAG[]
-	ingredients: Ingredient[]
+	types: ITEM_TAG[],
+	quality: number,
+	ingredients: Ingredient[],
 }
 
 /**

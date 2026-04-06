@@ -1,16 +1,17 @@
 'use client'
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from 'next/navigation';
 import { RootState } from "@/store/store";
 import AlchemyStoreSlice from '@/store/features/alchemySlice';
-import { AlchComponent, Ingredient } from '@/app/hex/architecture/typings';	
+import PlayerStoreSlice from '@/store/features/playerSlice';
+import { AlchComponent, Ingredient, Item } from '@/app/hex/architecture/typings';	
 import HexGrid from '@/app/hex/play/components/hex/hexGrid';
 import * as Helpers from '@/app/hex/architecture/helpers';
 import ComponentCursorGhost from '@/app/hex/play/components/compCursorGhost';
 import IngredientDisplay from '../components/ingredientDisplay';
 import './alchemy.css';
-import { HexTile, LinkedComponents, PlacedComponent, Position } from '../../architecture/interfaces';
+import { HexTile, LinkedComponents, Position } from '../../architecture/interfaces';
 import { AlchComponentDisplay } from '../components/alchComponent';
 import { Recipes } from '../../architecture/data/recipes';
 import RecipeDisplay from '../components/recipeDisplay';
@@ -85,14 +86,14 @@ export default function Page() {
 		});
 	}
 
-	function getCurrentElementScores(): Record<ALCH_ELEMENT, {nodes: number, links: number}> {
+	const currentElementScores = useMemo((): Record<ALCH_ELEMENT, { nodes: number; links: number }> => {
 		const output = {
-			[ALCH_ELEMENT.EARTH]: {nodes: 0, links: 0},
-			[ALCH_ELEMENT.WIND]: {nodes: 0, links: 0},
-			[ALCH_ELEMENT.FIRE]: {nodes: 0, links: 0},
-			[ALCH_ELEMENT.WATER]: {nodes: 0, links: 0},
-			[ALCH_ELEMENT.AETHER]: {nodes: 0, links: 0},
-			[ALCH_ELEMENT.CHAOS]: {nodes: 0, links: 0},
+			[ALCH_ELEMENT.EARTH]: { nodes: 0, links: 0 },
+			[ALCH_ELEMENT.WIND]: { nodes: 0, links: 0 },
+			[ALCH_ELEMENT.FIRE]: { nodes: 0, links: 0 },
+			[ALCH_ELEMENT.WATER]: { nodes: 0, links: 0 },
+			[ALCH_ELEMENT.AETHER]: { nodes: 0, links: 0 },
+			[ALCH_ELEMENT.CHAOS]: { nodes: 0, links: 0 },
 		};
 
 		placedComponents.forEach((component: {
@@ -101,17 +102,47 @@ export default function Page() {
 			rotation: number;
 			centerHexId: string;
 		}) => {
-			output[component.comp.element].nodes+= COMPONENT_SHAPE_VALUES[component.comp.shape].reduce((acc, curr) => acc + curr, 0);
-			output[component.comp.element].links+= Helpers.CalculateLinksInComponent(component.comp);
+			output[component.comp.element].nodes += COMPONENT_SHAPE_VALUES[component.comp.shape].reduce((acc, curr) => acc + curr, 0);
+			output[component.comp.element].links += Helpers.CalculateLinksInComponent(component.comp);
 		});
 
 		crossComponentLinks.forEach((link: LinkedComponents) => {
 			output[link.element].links++;
 		});
 
-		console.log(output)
 		return output;
-	}
+	}, [placedComponents, crossComponentLinks]);
+
+	const recipeQuality = useMemo(() => {
+		if (!recipe) return 0;
+		return Helpers.CalculateQuality(recipe, currentElementScores);
+	}, [recipe, currentElementScores]);
+
+	const canComplete = useMemo(
+		() =>
+			ingredients.length > 0 &&
+			ingredients.every((ing) => getCompPlaced(ing).some(Boolean)),
+		[ingredients, placedComponents],
+	);
+
+	const handleComplete = useCallback(() => {
+		if (!recipe || !canComplete) return;
+		const item: Item = {
+			name: recipe.description,
+			comps: placedComponents.map((p) => ({ ...p.comp })),
+			types: [...recipe.types],
+			quality: recipeQuality,
+			ingredients: structuredClone(ingredients),
+		};
+		dispatch(
+			PlayerStoreSlice.actions.completeCraft({
+				item,
+				recipe,
+				elementScores: currentElementScores,
+			}),
+		);
+		router.push('/hex/play/alchemy/complete');
+	}, [recipe, canComplete, placedComponents, ingredients, dispatch, router, currentElementScores, recipeQuality]);
 
 	useEffect(() => {
 		if (playGrid === undefined) {
@@ -209,7 +240,15 @@ export default function Page() {
 				<ComponentCursorGhost displaySize={alchCompSize} />
 			</main>
 			<aside className="alchemy-right-panel" onContextMenu={(e: React.MouseEvent) => {}}>
-				<RecipeDisplay recipe={recipe} quality={Helpers.CalculateQuality(recipe, getCurrentElementScores())} currentElementScores={getCurrentElementScores()} />
+				<RecipeDisplay recipe={recipe} quality={recipeQuality} currentElementScores={currentElementScores} />
+				<button
+					type="button"
+					className="alchemy-complete-button"
+					disabled={!canComplete}
+					onClick={handleComplete}
+				>
+					Complete
+				</button>
 			</aside>
 		</div>
 	);
