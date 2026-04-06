@@ -15,6 +15,9 @@
 	--alchemy-accent-hover: #a67c18;
 	--alchemy-frame: #5c4033;
 
+	--misc-container: #392d23;
+	--misc-container-light: #635552;
+
 	display: flex;
 	width: 100%;
 	min-height: 100vh;
@@ -107,4 +110,23 @@
 .alchemy-flash-occupied-button:focus-visible {
 	outline: 2px solid var(--alchemy-accent);
 	outline-offset: 2px;
+}
+
+.link.earth {
+	stroke: var(--alch-element-earth);
+}
+.link.wind {
+	stroke: var(--alch-element-wind);
+}
+.link.fire {
+	stroke: var(--alch-element-fire);
+}
+.link.water {
+	stroke: var(--alch-element-water);
+}
+.link.aether {
+	stroke: var(--alch-element-aether);
+}
+.link.chaos {
+	stroke: var(--alch-element-chaos);
 }

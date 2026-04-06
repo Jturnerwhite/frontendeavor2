@@ -10,8 +10,11 @@ import ComponentCursorGhost from '@/app/hex/play/components/cursor';
 import { IngedientBases } from '@/app/hex/architecture/data/ingedientBases';
 import IngredientDisplay from '../components/ingredientDisplay';
 import './alchemy.css';
-import { HexTile, Position } from '../../architecture/interfaces';
+import { HexTile, LinkedComponents, PlacedComponent, Position } from '../../architecture/interfaces';
 import { AlchComponentDisplay } from '../components/alchComponent';
+import { Recipes } from '../../architecture/data/recipes';
+import RecipeDisplay from '../components/recipeDisplay';
+import { ALCH_ELEMENT, COMPONENT_SHAPE_VALUES } from '../../architecture/enums';
 
 export default function Page() {
 	const dispatch = useDispatch();
@@ -23,6 +26,8 @@ export default function Page() {
 	const [centerHexGridX, setCenterHexGridX] = useState<number>((window.innerWidth * 0.6) / 2);
 	const [centerHexGridY, setCenterHexGridY] = useState<number>(window.innerHeight / 2);
 	const [flashOccupied, setFlashOccupied] = useState(false);
+	const [lastPlacedCompCount, setLastPlacedCompCount] = useState(0);
+	const [crossComponentLinks, setLinks] = useState<LinkedComponents[]>([]);
 
 	const testLayers = 6;
 	const size = 40;
@@ -33,6 +38,20 @@ export default function Page() {
 		if(cursorState.isPlacing && cursorState.selectedComponent) {
 			dispatch(AlchemyStoreSlice.actions.addPlacedComponent(hex));
 		}
+	}
+
+	function renderComponentLinks(): JSX.Element[] {
+		return crossComponentLinks.map((link, index) => {
+			const component1Pos = playGrid![link.component1HexId].position;
+			const component2Pos = playGrid![link.component2HexId].position;
+			return Helpers.GetSVGLine(
+				`${link.component1Id}-${link.component2Id}-line-${index}`, 
+				link.element.toLowerCase().replace(/\s+/g, "-"),
+				component1Pos, 
+				component2Pos, 
+				"black", 
+				alchCompSize);
+		});
 	}
 
 	function renderPlacedComponents() {
@@ -62,12 +81,34 @@ export default function Page() {
 		});
 	}
 
+	function getCurrentElementScores(): Record<ALCH_ELEMENT, {nodes: number, links: number}> {
+		const output = {
+			[ALCH_ELEMENT.EARTH]: {nodes: 0, links: 0},
+			[ALCH_ELEMENT.WIND]: {nodes: 0, links: 0},
+			[ALCH_ELEMENT.FIRE]: {nodes: 0, links: 0},
+			[ALCH_ELEMENT.WATER]: {nodes: 0, links: 0},
+			[ALCH_ELEMENT.AETHER]: {nodes: 0, links: 0},
+			[ALCH_ELEMENT.CHAOS]: {nodes: 0, links: 0},
+		};
+
+		placedComponents.forEach((component: {
+			comp: AlchComponent;
+			position: Position;
+			rotation: number;
+			centerHexId: string;
+		}) => {
+			output[component.comp.element].nodes+= COMPONENT_SHAPE_VALUES[component.comp.shape].reduce((acc, curr) => acc + curr, 0);
+		});
+
+		return output;
+	}
+
 	useEffect(() => {
 		if (playGrid === undefined) {
 			dispatch(AlchemyStoreSlice.actions.setPlayGrid({ pos: { x:0, y:0 }, size, layers: testLayers }));
 		}
 		if (ingredients.length === 0) {
-			let ingredients = IngedientBases.map((base:IngredientBase) => Helpers.CreateIngredient(base));
+			let ingredients = Object.values(IngedientBases).map((base:IngredientBase) => Helpers.CreateIngredient(base));
 			dispatch(AlchemyStoreSlice.actions.addIngredients(ingredients));
 		}
 	}, []);
@@ -81,6 +122,24 @@ export default function Page() {
 		window.addEventListener('resize', handleResize);
 		return () => window.removeEventListener('resize', handleResize);
 	}, []);
+
+	useEffect(() => {
+		if(placedComponents.length === lastPlacedCompCount) return;
+		if(placedComponents.length === 0) return;
+		if(placedComponents.length > lastPlacedCompCount) {
+			const newLinks = Helpers.GetLinks(playGrid!, placedComponents[placedComponents.length - 1]);
+			setLinks(newLinks);
+			setLastPlacedCompCount(placedComponents.length);
+		} else { // Remove links for the removed components
+			const updatedLinks = crossComponentLinks.filter((link) => {
+				return !placedComponents.some((component) => {
+					return component.comp.id === link.component1Id || component.comp.id === link.component2Id;
+				});
+			});
+			setLinks(updatedLinks);
+			setLastPlacedCompCount(placedComponents.length);
+		}
+	}, [placedComponents]);
 
 	return (
 		<div className="alchemy-layout">
@@ -121,13 +180,19 @@ export default function Page() {
 								preventHexPlacementHover={true}
 								flashOccupied={flashOccupied}
 							/>
-							{renderPlacedComponents()}
+							<g>
+								{renderComponentLinks()}
+							</g>
+							<g>
+								{renderPlacedComponents()}
+							</g>
 						</g>
 					</svg>
 				)}
 				<ComponentCursorGhost displaySize={alchCompSize} />
 			</main>
-			<aside className="alchemy-right-panel" onContextMenu={(e: React.MouseEvent) => e.preventDefault()}>
+			<aside className="alchemy-right-panel" onContextMenu={(e: React.MouseEvent) => {}}>
+				<RecipeDisplay recipe={Recipes[0]} currentElementScores={getCurrentElementScores()} />
 			</aside>
 		</div>
 	);

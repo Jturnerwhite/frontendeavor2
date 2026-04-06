@@ -56,7 +56,7 @@ const HexGrid: React.FC<HexGridProps> = ({
 				hexMap
 			);
 
-			if (!hexIds || !hexIds.every((id) => !hexMap[id].occupied)) {
+			if (!hexIds || !hexIds.every((id) => (id === "null" || !hexMap[id].occupied))) {
 				setValidTileHover(false);
 			} else {
 				setValidTileHover(true);

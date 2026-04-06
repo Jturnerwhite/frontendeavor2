@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { HexTile, HexMap, Position } from '@/app/hex/architecture/interfaces';
+import { HexTile, HexMap, Position, PlacedComponent } from '@/app/hex/architecture/interfaces';
 import * as Helpers from '@/app/hex/architecture/helpers';
 import { AlchComponent, Ingredient } from '@/app/hex/architecture/typings';
 
@@ -14,12 +14,7 @@ interface AlchemyState {
 	currentRecipe?: string;
 	playGrid?: HexMap;
 	ingredients: Array<Ingredient>;
-	placedComponents: Array<{
-		comp: AlchComponent;
-		position: Position;
-		rotation: number;
-		centerHexId: string;
-	}>;
+	placedComponents: Array<PlacedComponent>;
 	cursor: CursorState
 }
 
@@ -61,12 +56,7 @@ const alchemySlice = createSlice({
 		setPlayGrid: (state, action: PayloadAction<{ pos: Position, size: number, layers: number }>) => {
 			const newGrid = Helpers.CreateHexGrid(action.payload.pos, action.payload.size, action.payload.layers);
 			state.playGrid = newGrid;
-			state.placedComponents = new Array<{
-				comp: AlchComponent;
-				position: Position;
-				rotation: number;
-				centerHexId: string;
-			}>();
+			state.placedComponents = new Array<PlacedComponent>();
 		},
 		clearPlayGrid: (state) => {
 			state.playGrid = undefined;
@@ -83,18 +73,10 @@ const alchemySlice = createSlice({
 			state.ingredients = state.ingredients.filter(ingredient => ingredient.id !== action.payload);
 		},
 		addPlacedComponent: (state, action: PayloadAction<HexTile>) => {
-			state.placedComponents.push({
-				comp: {...state.cursor.selectedComponent!},
-				position: action.payload.position,
-				rotation: state.cursor.rotation,
-				centerHexId: action.payload.id
-			} as {
-				comp: AlchComponent;
-				position: Position;
-				rotation: number;
-				centerHexId: string;
-			});
-			Helpers.OccupyHexes(state.playGrid!, state.cursor.selectedComponent!, state.cursor.rotation, action.payload.id);
+
+			const newPlacedComponent = Helpers.CompilePlacedComponent(state.playGrid!, action.payload, action.payload.position, state.cursor.rotation, state.cursor.selectedComponent!);
+			state.placedComponents.push(newPlacedComponent);
+			Helpers.OccupyHexes(state.playGrid!, newPlacedComponent);
 			state.cursor = initialState.cursor;
 		},
 		removePlacedComponent: (state, action: PayloadAction<string>) => {

@@ -1,18 +1,20 @@
 import { ALCH_ELEMENT, ITEM_TAG, SHAPE_NAME } from '@/app/hex/architecture/enums'
 import { AlchComponent, IngredientBase, IngredientCompSpec } from "../typings";
 
-export const IngedientBases:Array<IngredientBase> = [
-	{
+export const IngedientBases:Record<string, IngredientBase> = {
+	JarbaLeaf: {
 		name: "Jarba Leaf",
 		types: [ITEM_TAG.NATURAL, ITEM_TAG.PLANT],
 		possibleComps: [
 			{
 				element: ALCH_ELEMENT.FIRE,
-				possibleShapes: [SHAPE_NAME.HALFLINE],//, SHAPE_NAME.LINE, SHAPE_NAME.FINGER, SHAPE_NAME.CLAW]
+				possibleShapes: [SHAPE_NAME.CLAW],//[SHAPE_NAME.HALFLINE, SHAPE_NAME.LINE, SHAPE_NAME.FINGER, SHAPE_NAME.CLAW],
+				linkSpots: [1, 0, 1, 0, 0, 0, 0]
 			},
 			{
 				element: ALCH_ELEMENT.FIRE,
-				possibleShapes: [SHAPE_NAME.DOT,SHAPE_NAME.LINE, SHAPE_NAME.CLAW, SHAPE_NAME.UMBRELLA]
+				possibleShapes: [SHAPE_NAME.CLAW],//[SHAPE_NAME.DOT,SHAPE_NAME.LINE, SHAPE_NAME.CLAW, SHAPE_NAME.UMBRELLA],
+				linkSpots: [0, 1, 0, 1, 0, 0, 0]
 			},
 			{
 				element: ALCH_ELEMENT.EARTH,
@@ -21,7 +23,7 @@ export const IngedientBases:Array<IngredientBase> = [
 			}
 		]
 	},
-	{
+	FruguBerry: {
 		name: "Frugu Berry",
 		types: [ITEM_TAG.NATURAL, ITEM_TAG.PLANT],
 		possibleComps: [
@@ -40,7 +42,7 @@ export const IngedientBases:Array<IngredientBase> = [
 			}
 		]
 	},
-	{
+	AeridGrass: {
 		name: "Aerid Grass",
 		types: [ITEM_TAG.NATURAL, ITEM_TAG.PLANT],
 		possibleComps: [
@@ -60,4 +62,4 @@ export const IngedientBases:Array<IngredientBase> = [
 			}
 		]
 	},
-];
+};

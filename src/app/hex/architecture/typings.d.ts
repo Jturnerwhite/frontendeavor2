@@ -8,6 +8,7 @@ import { HexTile } from './interfaces'
  * linkSpots - optional - defines which values, if any, can be linked externally.  Expects 7 1/0 values according to hexagon spots.
  */
 export type AlchComponent = {
+	id?: string,
 	element: ALCH_ELEMENT,
 	shape: SHAPE_NAME,
 	linkSpots?: number[],
@@ -18,6 +19,7 @@ export type AlchComponent = {
 export type IngredientCompSpec = {
 	element: ALCH_ELEMENT,
 	possibleShapes: Array<SHAPE_NAME>,
+	linkSpots?: number[],
 	chance?: number // If not defined, assumed to be 100%
 }
 
@@ -54,11 +56,18 @@ export type RecipeRequirement = {
 	requireFunc: function
 }
 
+export type RecipeElementScore = {
+	element: ALCH_ELEMENT,
+	softCap: number,
+	cap: number
+}
+
 export type Recipe = {
 	id: string,
 	description: string,
 	types: ITEM_TAG[],
-	requiredIngredients?: Array<Ingredient|ITEM_TAG>,
+	elementScores: RecipeElementScore[],
+	requiredIngredients?: Array<IngredientBase|ITEM_TAG>,
 	requirements?: RecipeRequirement[],
 	forbidden?: RecipeRequirement[],
 }

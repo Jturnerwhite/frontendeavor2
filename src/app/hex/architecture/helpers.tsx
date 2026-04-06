@@ -1,6 +1,6 @@
-import { HexMap, HexTile, Position } from "@/app/hex/architecture/interfaces";
+import { HexMap, HexTile, LinkedComponents, PlacedComponent, Position } from "@/app/hex/architecture/interfaces";
 import { Ingredient, IngredientBase, IngredientCompSpec, AlchComponent } from "./typings";
-import { COMPONENT_SHAPE_VALUES } from "./enums";
+import { ALCH_ELEMENT, COMPONENT_SHAPE_VALUES } from "./enums";
 
 let tempIdSeq = 0;
 
@@ -93,13 +93,14 @@ function GetPlacementHexIds(
 	hexMap: HexMap
 ): string[] | null {
 	const k = (rotation % 6);
-	const ids = new Set<string>();
+	const ids = new Array<string>();
 	const rotatedMask = GetRotatedMask(shapeMask, rotation);
-	console.log("shapeMask", shapeMask);
-	console.log("rotatedMask", rotatedMask);
 
 	for (let j = 0; j < 7 && j < rotatedMask.length; j++) {
-		if (!rotatedMask[j]) continue;
+		if (!rotatedMask[j]) {
+			ids.push("null");
+			continue;
+		}
 
 		let hexId: string;
 		if (j === 0) {
@@ -112,10 +113,9 @@ function GetPlacementHexIds(
 		}
 
 		if (!hexMap[hexId]) return null;
-		ids.add(hexId);
+		ids.push(hexId);
 	}
 
-	console.log("GetPlacementHexIds", Array.from(ids));
 	return Array.from(ids);
 }
 
@@ -208,14 +208,67 @@ function CreateHexGrid(center:Position, radius:number, layers:number):HexMap {
 	return hexMap;
 }
 
-function OccupyHexes(hexMap: HexMap, newComponent: AlchComponent, rotation: number, centerHexId: string) {
-	const shapeMask = COMPONENT_SHAPE_VALUES[newComponent.shape];
-	const hexIds = GetPlacementHexIds(hexMap[centerHexId], shapeMask, rotation, hexMap);
-	if (hexIds) {
-		hexIds.forEach((id, index) => {
-			hexMap[id].occupied = { index: index, alchComponent: newComponent };
-		});
+function OccupyHexes(hexMap: HexMap, newPlacedComponent:PlacedComponent) {
+	newPlacedComponent.nodeHexes.forEach((id, index) => {
+		if(id === null) return;
+		let rotatedMask: number[] | null = null;
+		if(newPlacedComponent.comp.linkSpots)
+			rotatedMask = GetRotatedMask(newPlacedComponent.comp.linkSpots!, newPlacedComponent.rotation);
+		hexMap[id].occupied = { 
+			index: index, 
+			alchComponent: newPlacedComponent.comp, 
+			isLinkSpot: rotatedMask ? rotatedMask[index] === 1 : false
+		};
+	});
+}
+
+function GetNeighbors(hexMap: HexMap, hexId: string, component: AlchComponent, ignoreSelf: boolean = true, onlyOccupied: boolean = false, onlyLinks: boolean = false): HexTile[] {
+	const neighbors: HexTile[] = [];
+	if(hexMap[hexId]?.neighbors === undefined) {
+		return neighbors;
 	}
+
+	// TODO HANDLE LINK SPOTS ROTATED
+
+	return hexMap[hexId].neighbors.reduce((acc: HexTile[], id: string, index: number) => {
+		const neighborsOccupied = hexMap[id].occupied;
+		if(hexMap[id] === undefined || 
+			(ignoreSelf && neighborsOccupied?.alchComponent.id === component.id) ||
+			(onlyOccupied && neighborsOccupied === undefined) ||
+			(neighborsOccupied?.alchComponent.element !== undefined && neighborsOccupied?.alchComponent.element !== component.element) ||
+			(onlyLinks && neighborsOccupied?.isLinkSpot === false)
+		) {
+			return acc;
+		}
+
+		return [...acc, hexMap[id]];
+	}, []);
+}
+
+function GetLinks(hexMap: HexMap, placedComponent: PlacedComponent):Array<LinkedComponents> {
+	const links:Array<LinkedComponents> = [];
+	if(placedComponent.comp.linkSpots === undefined) 
+		return links;
+
+	placedComponent.nodeHexes.forEach((hexId, index) => {
+		if(hexId === null || placedComponent.comp.linkSpots?.[index] === 0) 
+			return;
+
+		// Get neighbors that are occupied and have the same element and are 'link' type nodes
+		const neighbors = GetNeighbors(hexMap, hexId, placedComponent.comp, true, true, true);
+		neighbors.forEach((neighbor: HexTile, neighborIndex: number) => {
+			links.push({
+				element: placedComponent.comp.element,
+				component1Id: placedComponent.comp.id!,
+				component1NodeIndex: neighborIndex,
+				component1HexId: hexId,
+				component2Id: neighbor.occupied!.alchComponent.id!,
+				component2NodeIndex: neighbor.occupied!.index,
+				component2HexId: neighbor.id
+			});
+		});
+	});
+	return links;
 }
 
 function CreateIngredient(ingBase:IngredientBase):Ingredient {
@@ -224,15 +277,16 @@ function CreateIngredient(ingBase:IngredientBase):Ingredient {
 		base:ingBase,
 		comps: [],
 	} as Ingredient;
-
 	ingBase.possibleComps.forEach((compSpec, index) => {
 		let newComp = null as AlchComponent|null;
 		if ('possibleShapes' in compSpec) { // It's an IngredientCompSpec
 			if(compSpec.chance == undefined || compSpec.chance > 0 || ((Math.random() * 100) <= compSpec.chance)) {
 				const shapeIndex = Math.floor(Math.random() * compSpec.possibleShapes.length);
 				newComp = {
+					id: GenerateTempId(),
 					element: compSpec.element,
 					shape: compSpec.possibleShapes[shapeIndex],
+					linkSpots: compSpec.linkSpots ? Object.values(COMPONENT_SHAPE_VALUES[compSpec.possibleShapes[shapeIndex]]).map((a, i) => a & compSpec.linkSpots![i]) : undefined,
 					sourceIngredientId: newIng.id,
 					ingredientIndex: index
 				};
@@ -253,6 +307,39 @@ function CreateIngredient(ingBase:IngredientBase):Ingredient {
 	return newIng;
 }
 
+function CompilePlacedComponent(hexMap: HexMap, centerHex:HexTile, position:Position, rotation:number, comp:AlchComponent):PlacedComponent {
+	const newPlacedComponent:PlacedComponent = {
+		comp: comp,
+		position: position,
+		rotation: rotation,
+		centerHexId: centerHex.id,
+		nodeHexes: new Array<string|null>(7)
+	};
+
+	const shapeMask = COMPONENT_SHAPE_VALUES[comp.shape];
+	const hexIds = GetPlacementHexIds(hexMap[centerHex.id], shapeMask, rotation, hexMap);
+	if (hexIds) {
+		hexIds.forEach((id, index) => {
+			if(id !== "null")
+				newPlacedComponent.nodeHexes[index] = id;
+		});
+	}
+	return newPlacedComponent;
+}
+
+function GetSVGLine(key: string, classString: string, pos: Position, nextPos: Position, lineStroke: string, size: number): JSX.Element {
+	return <line
+		key={key}
+		className={"link " + classString}
+		x1={pos.x}
+		y1={pos.y}
+		x2={nextPos.x}
+		y2={nextPos.y}
+		stroke={lineStroke}
+		strokeWidth={size / 3}
+	/>
+};
+
 export {
 	GetApothem,
 	GetStarPoints,
@@ -263,5 +350,8 @@ export {
 	CreateHexGrid,
 	CreateIngredient,
 	GetPlacementHexIds,
-	OccupyHexes
+	OccupyHexes,
+	GetLinks,
+	CompilePlacedComponent,
+	GetSVGLine
 };

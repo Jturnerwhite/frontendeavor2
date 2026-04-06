@@ -1,0 +1,41 @@
+.element-score-line {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: start;
+}
+
+.node {
+	width: 18px;
+	height: 48px;
+	border-radius: 4px;
+	background-color: var(--misc-container);
+	border: 2px solid #d4c4a8;
+	box-shadow:
+		0 2px 8px rgba(44, 31, 20, 0.08),
+		inset 2px 2px 0 rgba(255, 255, 255, 0.35);
+	margin-right: 1px;
+}
+
+.node.locked {
+	background-color: gray;
+}
+
+.node.earth.filled {
+	background-color: var(--alch-element-earth);
+}
+.node.wind.filled {
+	background-color: var(--alch-element-wind);
+}
+.node.fire.filled {
+	background-color: var(--alch-element-fire);
+}
+.node.water.filled {
+	background-color: var(--alch-element-water);
+}
+.node.aether.filled {
+	background-color: var(--alch-element-aether);
+}
+.node.chaos.filled {
+	background-color: var(--alch-element-chaos);
+}
