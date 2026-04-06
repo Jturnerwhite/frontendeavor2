@@ -251,7 +251,10 @@ function GetLinks(hexMap: HexMap, placedComponent: PlacedComponent):Array<Linked
 		return links;
 
 	placedComponent.nodeHexes.forEach((hexId, index) => {
-		if(hexId === null || placedComponent.comp.linkSpots?.[index] === 0) 
+		let rotatedMask: number[] | null = null;
+		if(placedComponent.comp.linkSpots)
+			rotatedMask = GetRotatedMask(placedComponent.comp.linkSpots!, placedComponent.rotation);
+		if(hexId === null || rotatedMask?.[index] === 0) 
 			return;
 
 		// Get neighbors that are occupied and have the same element and are 'link' type nodes

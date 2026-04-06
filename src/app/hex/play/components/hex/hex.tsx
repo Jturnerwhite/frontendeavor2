@@ -85,6 +85,7 @@ const Hex: React.FC<HexProps> = ({
 				onClick={hexClick}
 			/>
 			{displayIndex && (
+				<>
 				<text
 					className="hex-index-text"
 					x={x}
@@ -95,6 +96,16 @@ const Hex: React.FC<HexProps> = ({
 				>
 					{hexData.index}
 				</text>
+				<text
+					className="hex-index-text"
+					x={x}
+					y={y + 18}
+					textAnchor="middle"
+					dominantBaseline="middle"
+					fontSize={radius / 3}>
+					{hexData.id}
+				</text>
+				</>
 			)}
 		</>
 	);

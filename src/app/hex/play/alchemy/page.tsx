@@ -128,6 +128,7 @@ export default function Page() {
 		if(placedComponents.length === 0) return;
 		if(placedComponents.length > lastPlacedCompCount) {
 			const newLinks = Helpers.GetLinks(playGrid!, placedComponents[placedComponents.length - 1]);
+			console.log(newLinks);
 			setLinks(newLinks);
 			setLastPlacedCompCount(placedComponents.length);
 		} else { // Remove links for the removed components
