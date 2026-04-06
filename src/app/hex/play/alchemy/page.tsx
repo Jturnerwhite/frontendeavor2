@@ -1,13 +1,13 @@
 'use client'
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from 'next/navigation';
 import { RootState } from "@/store/store";
 import AlchemyStoreSlice from '@/store/features/alchemySlice';
-import { AlchComponent, Ingredient, IngredientBase } from '@/app/hex/architecture/typings';	
+import { AlchComponent, Ingredient } from '@/app/hex/architecture/typings';	
 import HexGrid from '@/app/hex/play/components/hex/hexGrid';
 import * as Helpers from '@/app/hex/architecture/helpers';
 import ComponentCursorGhost from '@/app/hex/play/components/compCursorGhost';
-import { IngedientBases } from '@/app/hex/architecture/data/ingedientBases';
 import IngredientDisplay from '../components/ingredientDisplay';
 import './alchemy.css';
 import { HexTile, LinkedComponents, PlacedComponent, Position } from '../../architecture/interfaces';
@@ -18,10 +18,14 @@ import { ALCH_ELEMENT, COMPONENT_SHAPE_VALUES } from '../../architecture/enums';
 
 export default function Page() {
 	const dispatch = useDispatch();
+	const router = useRouter();
 	const playGrid = useSelector((state: RootState) => state.Alchemy.playGrid);
 	const placedComponents = useSelector((state: RootState) => state.Alchemy.placedComponents);
 	const ingredients = useSelector((state: RootState) => state.Alchemy.ingredients);
 	const cursorState = useSelector((state: RootState) => state.Alchemy.cursor);
+	const currentRecipeId = useSelector((state: RootState) => state.Alchemy.currentRecipe);
+
+	const recipe = currentRecipeId ? Recipes.find((r) => r.id === currentRecipeId) : undefined;
 
 	const [centerHexGridX, setCenterHexGridX] = useState<number>((window.innerWidth * 0.6) / 2);
 	const [centerHexGridY, setCenterHexGridY] = useState<number>(window.innerHeight / 2);
@@ -115,13 +119,14 @@ export default function Page() {
 		if (playGrid === undefined) {
 			dispatch(AlchemyStoreSlice.actions.setPlayGrid({ pos: { x:0, y:0 }, size, layers: testLayers }));
 		}
-		/*
-		if (ingredients.length === 0) {
-			let newIng = Object.values(IngedientBases).map((base:IngredientBase) => Helpers.CreateIngredient(base));
-			dispatch(AlchemyStoreSlice.actions.addIngredients(newIng));
-		}
-			*/
 	}, []);
+
+	// useLayoutEffect runs after AlchemyRehydrate's layout effect (parent before child), so recipe reflects localStorage.
+	useLayoutEffect(() => {
+		if (!recipe) {
+			router.replace('/hex/play/alchemy/selectRecipe');
+		}
+	}, [recipe, router]);
 
 	useEffect(() => {
 		const handleResize = () => {
@@ -152,8 +157,9 @@ export default function Page() {
 		}
 	}, [placedComponents]);
 
-	useEffect(() => {
-	}, []);
+	if (!recipe) {
+		return null;
+	}
 
 	return (
 		<div className="alchemy-layout">
@@ -206,7 +212,7 @@ export default function Page() {
 				<ComponentCursorGhost displaySize={alchCompSize} />
 			</main>
 			<aside className="alchemy-right-panel" onContextMenu={(e: React.MouseEvent) => {}}>
-				<RecipeDisplay recipe={Recipes[0]} currentElementScores={getCurrentElementScores()} />
+				<RecipeDisplay recipe={recipe} currentElementScores={getCurrentElementScores()} />
 			</aside>
 		</div>
 	);

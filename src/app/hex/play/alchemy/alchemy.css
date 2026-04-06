@@ -130,3 +130,198 @@
 .link.chaos {
 	stroke: var(--alch-element-chaos);
 }
+
+/* Setup flow: select recipe / select ingredients (shared with main alchemy theme) */
+.alchemy-setup-flow {
+	--alchemy-parchment: #f0e6d2;
+	--alchemy-ink: #2c1f14;
+	--alchemy-ink-muted: #5c4a3a;
+	--alchemy-accent: #8b6914;
+	--alchemy-frame: #5c4033;
+
+	min-height: 100vh;
+	box-sizing: border-box;
+	padding: 24px 28px 40px;
+	max-width: 720px;
+	margin: 0 auto;
+	font-family: Georgia, 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+	color: var(--alchemy-ink);
+	background: linear-gradient(180deg, #3d2e22 0%, #4c331e 45%, #32261c 100%);
+}
+
+.alchemy-setup-header h1 {
+	margin: 0 0 8px;
+	font-size: 1.75rem;
+	color: var(--alchemy-parchment);
+}
+
+.alchemy-setup-lead {
+	margin: 0 0 20px;
+	color: #d4c4a8;
+	font-size: 0.95rem;
+	line-height: 1.45;
+}
+
+.alchemy-setup-hint {
+	margin: 0 0 16px;
+	color: #d4c4a8;
+	font-size: 0.9rem;
+}
+
+.alchemy-recipe-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.alchemy-recipe-card {
+	background: var(--alchemy-parchment);
+	border: 1px solid var(--alchemy-frame);
+	border-radius: 8px;
+	padding: 16px 18px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.alchemy-recipe-card-head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 8px;
+	margin-bottom: 12px;
+}
+
+.alchemy-recipe-card-head h2 {
+	margin: 0;
+	font-size: 1.25rem;
+}
+
+.alchemy-recipe-id {
+	font-size: 0.8rem;
+	color: var(--alchemy-ink-muted);
+	font-family: ui-monospace, monospace;
+}
+
+.alchemy-recipe-section h3 {
+	margin: 0 0 8px;
+	font-size: 0.85rem;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: var(--alchemy-ink-muted);
+}
+
+.alchemy-element-scores,
+.alchemy-required-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	font-size: 0.95rem;
+}
+
+.alchemy-element-scores li {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-bottom: 6px;
+}
+
+.alchemy-score-meta {
+	color: var(--alchemy-ink-muted);
+	font-size: 0.9rem;
+}
+
+.alchemy-required-list li {
+	margin-bottom: 4px;
+	padding-left: 0.5em;
+}
+
+.alchemy-setup-primary {
+	margin-top: 14px;
+	padding: 10px 18px;
+	font-size: 1rem;
+	cursor: pointer;
+	border-radius: 6px;
+	border: 1px solid var(--alchemy-accent);
+	background: linear-gradient(180deg, #efe4d0 0%, #e0d2b4 100%);
+	color: var(--alchemy-ink);
+	font-family: inherit;
+}
+
+.alchemy-setup-primary:hover:not(:disabled) {
+	border-color: #a67c18;
+}
+
+.alchemy-setup-primary:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.alchemy-setup-back {
+	margin-top: 28px;
+}
+
+.alchemy-setup-back a {
+	color: #d4c4a8;
+}
+
+.alchemy-setup-back a:hover {
+	color: var(--alchemy-parchment);
+}
+
+.alchemy-ingredient-pick-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	background: var(--alchemy-parchment);
+	border: 1px solid var(--alchemy-frame);
+	border-radius: 8px;
+	overflow: hidden;
+}
+
+.alchemy-ingredient-pick-row {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 14px;
+	cursor: pointer;
+	border-bottom: 1px solid rgba(92, 64, 51, 0.25);
+	font-size: 1rem;
+}
+
+.alchemy-ingredient-pick-list li:last-child .alchemy-ingredient-pick-row {
+	border-bottom: none;
+}
+
+.alchemy-ingredient-pick-row input {
+	width: 1.1rem;
+	height: 1.1rem;
+	accent-color: var(--alchemy-accent);
+}
+
+.alchemy-setup-actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 16px;
+	margin-top: 28px;
+}
+
+.alchemy-setup-secondary {
+	color: #d4c4a8;
+}
+
+.alchemy-setup-secondary:hover {
+	color: var(--alchemy-parchment);
+}
+
+.alchemy-setup-link {
+	color: #d4c4a8;
+	text-decoration: underline;
+}
+
+.alchemy-setup-link:hover {
+	color: var(--alchemy-parchment);
+}

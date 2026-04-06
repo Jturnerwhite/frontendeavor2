@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit'
 import Alchemy from '@/store/features/alchemySlice'
 import type { PersistedAlchemyState } from '@/store/features/alchemySlice'
+import { initialAlchemyState } from '@/store/features/alchemySlice'
 
 export const ALCHEMY_STORAGE_KEY = 'frontendeavor-alchemy-v1'
 
@@ -11,10 +12,35 @@ export function enableAlchemyPersistence() {
 	alchemyPersistenceEnabled = true
 }
 
+function readPersistedAlchemy(): PersistedAlchemyState | null {
+	if (typeof window === 'undefined') return null
+	try {
+		const raw = localStorage.getItem(ALCHEMY_STORAGE_KEY)
+		if (!raw) return null
+		return JSON.parse(raw) as PersistedAlchemyState
+	} catch {
+		return null
+	}
+}
+
+/** Synchronous merge so the first client render (and useLayoutEffects) see persisted recipe/ingredients/grid. */
+const persistedAlchemy = readPersistedAlchemy()
+const preloadedState =
+	persistedAlchemy !== null
+		? {
+				Alchemy: {
+					...initialAlchemyState,
+					...persistedAlchemy,
+					cursor: initialAlchemyState.cursor,
+				},
+			}
+		: undefined
+
 export const store = configureStore({
 	reducer: {
 		Alchemy: Alchemy.reducer
 	},
+	preloadedState,
 })
 
 if (typeof window !== 'undefined') {
