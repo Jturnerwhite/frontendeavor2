@@ -1,7 +1,7 @@
 'use client';
 
 import * as Helpers from '@/app/hex/architecture/helpers';
-import HexGrid from '@/app/hex/play/components/hex/hexGrid';
+import AlchHexGrid from '@/app/hex/sharedComponents/hex/hexGrid';
 import { Ingredient, Recipe, RecipeElementScore } from '@/app/hex/architecture/typings';
 import { AlchComponentDisplay, PlaceableAlchComponent } from '@/app/hex/play/components/alchComponent';
 import './recipe-display.css';

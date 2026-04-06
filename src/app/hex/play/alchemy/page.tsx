@@ -7,7 +7,7 @@ import AlchemyStoreSlice from '@/store/features/alchemySlice';
 import PlayerStoreSlice from '@/store/features/playerSlice';
 import HistoryStoreSlice from '@/store/features/historySlice';
 import { AlchComponent, Ingredient, Item } from '@/app/hex/architecture/typings';	
-import HexGrid from '@/app/hex/play/components/hex/hexGrid';
+import AlchHexGrid from '@/app/hex/sharedComponents/hex/hexGrid';
 import * as Helpers from '@/app/hex/architecture/helpers';
 import ComponentCursorGhost from '@/app/hex/play/components/compCursorGhost';
 import IngredientDisplay from '../components/ingredientDisplay';
@@ -31,7 +31,6 @@ export default function Page() {
 
 	const [centerHexGridX, setCenterHexGridX] = useState<number>((window.innerWidth * 0.6) / 2);
 	const [centerHexGridY, setCenterHexGridY] = useState<number>(window.innerHeight / 2);
-	const [flashOccupied, setFlashOccupied] = useState(false);
 	const [lastPlacedCompCount, setLastPlacedCompCount] = useState(0);
 	const [crossComponentLinks, setLinks] = useState<LinkedComponents[]>([]);
 
@@ -69,11 +68,6 @@ export default function Page() {
 				size={alchCompSize} 
 				rotation={component.rotation} />
 		});
-	}
-
-	function flashOccupiedTiles() {
-		setFlashOccupied(true);
-		window.setTimeout(() => setFlashOccupied(false), 450);
 	}
 
 	function getCompPlaced(ingredient: Ingredient): boolean[] {
@@ -193,7 +187,7 @@ export default function Page() {
 
 	return (
 		<div className="alchemy-layout">
-			<aside className="alchemy-left-panel" onContextMenu={(e: React.MouseEvent) => {}}>
+			<aside className="alchemy-left-panel" onContextMenu={(e: React.MouseEvent) => e.preventDefault()}>
 				{ingredients.length > 0 &&
 					ingredients.map((ingredient: Ingredient) => (
 						<IngredientDisplay
@@ -204,13 +198,6 @@ export default function Page() {
 							compPlaced={getCompPlaced(ingredient)}
 						/>
 					))}
-				<button
-					type="button"
-					className="alchemy-flash-occupied-button"
-					onClick={flashOccupiedTiles}
-				>
-					DEBUG:Flash occupied
-				</button>
 			</aside>
 			<main className="alchemy-main-panel" onContextMenu={(e: React.MouseEvent) => e.preventDefault()}>
 				{playGrid && (
@@ -221,14 +208,12 @@ export default function Page() {
 						pointerEvents="none"
 					>
 						<g transform={`translate(${centerHexGridX} ${centerHexGridY})`}>
-							<HexGrid
+							<AlchHexGrid
 								hexMap={playGrid}
 								radius={size}
 								onHexClick={hexClick}
 								displayIndex={true}
 								preventHexHover={false}
-								preventHexPlacementHover={true}
-								flashOccupied={flashOccupied}
 							/>
 							<g>
 								{renderComponentLinks()}
@@ -241,7 +226,7 @@ export default function Page() {
 				)}
 				<ComponentCursorGhost displaySize={alchCompSize} />
 			</main>
-			<aside className="alchemy-right-panel" onContextMenu={(e: React.MouseEvent) => {}}>
+			<aside className="alchemy-right-panel" onContextMenu={(e: React.MouseEvent) => e.preventDefault()}>
 				<RecipeDisplay recipe={recipe} quality={recipeQuality} currentElementScores={currentElementScores} />
 				<button
 					type="button"

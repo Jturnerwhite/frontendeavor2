@@ -1,7 +1,7 @@
 'use client';
 
 import * as Helpers from '@/app/hex/architecture/helpers';
-import HexGrid from '@/app/hex/play/components/hex/hexGrid';
+import AlchHexGrid from '@/app/hex/sharedComponents/hex/hexGrid';
 import { Ingredient } from '@/app/hex/architecture/typings';
 import { AlchComponentDisplay, PlaceableAlchComponent } from '@/app/hex/play/components/alchComponent';
 import './ingredient-display.css';
@@ -54,7 +54,7 @@ const IngredientDisplay: React.FC<IngredientDisplayProps> = ({
 					style={{ position: 'relative', display: 'inline-block' }}
 				>
 					<g transform={`translate(50 50)`}>
-						<HexGrid
+						<AlchHexGrid
 							hexMap={Helpers.CreateHexGrid({ x: 0, y: 0 }, displaySize / 2, 2)}
 							radius={displaySize / 2}
 							displayIndex={false}

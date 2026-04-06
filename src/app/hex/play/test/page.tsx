@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { RootState } from "@/store/store";
 import AlchemyStoreSlice from '@/store/features/alchemySlice';
 import { AlchComponent } from '@/app/hex/architecture/typings';	
-import HexGrid from '@/app/hex/play/components/hex/hexGrid';
+import AlchHexGrid from '@/app/hex/sharedComponents/hex/hexGrid';
 import { HexTile, Position } from '@/app/hex/architecture/interfaces';
 import { ALCH_ELEMENT, SHAPE_NAME, ITEM_TAG } from '@/app/hex/architecture/enums';
 import * as Helpers from '@/app/hex/architecture/helpers';
@@ -141,7 +141,7 @@ export default function Page() {
 				<g 
 					onContextMenu={(e:any) => e.preventDefault()}
 					transform={`translate(${gridCenter.x} 300)`}>
-					<HexGrid 
+					<AlchHexGrid 
 						hexMap={playGrid} 
 						radius={size} 
 						onHexClick={hexClick}
@@ -156,7 +156,7 @@ export default function Page() {
 		</>}
 		<svg width={windowSize.width} height="600" style={{  }}>
 			<g transform={`translate(0 -300)`}>
-				<HexGrid hexMap={Helpers.CreateHexGrid(gridCenter, size, 2)} radius={size}  displayIndex={true} preventHexHover={true} preventHexPlacementHover={true}	/>
+				<AlchHexGrid hexMap={Helpers.CreateHexGrid(gridCenter, size, 2)} radius={size}  displayIndex={true} preventHexHover={true} preventHexPlacementHover={true}	/>
 				<PlaceableAlchComponent alchData={staticAlcDataTest} position={gridCenter} size={alchCompSize} rotation={0} />
 			</g>
 		</svg>
