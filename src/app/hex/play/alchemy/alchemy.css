@@ -73,31 +73,6 @@
 	max-width: 100%;
 }
 
-.alchemy-flash-occupied-button {
-	align-self: flex-start;
-	margin-top: 4px;
-	padding: 8px 14px;
-	font-size: 0.8125rem;
-	font-family: inherit;
-	cursor: pointer;
-	border-radius: 6px;
-	border: 1px solid var(--alchemy-frame);
-	background: linear-gradient(180deg, #e8dcc8 0%, #d8c8a8 100%);
-	color: var(--alchemy-ink);
-	box-shadow: 0 1px 3px rgba(44, 31, 20, 0.12);
-}
-
-.alchemy-flash-occupied-button:hover {
-	background: linear-gradient(180deg, #efe4d0 0%, #e0d2b4 100%);
-	border-color: var(--alchemy-accent);
-	color: var(--alchemy-ink);
-}
-
-.alchemy-flash-occupied-button:focus-visible {
-	outline: 2px solid var(--alchemy-accent);
-	outline-offset: 2px;
-}
-
 .alchemy-complete-button {
 	align-self: stretch;
 	margin-top: 8px;
@@ -156,12 +131,6 @@
 
 /* Setup flow: select recipe / select ingredients (shared with main alchemy theme) */
 .alchemy-setup-flow {
-	--alchemy-parchment: #f0e6d2;
-	--alchemy-ink: #2c1f14;
-	--alchemy-ink-muted: #5c4a3a;
-	--alchemy-accent: #8b6914;
-	--alchemy-frame: #5c4033;
-
 	min-height: 100vh;
 	box-sizing: border-box;
 	padding: 24px 28px 40px;

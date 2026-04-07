@@ -1,7 +1,3 @@
-/**
- * Ingredient list card — global prefixed classes (no CSS modules).
- */
-
 .ingredient-display {
 	box-sizing: border-box;
 	background: linear-gradient(

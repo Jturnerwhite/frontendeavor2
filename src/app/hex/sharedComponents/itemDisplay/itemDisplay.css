@@ -1,0 +1,180 @@
+/**
+ * Item / inventory line — card style aligned with ingredient-display (warm parchment + dark card variant).
+ */
+
+/* --- Complex inventory row (single item card) --- */
+.item-display-complex {
+	box-sizing: border-box;
+	max-width: 100%;
+	background: linear-gradient(
+		165deg,
+		#35302c 0%,
+		#2b2421 45%,
+		#231e1c 100%
+	);
+	border: 1px solid rgba(212, 196, 168, 0.22);
+	border-radius: 10px;
+	padding: 14px 16px;
+	margin-bottom: 12px;
+	box-shadow:
+		0 2px 10px rgba(0, 0, 0, 0.35),
+		inset 0 1px 0 rgba(255, 255, 255, 0.06);
+	font-family: Georgia, 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+	color: #e8dcc8;
+}
+
+.item-display-complex-row {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+	gap: 14px;
+}
+
+.item-display-complex-icon {
+	flex-shrink: 0;
+	width: 48px;
+	height: 48px;
+	border-radius: 8px;
+	background: rgba(0, 0, 0, 0.25);
+	border: 1px solid rgba(212, 196, 168, 0.15);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 0.7rem;
+	color: rgba(232, 220, 200, 0.55);
+	letter-spacing: 0.02em;
+}
+
+.item-display-complex-main {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 12px;
+}
+
+.item-display-complex-text {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.item-display-complex-name {
+	font-weight: 600;
+	font-size: 1.05rem;
+	letter-spacing: 0.02em;
+	color: #f5ecd8;
+	margin: 0;
+}
+
+.item-display-complex-desc {
+	font-size: 0.82rem;
+	color: rgba(232, 220, 200, 0.55);
+	font-weight: 400;
+	margin: 0;
+}
+
+.item-display-complex-types {
+	flex-shrink: 0;
+	font-size: 0.88rem;
+	color: #d4c4a8;
+	text-align: right;
+	max-width: 40%;
+}
+
+.item-display-complex-end {
+	flex-shrink: 0;
+	width: 40px;
+	height: 40px;
+	border-radius: 8px;
+	background: rgba(60, 90, 140, 0.45);
+	border: 1px solid rgba(160, 190, 230, 0.25);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 0.85rem;
+	font-weight: 600;
+	color: #e8f0ff;
+}
+
+.item-display-complex-tools {
+	margin-top: 12px;
+	padding-top: 12px;
+	border-top: 1px solid rgba(212, 196, 168, 0.12);
+}
+
+.item-display-complex-tools h3 {
+	margin: 0 0 8px;
+	font-size: 0.8rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: rgba(232, 220, 200, 0.45);
+}
+
+.item-display-complex-tools .item-display-line {
+	margin-top: 8px;
+}
+
+/* --- Inventory line (hex comps strip, nested in card) --- */
+.item-display-line {
+	width: 100%;
+}
+
+.item-display-line-header {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 8px;
+	margin-bottom: 10px;
+}
+
+.item-display-line-header label {
+	display: block;
+	font-weight: 600;
+	font-size: 0.95rem;
+	color: #f5ecd8;
+}
+
+.item-display-line-header .item-display-line-desc {
+	font-size: 0.8rem;
+	font-weight: 400;
+	color: rgba(232, 220, 200, 0.5);
+}
+
+.item-display-line-comps {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+	align-items: center;
+	gap: 8px;
+}
+
+.map-left-panel .inventory-display * {
+	color: #5c4a3a;
+}
+
+.map-left-panel .inventory-display .item-display-complex {
+	box-sizing: border-box;
+	background: linear-gradient(
+		165deg,
+		rgba(255, 252, 245, 0.65) 0%,
+		rgba(240, 230, 210, 0.9) 100%
+	);
+	border: 1px solid #d4c4a8;
+	border-radius: 8px;
+	padding: 12px 14px;
+	color: #5c4a3a;
+	box-shadow:
+		0 2px 8px rgba(44, 31, 20, 0.08),
+		inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.map-left-panel .inventory-display .item-display-complex * {
+	color: #5c4a3a;
+}

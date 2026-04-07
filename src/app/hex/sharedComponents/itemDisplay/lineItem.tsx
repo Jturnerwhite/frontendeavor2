@@ -1,11 +1,8 @@
 'use client';
 import { useEffect, useState } from "react";
 import { AlchComponent, Ingredient, IngredientBase, IngredientCompSpec, Item } from "@/app/hex/architecture/typings";
-import { AlchComponentDisplay } from "@/app/hex/sharedComponents/alchComponent";
+import AlchCompWithBacking from "@/app/hex/sharedComponents/alchComponent/alchCompWithBacking";
 import './itemDisplay.css';
-import AlchHexGrid from "../hex/hexGrid";
-import * as Helpers from "@/app/hex/architecture/helpers";
-import AlchCompWithBacking from "../alchComponent/alchCompWithBacking";
 
 interface InventoryLineItemProps {
 	item?: Item;
@@ -72,25 +69,29 @@ const InventoryLineItem: React.FC<InventoryLineItemProps> = ({ item, ingredient,
 		return output;
 	}
 
-	return (<>
-		<div key={name}>
-			<div className="flex flex-row flex-1 justify-between items-center">
-				{displayHeading && <>
-					<div className="flex flex-col">
-						<label>{name}</label>
-						<label>description</label>
+	return (
+		<div className="item-display-line" key={name}>
+			<div className="item-display-line-header">
+				{displayHeading && (
+					<>
+						<div className="item-display-complex-text">
+							<label>{name}</label>
+							<label className="item-display-line-desc">description</label>
+						</div>
+						<div>
+							<label>{types.join(', ')}</label>
+						</div>
+					</>
+				)}
+				{item?.quality != null && (
+					<div>
+						<label>Quality: {item.quality}</label>
 					</div>
-					<div><label>{types.join(', ')}</label></div>
-				</>}
-				{item?.quality && <>
-					<div><label>Quality: {item?.quality}</label></div>
-				</>}
+				)}
 			</div>
-			<div className="flex flex-row flex-1 justify-start items-center gap-2">
-				{getCompsToDisplay()}
-			</div>
+			<div className="item-display-line-comps">{getCompsToDisplay()}</div>
 		</div>
-	</>);
+	);
 };
 
 interface ComplexInventoryItemProps extends InventoryLineItemProps {
@@ -116,24 +117,38 @@ const ComplexInventoryItem: React.FC<ComplexInventoryItemProps> = ({ item, ingre
 		types = ingredientBase.types;
 	}
 
-	return (<>
-		<div className="flex flex-row gap-4">
-			<div className=""><span className="w-10 h-10 bg-red-500 block">Icon</span></div>
-			<div className="flex flex-row flex-1 justify-between">
-				<div className="flex flex-col">
-					<label>{name}</label>
-					<label>description</label>
+	return (
+		<div className="item-display-complex">
+			<div className="item-display-complex-row">
+				<div className="item-display-complex-icon" aria-hidden>
+					Icon
 				</div>
-				<div><label>{types.join(', ')}</label></div>
+				<div className="item-display-complex-main">
+					<div className="item-display-complex-text">
+						<label className="item-display-complex-name">{name}</label>
+						<label className="item-display-complex-desc">description</label>
+					</div>
+					<div className="item-display-complex-types">{types.join(', ')}</div>
+				</div>
+				<div className="item-display-complex-end" aria-hidden>
+					V
+				</div>
 			</div>
-			<div className=""><span className="w-10 h-10 bg-blue-500 block">V</span></div>
+			<div className="item-display-complex-tools">
+				{!hideFiltering && (
+					<div>
+						<h3>Filtering</h3>
+					</div>
+				)}
+				{!hideSorting && (
+					<div>
+						<h3>Sorting</h3>
+					</div>
+				)}
+				<InventoryLineItem item={item} ingredient={ingredient} ingredientBase={ingredientBase} displaySize={displaySize} />
+			</div>
 		</div>
-		<div>
-			{!hideFiltering && <div><h3>Filtering</h3></div>}
-			{!hideSorting && <div><h3>Sorting</h3></div>}
-			<div><InventoryLineItem item={item} ingredient={ingredient} ingredientBase={ingredientBase} displaySize={displaySize} /></div>
-		</div>
-	</>);
+	);
 };
 
 export { InventoryLineItem, ComplexInventoryItem };

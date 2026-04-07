@@ -4,6 +4,13 @@
 	min-height: 100vh;
 	box-sizing: border-box;
 	font-family: Georgia, 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+	color: var(--alchemy-ink);
+	background: linear-gradient(
+		180deg,
+		var(--alchemy-wood-light) 0%,
+		var(--alchemy-wood) 45%,
+		var(--alchemy-wood-mid) 100%
+	);
 }
 
 .map-left-panel {
@@ -16,7 +23,9 @@
 	flex-direction: column;
 	gap: 12px;
 
-	border-right: 2px solid white;
+	background: var(--alchemy-parchment);
+	color: var(--alchemy-ink);
+	border-right: 2px solid var(--alchemy-frame);
 	box-shadow: inset -4px 0 12px rgba(44, 31, 20, 0.06);
 }
 
@@ -27,6 +36,12 @@
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
+	background: linear-gradient(
+		180deg,
+		var(--alchemy-wood-mid) 0%,
+		var(--alchemy-wood) 35%,
+		#231a14 100%
+	);
 	box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.25);
 }
 
@@ -37,4 +52,9 @@
 	pointer-events: none;
 	display: block;
 	max-width: 100%;
+}
+
+/* Map terrain icons — read clearly on dark wood (same contrast idea as cream hex strokes) */
+.map-content-icon {
+	filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45));
 }
