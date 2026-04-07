@@ -13,7 +13,7 @@ import ComponentCursorGhost from '@/app/hex/play/components/compCursorGhost';
 import IngredientDisplay from '../components/ingredientDisplay';
 import './alchemy.css';
 import { HexTile, LinkedComponents, Position } from '../../architecture/interfaces';
-import { AlchComponentDisplay } from '../components/alchComponent';
+import { AlchComponentDisplay } from '@/app/hex/sharedComponents/alchComponent';
 import { Recipes } from '../../architecture/data/recipes';
 import RecipeDisplay from '../components/recipeDisplay';
 import { ALCH_ELEMENT, COMPONENT_SHAPE_VALUES } from '../../architecture/enums';
@@ -121,7 +121,8 @@ export default function Page() {
 		const quality = Helpers.CalculateQuality(recipe, elementScores);
 		const item: Item = {
 			name: recipe.description,
-			comps: placedComponents.map((p) => ({ ...p.comp })),
+			description: recipe.description,
+			comps: Helpers.GetResultingComponents(recipe, elementScores),
 			types: [...recipe.types],
 			quality,
 			ingredients: structuredClone(ingredients),

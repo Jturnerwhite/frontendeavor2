@@ -8,7 +8,7 @@ import './hex.css';
 import { Position, HexTile, HexMap } from '@/app/hex/architecture/interfaces';
 import * as Helpers from '@/app/hex/architecture/helpers';
 import { COMPONENT_SHAPE_VALUES } from '@/app/hex/architecture/enums';
-import { AlchComponentDisplay } from '@/app/hex/play/components/alchComponent';
+import { AlchComponentDisplay } from '@/app/hex/sharedComponents/alchComponent';
 
 interface HexGridProps {
 	hexMap: HexMap;

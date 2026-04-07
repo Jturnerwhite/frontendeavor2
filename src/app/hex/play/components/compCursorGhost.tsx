@@ -2,7 +2,7 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/store/store';
 import { useEffect, useState } from 'react';
-import { AlchComponentDisplay } from '@/app/hex/play/components/alchComponent';
+import { AlchComponentDisplay } from '@/app/hex/sharedComponents/alchComponent';
 import AlchemyStoreSlice from '@/store/features/alchemySlice';
 
 interface ComponentCursorGhostProps {

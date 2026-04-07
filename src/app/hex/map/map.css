@@ -6,6 +6,20 @@
 	font-family: Georgia, 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
 }
 
+.map-left-panel {
+	width: 30%;
+	flex-shrink: 0;
+	box-sizing: border-box;
+	padding: 16px 18px;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+
+	border-right: 2px solid white;
+	box-shadow: inset -4px 0 12px rgba(44, 31, 20, 0.06);
+}
+
 .map-main-panel {
 	flex: 1;
 	min-width: 0;

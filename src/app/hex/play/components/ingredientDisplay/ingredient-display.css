@@ -3,9 +3,6 @@
  */
 
 .ingredient-display {
-	--ingredient-comp-container: #392d23;
-	--ingredient-comp-container-light: #635552;
-
 	box-sizing: border-box;
 	background: linear-gradient(
 		165deg,
@@ -47,25 +44,4 @@
 	flex-wrap: wrap;
 	gap: 8px;
 	margin-top: 8px;
-}
-
-.ingredient-display-alch-comp {
-	background-color: var(--ingredient-comp-container);
-	border: 1px solid #d4c4a8;
-	border-radius: 8px;
-	box-shadow:
-		0 2px 8px rgba(44, 31, 20, 0.08),
-		inset 0 1px 0 rgba(255, 255, 255, 0.35);
-}
-
-/* Nested mini hex grid inside placeable comp preview */
-.ingredient-display .hex-grid {
-	pointer-events: none;
-	fill: var(--ingredient-comp-container-light);
-}
-
-.ingredient-display .hex-grid .hex-tile {
-	pointer-events: none;
-	stroke: var(--ingredient-comp-container);
-	fill: var(--ingredient-comp-container-light);
 }

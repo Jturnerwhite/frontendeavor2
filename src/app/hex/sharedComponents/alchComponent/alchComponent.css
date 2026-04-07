@@ -1,0 +1,79 @@
+.node {
+	transition: fill 0.15s ease, stroke 0.15s ease;
+}
+
+.link {
+	transition: stroke 0.15s ease;
+}
+
+.placed .node {
+	fill: #7d7d7d !important;
+	stroke: #a3a3a3 !important;
+}
+.placed .link {
+	stroke: #6e6e6e !important;
+}
+
+.hitArea {
+	cursor: pointer;
+}
+
+.node.earth {
+	fill: var(--alch-element-earth);
+	stroke: white;
+}
+.node.wind {
+	fill: var(--alch-element-wind);
+	stroke: white;
+}
+.node.fire {
+	fill: var(--alch-element-fire);
+	stroke: white;
+}
+.node.water {
+	fill: var(--alch-element-water);
+	stroke: white;
+}
+.node.aether {
+	fill: var(--alch-element-aether);
+	stroke: white;
+}
+.node.chaos {
+	fill: var(--alch-element-chaos);
+	stroke: white;
+}
+
+.link.earth {
+	stroke: var(--alch-element-earth);
+}
+.link.wind {
+	stroke: var(--alch-element-wind);
+}
+.link.fire {
+	stroke: var(--alch-element-fire);
+}
+.link.water {
+	stroke: var(--alch-element-water);
+}
+.link.aether {
+	stroke: var(--alch-element-aether);
+}
+.link.chaos {
+	stroke: var(--alch-element-chaos);
+}
+
+.alch-comp-with-backing {
+	background-color: var(--misc-container);
+	border-radius: 8px;
+}
+
+.alch-comp-with-backing .hex-grid {
+	pointer-events: none;
+	fill: var(--misc-container-light);
+}
+
+.alch-comp-with-backing .hex-grid .hex-tile {
+	pointer-events: none;
+	stroke: var(--misc-container);
+	fill: var(--misc-container-light);
+}

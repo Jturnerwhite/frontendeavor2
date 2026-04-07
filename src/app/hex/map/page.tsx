@@ -1,17 +1,22 @@
 'use client';
-import '../map/map.css';
-import * as Helpers from '../architecture/helpers';
-import { HexMap, HexTile } from '../architecture/interfaces';
 import { useEffect, useState } from 'react';
-import HexGrid from '../sharedComponents/hex/hexGrid';
+import '@/app/hex/map/map.css';
+import * as Helpers from '@/app/hex/architecture/helpers';
+import { HexMap, HexTile } from '@/app/hex/architecture/interfaces';
+import HexGrid from '@/app/hex/sharedComponents/hex/hexGrid';
+import InventoryDisplay from '@/app/hex/sharedComponents/inventory/inventory';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store/store';
 
 export default function MapPage() {
+	const inventoryItems = useSelector((state: RootState) => state.Player.inventory.crafted);
+	const ingredients = useSelector((state: RootState) => state.Player.inventory.raw);
+
 	const TILE_SIZE = 40;
 	const MAP_LAYER_SIZE = 2;
 	const [hexMap, setHexMap] = useState<HexMap | undefined>(undefined);
-	const [centerHexGridX, setCenterHexGridX] = useState<number>((window.innerWidth) / 2);
+	const [centerHexGridX, setCenterHexGridX] = useState<number>((window.innerWidth * 0.7) / 2);
 	const [centerHexGridY, setCenterHexGridY] = useState<number>(window.innerHeight / 2);
-
 	const mapContents = [
 		{
 			tileIndexes: [0],
@@ -72,7 +77,7 @@ export default function MapPage() {
 	useEffect(() => {
 		const handleResize = () => {
 			setCenterHexGridY(window.innerHeight / 2);
-			setCenterHexGridX((window.innerWidth) / 2);
+			setCenterHexGridX((window.innerWidth * 0.7) / 2);
 		};
 
 		window.addEventListener('resize', handleResize);
@@ -80,7 +85,15 @@ export default function MapPage() {
 	}, []);
 
 	return <div className="map-layout">
-		<aside></aside>
+		<aside className="map-left-panel">
+			<InventoryDisplay 
+				inventoryItems={inventoryItems} 
+				ingredients={ingredients}
+				hideFiltering={false} 
+				hideSorting={false} 
+				hideSubFiltering={false} 
+				hideSubSorting={false} />
+		</aside>
 		<main className="map-main-panel" onContextMenu={(e: React.MouseEvent) => {}}>
 			{hexMap && (
 				<>

@@ -37,6 +37,7 @@ export type Ingredient = {
 
 export type Item = {
 	name: string,
+	description: string,
 	comps: AlchComponent[],
 	types: ITEM_TAG[],
 	quality: number,
@@ -63,11 +64,23 @@ export type RecipeElementScore = {
 	cap: number
 }
 
+/**
+ * These act like "goals" that are conditionally met depending on how
+ * the recipe is completed.
+ */
+export type RecipeResultingComponent = {
+	element: ALCH_ELEMENT,
+	shape: SHAPE_NAME,
+	scoreRequirement: number,
+	linkSpots?: number[],
+}
+
 export type Recipe = {
 	id: string,
 	description: string,
 	types: ITEM_TAG[],
 	elementScores: RecipeElementScore[],
+	resultingComponents: Array<Array<RecipeResultingComponent>>,
 	requiredIngredients?: Array<IngredientBase|ITEM_TAG>,
 	requirements?: RecipeRequirement[],
 	forbidden?: RecipeRequirement[],

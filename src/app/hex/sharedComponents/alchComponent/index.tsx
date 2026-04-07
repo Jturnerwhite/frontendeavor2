@@ -8,11 +8,6 @@ import { useDispatch } from 'react-redux';
 import AlchemyStoreSlice from '@/store/features/alchemySlice';
 import './alchComponent.css';
 
-/** Fill/stroke when a component is already placed on the grid */
-const PLACED_NODE_FILL = '#7d7d7d';
-const PLACED_NODE_STROKE = '#a3a3a3';
-const PLACED_LINE_STROKE = '#6e6e6e';
-
 interface NodeProps {
 	index: number;
 	position: Position;
@@ -39,17 +34,13 @@ const AlchNode: React.FC<NodeProps> = ({
 		strokeWidth = 3;
 	}
 
-	const colorHex = AlchemicalElements[element].colorHex;
-	const fill = placed ? PLACED_NODE_FILL : colorHex;
-	const stroke = placed ? PLACED_NODE_STROKE : 'white';
-
 	if (canLink) {
 		return (
 			<polygon
-				className="node"
+				className={"node " + element.replace(/\s+/g, "-").toLowerCase()}
 				points={Helpers.GetStarPoints(position.x, position.y, size / 3)}
-				fill={fill}
-				stroke={stroke}
+				fill={"white"}
+				stroke={"white"}
 				strokeWidth={strokeWidth}
 			/>
 		);
@@ -57,12 +48,12 @@ const AlchNode: React.FC<NodeProps> = ({
 
 	return (
 		<circle
-			className="node"
+			className={"node " + element.replace(/\s+/g, "-").toLowerCase()}
 			cx={position.x}
 			cy={position.y}
 			r={size / 3}
-			fill={fill}
-			stroke={stroke}
+			fill={"white"}
+			stroke={"white"}
 			strokeWidth={strokeWidth}
 		/>
 	);
@@ -86,8 +77,6 @@ const AlchComponentDisplay: React.FC<CompProps> = ({
 	const nodeComps = [];
 	const lines = [];
 	const shapeValue = COMPONENT_SHAPE_VALUES[alchData.shape];
-	const colorHex = AlchemicalElements[alchData.element].colorHex;
-	const lineStroke = placed ? PLACED_LINE_STROKE : colorHex;
 
 	for (let i = 0; i < shapeValue.length; i++) {
 		if (shapeValue[i]) {
@@ -111,18 +100,18 @@ const AlchComponentDisplay: React.FC<CompProps> = ({
 			if (i === 6 && shapeValue[i] && shapeValue[1]) {
 				const nodePos: Position = Helpers.GetHexPointPos(i, position.x, position.y, size);
 				const nextPos: Position = Helpers.GetHexPointPos(1, position.x, position.y, size);
-				lines.push(Helpers.GetSVGLine(`${position.x}-${position.y}-line-${lines.length}`, alchData.element, nodePos, nextPos, lineStroke, size));
+				lines.push(Helpers.GetSVGLine(`${position.x}-${position.y}-line-${lines.length}`, alchData.element, nodePos, nextPos, "white", size));
 			}
 			if (shapeValue[i]) {
 				if (shapeValue[0]) {
 					const nodePos: Position = Helpers.GetHexPointPos(i, position.x, position.y, size);
 					const nextPos: Position = Helpers.GetHexPointPos(0, position.x, position.y, size);
-					lines.push(Helpers.GetSVGLine(`${position.x}-${position.y}-line-${lines.length}`, alchData.element, nodePos, nextPos, lineStroke, size));
+					lines.push(Helpers.GetSVGLine(`${position.x}-${position.y}-line-${lines.length}`, alchData.element, nodePos, nextPos, "white", size));
 				}
 				if (shapeValue[i + 1]) {
 					const nodePos: Position = Helpers.GetHexPointPos(i, position.x, position.y, size);
 					const nextPos: Position = Helpers.GetHexPointPos(i + 1, position.x, position.y, size);
-					lines.push(Helpers.GetSVGLine(`${position.x}-${position.y}-line-${lines.length}`, alchData.element, nodePos, nextPos, lineStroke, size));
+					lines.push(Helpers.GetSVGLine(`${position.x}-${position.y}-line-${lines.length}`, alchData.element, nodePos, nextPos, "white", size));
 				}
 			}
 		}

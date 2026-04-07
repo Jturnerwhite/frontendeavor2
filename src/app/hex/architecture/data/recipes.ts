@@ -1,4 +1,4 @@
-import { ALCH_ELEMENT, ITEM_TAG } from '@/app/hex/architecture/enums'
+import { ALCH_ELEMENT, ITEM_TAG, SHAPE_NAME } from '@/app/hex/architecture/enums'
 import { Ingredient, Recipe } from '@/app/hex/architecture/typings'
 import { IngedientBases } from './ingedientBases';
 
@@ -16,6 +16,62 @@ export const Recipes:Array<Recipe> = [
 			IngedientBases["JarbaLeaf"], 
 			IngedientBases["FruguBerry"], 
 			IngedientBases["AeridGrass"]
+		],
+		resultingComponents: [
+			[
+				{ 
+					element: ALCH_ELEMENT.WATER, 
+					shape: SHAPE_NAME.DOT,
+					scoreRequirement: 1,
+				},
+				{ 
+					element: ALCH_ELEMENT.WATER, 
+					shape: SHAPE_NAME.HALFLINE,
+					scoreRequirement: 3,
+				},
+				{ 
+					element: ALCH_ELEMENT.WATER, 
+					shape: SHAPE_NAME.LINE,
+					linkSpots: [1, 0, 0, 0, 0, 0, 0],
+					scoreRequirement: 5,
+				},
+			],
+			[
+				{ 
+					element: ALCH_ELEMENT.FIRE, 
+					shape: SHAPE_NAME.DOT,
+					scoreRequirement: 1,
+				},
+				{ 
+					element: ALCH_ELEMENT.FIRE, 
+					shape: SHAPE_NAME.HALFLINE,
+					scoreRequirement: 3,
+				},
+				{ 
+					element: ALCH_ELEMENT.FIRE, 
+					shape: SHAPE_NAME.TRIANGLE,
+					linkSpots: [1, 0, 0, 0, 0, 0, 0],
+					scoreRequirement: 6,
+				},
+			],
+			[
+				{ 
+					element: ALCH_ELEMENT.WIND, 
+					shape: SHAPE_NAME.DOT,
+					scoreRequirement: 1,
+				},
+				{ 
+					element: ALCH_ELEMENT.WIND, 
+					shape: SHAPE_NAME.HALFLINE,
+					scoreRequirement: 3,
+				},
+				{ 
+					element: ALCH_ELEMENT.WIND, 
+					shape: SHAPE_NAME.OBTUSE,
+					linkSpots: [0, 0, 1, 0, 0, 0, 0],
+					scoreRequirement: 5,
+				},
+			]
 		],
 		/*
 		requirements: [ {

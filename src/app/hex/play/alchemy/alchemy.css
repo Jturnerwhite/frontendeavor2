@@ -4,20 +4,6 @@
  */
 
 .alchemy-layout {
-	--alchemy-parchment: #f0e6d2;
-	--alchemy-parchment-dark: #d4c4a8;
-	--alchemy-ink: #2c1f14;
-	--alchemy-ink-muted: #5c4a3a;
-	--alchemy-wood: #4c331e;
-	--alchemy-wood-light: #3d2e22;
-	--alchemy-wood-mid: #32261c;
-	--alchemy-accent: #8b6914;
-	--alchemy-accent-hover: #a67c18;
-	--alchemy-frame: #5c4033;
-
-	--misc-container: #392d23;
-	--misc-container-light: #635552;
-
 	display: flex;
 	width: 100%;
 	min-height: 100vh;

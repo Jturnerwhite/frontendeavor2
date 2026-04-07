@@ -1,5 +1,5 @@
 import { HexMap, HexTile, LinkedComponents, PlacedComponent, Position } from "@/app/hex/architecture/interfaces";
-import { Ingredient, IngredientBase, IngredientCompSpec, AlchComponent, Recipe, RecipeElementScore } from "./typings";
+import { Ingredient, IngredientBase, IngredientCompSpec, AlchComponent, Recipe, RecipeElementScore, RecipeResultingComponent } from "./typings";
 import { ALCH_ELEMENT, COMPONENT_SHAPE_VALUES } from "./enums";
 
 let tempIdSeq = 0;
@@ -334,7 +334,7 @@ function CompilePlacedComponent(hexMap: HexMap, centerHex:HexTile, position:Posi
 function GetSVGLine(key: string, classString: string, pos: Position, nextPos: Position, lineStroke: string, size: number): JSX.Element {
 	return <line
 		key={key}
-		className={"link " + classString}
+		className={"link " + classString.replace(/\s+/g, "-").toLowerCase()}
 		x1={pos.x}
 		y1={pos.y}
 		x2={nextPos.x}
@@ -382,20 +382,41 @@ function CalculateQuality(recipe: Recipe, elementScores: Record<ALCH_ELEMENT, {n
 	return output;
 }
 
+function GetResultingComponents(recipe: Recipe, elementScores: Record<ALCH_ELEMENT, {nodes: number, links: number}>): Array<AlchComponent> {
+	const output: Array<AlchComponent> = [];
+	recipe.resultingComponents.forEach((resultComps: Array<RecipeResultingComponent>) => {
+		let finalComponent: AlchComponent|null = null;
+		resultComps.forEach((resultCompGoal: RecipeResultingComponent) => {
+			if(elementScores[resultCompGoal.element] && 
+				elementScores[resultCompGoal.element].nodes >= resultCompGoal.scoreRequirement) {
+				finalComponent = {
+					element: resultCompGoal.element,
+					shape: resultCompGoal.shape,
+					linkSpots: resultCompGoal.linkSpots,
+				};
+			}
+		});
+		if(finalComponent)
+			output.push(finalComponent);
+	});
+	return output;
+}
+
 export {
-	GetApothem,
-	GetStarPoints,
-	GetHexPointPos,
-	GetHexId,
-	GenerateTempId,
-	GetOppositeDirection,
+	CalculateLinksInComponent,
+	CalculateQuality,
+	CompilePlacedComponent,
 	CreateHexGrid,
 	CreateIngredient,
-	GetPlacementHexIds,
-	OccupyHexes,
+	GenerateTempId,
+	GetApothem,
+	GetHexId,
+	GetHexPointPos,
 	GetLinks,
-	CompilePlacedComponent,
+	GetOppositeDirection,
+	GetPlacementHexIds,
+	GetResultingComponents,
+	GetStarPoints,
 	GetSVGLine,
-	CalculateLinksInComponent,
-	CalculateQuality
+	OccupyHexes,
 };

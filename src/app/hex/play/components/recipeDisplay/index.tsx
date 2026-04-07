@@ -1,11 +1,9 @@
 'use client';
-
-import * as Helpers from '@/app/hex/architecture/helpers';
-import AlchHexGrid from '@/app/hex/sharedComponents/hex/hexGrid';
-import { Ingredient, Recipe, RecipeElementScore } from '@/app/hex/architecture/typings';
-import { AlchComponentDisplay, PlaceableAlchComponent } from '@/app/hex/play/components/alchComponent';
-import './recipe-display.css';
+import { AlchComponent, Ingredient, Recipe, RecipeElementScore } from '@/app/hex/architecture/typings';
 import { ALCH_ELEMENT } from '@/app/hex/architecture/enums';
+import AlchCompWithBacking from '@/app/hex/sharedComponents/alchComponent/alchCompWithBacking';
+import * as Helpers from '@/app/hex/architecture/helpers';
+import './recipe-display.css';
 
 interface RecipeDisplayProps {
 	recipe: Recipe;
@@ -38,6 +36,7 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({recipe, quality, currentEl
 			{output}
 		</div>;
 	}
+
 	function getElementScores(): Array<JSX.Element> {
 		return recipe.elementScores.map((elementScore: RecipeElementScore) => {
 			return <div className="recipe-completion-line" key={elementScore.element}>
@@ -47,10 +46,30 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({recipe, quality, currentEl
 		});
 	}
 
+	function getResultingComponents(): Array<JSX.Element> {
+		let resultingComponents:Array<AlchComponent> = [];
+		if(currentElementScores === undefined) {
+			return [<></>];
+		}
+
+		resultingComponents = Helpers.GetResultingComponents(recipe, currentElementScores);
+		return resultingComponents.map((component: AlchComponent) => {
+			return <div key={'resulting-' + recipe.id + '-' + component.id}>
+				<AlchCompWithBacking 
+				keyString={recipe.id + '-' + component.id} 
+				alchData={component} 
+				displaySize={35} />
+			</div>;
+		});
+	}
+
 	return (
 		<div className="recipe-display">
 			<div className="recipe-display-header">
 				<h1>{recipe.description}</h1>
+			</div>
+			<div className="resulting-comps">
+				{getResultingComponents()}
 			</div>
 			<div className="recipe-display-content">
 				{quality !== undefined && (

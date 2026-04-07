@@ -9,7 +9,7 @@ import AlchHexGrid from '@/app/hex/sharedComponents/hex/hexGrid';
 import { HexTile, Position } from '@/app/hex/architecture/interfaces';
 import { ALCH_ELEMENT, SHAPE_NAME, ITEM_TAG } from '@/app/hex/architecture/enums';
 import * as Helpers from '@/app/hex/architecture/helpers';
-import {AlchComponentDisplay, PlaceableAlchComponent} from '@/app/hex/play/components/alchComponent';
+import {AlchComponentDisplay, PlaceableAlchComponent} from '@/app/hex/sharedComponents/alchComponent';
 import ComponentCursorGhost from '@/app/hex/play/components/compCursorGhost';
 
 export default function Page() {
