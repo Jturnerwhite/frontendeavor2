@@ -118,17 +118,18 @@ const AlchHexGrid: React.FC<HexGridProps> = ({
 
 	return (
 		<>
-			<HexGrid
-				hexMap={hexMap}
-				radius={radius}
-				onHexEnter={hexEnter}
-				onHexLeave={hexLeave}
-				onHexClick={hexClick}
-				displayIndex={displayIndex}
-				preventHexHover={preventHexHover}
-			/>
+			<g className="alch-hex-grid">
+				<HexGrid
+					hexMap={hexMap}
+					radius={radius}
+					onHexEnter={hexEnter}
+					onHexLeave={hexLeave}
+					onHexClick={hexClick}
+					displayIndex={displayIndex}
+					preventHexHover={preventHexHover}
+				/>
+			</g>
 		</>
 	);
 };
-
 export { HexGrid,AlchHexGrid };

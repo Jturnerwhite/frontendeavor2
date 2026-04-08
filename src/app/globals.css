@@ -20,7 +20,9 @@
 	--alchemy-frame: #5c4033;
 
 	--misc-container: #392d23;
+	--misc-container-mid: #4d3f38;
 	--misc-container-light: #635552;
+	--misc-container-dark: #2c2421;
 }
 
 @media (prefers-color-scheme: dark) {

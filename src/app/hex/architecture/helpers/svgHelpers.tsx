@@ -73,13 +73,13 @@ export function GetSVGLine(
 	lineStroke: string,
 	size: number,
 ): JSX.Element {
-	let strokeWidth = 10;
+	let strokeWidth = 18;
 	if (size <= 20) {
 		strokeWidth = 0;
 	} else if (size <= 35) {
 		strokeWidth = 0;
 	} else if (size <= 40) {
-		strokeWidth = 10;
+		strokeWidth = 16;
 	}
 
 	return (

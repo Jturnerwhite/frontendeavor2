@@ -12,13 +12,14 @@ import { AlchHexGrid } from '@/app/hex/sharedComponents/hex/hexGrid';
 import * as AlchHelpers from '@/app/hex/architecture/helpers/alchHelpers';
 import * as SVGHelpers from '@/app/hex/architecture/helpers/svgHelpers';
 import ComponentCursorGhost from '@/app/hex/play/components/compCursorGhost';
-import IngredientDisplay from '../components/ingredientDisplay';
-import './alchemy.css';
-import { HexTile, LinkedComponents, Position } from '../../architecture/interfaces';
+import IngredientDisplay from '@/app/hex/play/components/ingredientDisplay';
+import { HexTile, LinkedComponents, Position } from '@/app/hex/architecture/interfaces';
 import { AlchComponentDisplay } from '@/app/hex/sharedComponents/alchComponent';
-import { Recipes } from '../../architecture/data/recipes';
-import RecipeDisplay from '../components/recipeDisplay';
-import { ALCH_ELEMENT, COMPONENT_SHAPE_VALUES } from '../../architecture/enums';
+import { Recipes } from '@/app/hex/architecture/data/recipes';
+import RecipeDisplay from '@/app/hex/play/components/recipeDisplay';
+import { ALCH_ELEMENT, COMPONENT_SHAPE_VALUES } from '@/app/hex/architecture/enums';
+import BoardHex from '@/app/hex/play/components/board';
+import './alchemy.css';
 
 export default function Page() {
 	const dispatch = useDispatch();
@@ -198,7 +199,7 @@ export default function Page() {
 						<IngredientDisplay
 							key={ingredient.base.name}
 							ingredient={ingredient}
-							displaySize={35}
+							displaySize={20}
 							usePlaceable={true}
 							compPlaced={getCompPlaced(ingredient)}
 						/>
@@ -213,6 +214,7 @@ export default function Page() {
 						pointerEvents="none"
 					>
 						<g transform={`translate(${centerHexGridX} ${centerHexGridY})`}>
+							<BoardHex radiusBase={size} layers={playGridLayers} />
 							<AlchHexGrid
 								hexMap={playGrid}
 								radius={size}

@@ -58,11 +58,13 @@ const AlchNode: React.FC<NodeProps> = ({
 	if (canLink) {
 		return (
 			<g className={placed ? 'placed' : undefined}>
-				<polygon
-					className={'border-fill'}
-					points={borderFillPoints}
-					strokeWidth={strokeWidth}
-				/>
+				{size < 25 && (
+					<polygon
+						className={'border-fill'}
+						points={borderFillPoints}
+						strokeWidth={strokeWidth}
+					/>
+				)}
 				<polygon
 					className={'node ' + elemClass}
 					points={starPoints}

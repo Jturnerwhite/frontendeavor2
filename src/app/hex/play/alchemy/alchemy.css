@@ -321,3 +321,36 @@
 .alchemy-main-panel .node-sheen, .component-cursor-ghost .node-sheen {
 	fill: transparent;
 }
+
+.alchemy-main-panel .hex-tile {
+	fill: var(--misc-container);
+	stroke-width: 4px;
+}
+
+.alchemy-main-panel .board-hex .outer-border {
+	fill: var(--misc-container);
+	stroke: var(--misc-container-dark);
+	stroke-width: 4px;
+}
+
+.alchemy-main-panel .board-hex .inner-border {
+	stroke: var(--misc-container-mid);
+	stroke-width: 4px;
+}
+
+.alchemy-main-panel .board-hex .inner-border-2 {
+	stroke: var(--misc-container-mid);
+	fill: var(--misc-container);
+	stroke-width: 4px;
+}
+
+.alchemy-main-panel .board-hex .inner-border-3 {
+	stroke: var(--misc-container-mid);
+	fill: var(--misc-container);
+	stroke-width: 4px;
+}
+
+.alchemy-main-panel .board-hex .inner-border-4 {
+	stroke: var(--misc-container-mid);
+	stroke-width: 4px;
+}
