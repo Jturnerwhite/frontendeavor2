@@ -2,7 +2,7 @@
 import { AlchComponent, Ingredient, Recipe, RecipeElementScore } from '@/app/hex/architecture/typings';
 import { ALCH_ELEMENT } from '@/app/hex/architecture/enums';
 import AlchCompWithBacking from '@/app/hex/sharedComponents/alchComponent/alchCompWithBacking';
-import * as Helpers from '@/app/hex/architecture/helpers';
+import * as Helpers from '@/app/hex/architecture/helpers/alchHelpers';
 import './recipe-display.css';
 
 interface RecipeDisplayProps {

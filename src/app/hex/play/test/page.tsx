@@ -8,7 +8,7 @@ import { AlchComponent } from '@/app/hex/architecture/typings';
 import AlchHexGrid from '@/app/hex/sharedComponents/hex/hexGrid';
 import { HexTile, Position } from '@/app/hex/architecture/interfaces';
 import { ALCH_ELEMENT, SHAPE_NAME, ITEM_TAG } from '@/app/hex/architecture/enums';
-import * as Helpers from '@/app/hex/architecture/helpers';
+import * as Helpers from '@/app/hex/architecture/helpers/alchHelpers';
 import {AlchComponentDisplay, PlaceableAlchComponent} from '@/app/hex/sharedComponents/alchComponent';
 import ComponentCursorGhost from '@/app/hex/play/components/compCursorGhost';
 

@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { HexTile, HexMap, Position, PlacedComponent } from '@/app/hex/architecture/interfaces';
-import * as Helpers from '@/app/hex/architecture/helpers';
+import * as Helpers from '@/app/hex/architecture/helpers/alchHelpers';
 import { AlchComponent, Ingredient } from '@/app/hex/architecture/typings';
 
 interface CursorState {

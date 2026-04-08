@@ -6,7 +6,7 @@ import { RootState } from '@/store/store';
 import Hex from './hex';
 import './hex.css';
 import { Position, HexTile, HexMap } from '@/app/hex/architecture/interfaces';
-import * as Helpers from '@/app/hex/architecture/helpers';
+import * as AlchHelpers from '@/app/hex/architecture/helpers/alchHelpers';
 import { COMPONENT_SHAPE_VALUES } from '@/app/hex/architecture/enums';
 import { AlchComponentDisplay } from '@/app/hex/sharedComponents/alchComponent';
 
@@ -34,13 +34,16 @@ const HexGrid: React.FC<HexGridProps> = ({
 
 	function hexEnter(hex: HexTile) {
 		setHexHovered(hex);
-		if (onHexEnter) onHexEnter(hex);
+		if (onHexEnter) 
+			onHexEnter(hex);
 	}
 	function hexLeave() {
-		if (onHexLeave) onHexLeave(hexHovered);
+		if (onHexLeave) 
+			onHexLeave(hexHovered);
 	}
 	function hexClick(clickedHex: HexTile) {
-		if (onHexClick) onHexClick(clickedHex);
+		if (onHexClick) 
+			onHexClick(clickedHex);
 	}
 
 	return (
@@ -82,14 +85,14 @@ const AlchHexGrid: React.FC<HexGridProps> = ({
 		if (cursorState.isPlacing && cursorState.selectedComponent) {
 
 			const shapeMask = COMPONENT_SHAPE_VALUES[cursorState.selectedComponent.shape];
-			const hexIds = Helpers.GetPlacementHexIds(
+			const hexIds = AlchHelpers.GetPlacementHexIds(
 				hex,
 				shapeMask,
 				cursorState.rotation,
 				hexMap
 			);
 
-			if (!hexIds || !hexIds.every((id) => (id === "null" || !hexMap[id].occupied))) {
+			if (!hexIds || !hexIds.every((id: string) => (id === "null" || !hexMap[id].occupied))) {
 				setValidTileHover(false);
 			} else {
 				setValidTileHover(true);
@@ -128,4 +131,4 @@ const AlchHexGrid: React.FC<HexGridProps> = ({
 	);
 };
 
-export default AlchHexGrid;
+export { HexGrid,AlchHexGrid };

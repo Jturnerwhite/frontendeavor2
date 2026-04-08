@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import type { Ingredient, Item } from '@/app/hex/architecture/typings'
+import type { Ingredient, Item, MapBiome } from '@/app/hex/architecture/typings'
+import { GatherIngredientsInBiome } from '@/app/hex/architecture/helpers/mapHelpers';
 
 export interface PlayerState {
 	inventory: { raw: Ingredient[]; crafted: Item[] }
@@ -32,6 +33,11 @@ const playerSlice = createSlice({
 			state.inventory.crafted.push(action.payload.item)
 			state.xp += XP_PER_CRAFT
 			state.gold += GOLD_PER_CRAFT
+		},
+		gatherInBiome: (state, action: PayloadAction<{ biome: MapBiome, count: number }>) => {
+			const ingredients = GatherIngredientsInBiome(action.payload.biome, action.payload.count);
+			console.log(ingredients);
+			state.inventory.raw.push(...ingredients)
 		},
 	},
 })

@@ -85,3 +85,10 @@ export type Recipe = {
 	requirements?: RecipeRequirement[],
 	forbidden?: RecipeRequirement[],
 }
+
+export type MapBiome = {
+	name: string,
+	description: string,
+	terrain: MAP_TERRAIN,
+	nativeIngredients: Array<{ingredient: IngredientBase, rarity: number}>,
+}

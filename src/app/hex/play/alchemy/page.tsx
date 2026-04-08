@@ -7,8 +7,9 @@ import AlchemyStoreSlice from '@/store/features/alchemySlice';
 import PlayerStoreSlice from '@/store/features/playerSlice';
 import HistoryStoreSlice from '@/store/features/historySlice';
 import { AlchComponent, Ingredient, Item } from '@/app/hex/architecture/typings';	
-import AlchHexGrid from '@/app/hex/sharedComponents/hex/hexGrid';
-import * as Helpers from '@/app/hex/architecture/helpers';
+import { AlchHexGrid } from '@/app/hex/sharedComponents/hex/hexGrid';
+import * as AlchHelpers from '@/app/hex/architecture/helpers/alchHelpers';
+import * as SVGHelpers from '@/app/hex/architecture/helpers/svgHelpers';
 import ComponentCursorGhost from '@/app/hex/play/components/compCursorGhost';
 import IngredientDisplay from '../components/ingredientDisplay';
 import './alchemy.css';
@@ -36,7 +37,7 @@ export default function Page() {
 
 	const playGridLayers = 4;
 	const size = 40;
-	const alchCompSize = 2 * Helpers.GetApothem(size);
+	const alchCompSize = 2 * AlchHelpers.GetApothem(size);
 
 	function hexClick(hex: HexTile, validTileHover: boolean) {
 		if(!validTileHover) return;
@@ -49,7 +50,7 @@ export default function Page() {
 		return crossComponentLinks.map((link, index) => {
 			const component1Pos = playGrid![link.component1HexId].position;
 			const component2Pos = playGrid![link.component2HexId].position;
-			return Helpers.GetSVGLine(
+			return SVGHelpers.GetSVGLine(
 				`${link.component1Id}-${link.component2Id}-line-${index}`, 
 				link.element.toLowerCase().replace(/\s+/g, "-"),
 				component1Pos, 
@@ -98,7 +99,7 @@ export default function Page() {
 			centerHexId: string;
 		}) => {
 			output[component.comp.element].nodes += COMPONENT_SHAPE_VALUES[component.comp.shape].reduce((acc, curr) => acc + curr, 0);
-			output[component.comp.element].links += Helpers.CalculateLinksInComponent(component.comp);
+			output[component.comp.element].links += AlchHelpers.CalculateLinksInComponent(component.comp);
 		});
 
 		crossComponentLinks.forEach((link: LinkedComponents) => {
@@ -118,11 +119,11 @@ export default function Page() {
 	const handleComplete = useCallback(() => {
 		if (!recipe || !canComplete) return;
 		const elementScores = getCurrentElementScores();
-		const quality = Helpers.CalculateQuality(recipe, elementScores);
+		const quality = AlchHelpers.CalculateQuality(recipe, elementScores);
 		const item: Item = {
 			name: recipe.description,
 			description: recipe.description,
-			comps: Helpers.GetResultingComponents(recipe, elementScores),
+			comps: AlchHelpers.GetResultingComponents(recipe, elementScores),
 			types: [...recipe.types],
 			quality,
 			ingredients: structuredClone(ingredients),
@@ -165,7 +166,7 @@ export default function Page() {
 		if(placedComponents.length === lastPlacedCompCount) return;
 		if(placedComponents.length === 0) return;
 		if(placedComponents.length > lastPlacedCompCount) {
-			const newLinks = Helpers.GetLinks(playGrid!, placedComponents[placedComponents.length - 1]);
+			const newLinks = AlchHelpers.GetLinks(playGrid!, placedComponents[placedComponents.length - 1]);
 			setLinks((prev) => [...prev, ...newLinks]);
 			setLastPlacedCompCount(placedComponents.length);
 		} else { // Remove links for the removed components
@@ -180,7 +181,7 @@ export default function Page() {
 	}, [placedComponents]);
 
 	const currentElementScores = getCurrentElementScores();
-	const recipeQuality = recipe ? Helpers.CalculateQuality(recipe, currentElementScores) : 0;
+	const recipeQuality = recipe ? AlchHelpers.CalculateQuality(recipe, currentElementScores) : 0;
 
 	if (!recipe) {
 		return null;

@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 import AlchemyStoreSlice from '@/store/features/alchemySlice';
 import { IngedientBases } from '@/app/hex/architecture/data/ingedientBases';
 import { Recipes } from '@/app/hex/architecture/data/recipes';
-import * as Helpers from '@/app/hex/architecture/helpers';
+import * as Helpers from '@/app/hex/architecture/helpers/alchHelpers';
 import '../alchemy.css';
 
 const BASE_KEYS = Object.keys(IngedientBases) as Array<keyof typeof IngedientBases>;

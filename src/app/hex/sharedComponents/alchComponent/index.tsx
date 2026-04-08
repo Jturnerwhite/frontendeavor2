@@ -3,7 +3,8 @@ import type { AlchComponent } from '@/app/hex/architecture/typings';
 import type { Position } from '@/app/hex/architecture/interfaces';
 import { ALCH_ELEMENT, COMPONENT_SHAPE_VALUES } from '@/app/hex/architecture/enums';
 import { AlchemicalElements } from '@/app/hex/architecture/data/elements';
-import * as Helpers from '@/app/hex/architecture/helpers';
+import * as AlchHelpers from '@/app/hex/architecture/helpers/alchHelpers';
+import * as SVGHelpers from '@/app/hex/architecture/helpers/svgHelpers';
 import { useDispatch } from 'react-redux';
 import AlchemyStoreSlice from '@/store/features/alchemySlice';
 import './alchComponent.css';
@@ -38,7 +39,7 @@ const AlchNode: React.FC<NodeProps> = ({
 		return (
 			<polygon
 				className={"node " + element.replace(/\s+/g, "-").toLowerCase()}
-				points={Helpers.GetStarPoints(position.x, position.y, size / 3)}
+				points={SVGHelpers.GetStarPoints(position.x, position.y, size / 3)}
 				fill={"white"}
 				stroke={"white"}
 				strokeWidth={strokeWidth}
@@ -80,7 +81,7 @@ const AlchComponentDisplay: React.FC<CompProps> = ({
 
 	for (let i = 0; i < shapeValue.length; i++) {
 		if (shapeValue[i]) {
-			const nodePos: Position = Helpers.GetHexPointPos(i, position.x, position.y, size);
+			const nodePos: Position = SVGHelpers.GetHexPointPos(i, position.x, position.y, size);
 			nodeComps.push(
 				<AlchNode
 					key={`${position.x}-${position.y}-node-${i}`}
@@ -98,20 +99,20 @@ const AlchComponentDisplay: React.FC<CompProps> = ({
 	if (size > 20) {
 		for (let i = 1; i < shapeValue.length; i++) {
 			if (i === 6 && shapeValue[i] && shapeValue[1]) {
-				const nodePos: Position = Helpers.GetHexPointPos(i, position.x, position.y, size);
-				const nextPos: Position = Helpers.GetHexPointPos(1, position.x, position.y, size);
-				lines.push(Helpers.GetSVGLine(`${position.x}-${position.y}-line-${lines.length}`, alchData.element, nodePos, nextPos, "white", size));
+				const nodePos: Position = SVGHelpers.GetHexPointPos(i, position.x, position.y, size);
+				const nextPos: Position = SVGHelpers.GetHexPointPos(1, position.x, position.y, size);
+				lines.push(SVGHelpers.GetSVGLine(`${position.x}-${position.y}-line-${lines.length}`, alchData.element, nodePos, nextPos, "white", size));
 			}
 			if (shapeValue[i]) {
 				if (shapeValue[0]) {
-					const nodePos: Position = Helpers.GetHexPointPos(i, position.x, position.y, size);
-					const nextPos: Position = Helpers.GetHexPointPos(0, position.x, position.y, size);
-					lines.push(Helpers.GetSVGLine(`${position.x}-${position.y}-line-${lines.length}`, alchData.element, nodePos, nextPos, "white", size));
+					const nodePos: Position = SVGHelpers.GetHexPointPos(i, position.x, position.y, size);
+					const nextPos: Position = SVGHelpers.GetHexPointPos(0, position.x, position.y, size);
+					lines.push(SVGHelpers.GetSVGLine(`${position.x}-${position.y}-line-${lines.length}`, alchData.element, nodePos, nextPos, "white", size));
 				}
 				if (shapeValue[i + 1]) {
-					const nodePos: Position = Helpers.GetHexPointPos(i, position.x, position.y, size);
-					const nextPos: Position = Helpers.GetHexPointPos(i + 1, position.x, position.y, size);
-					lines.push(Helpers.GetSVGLine(`${position.x}-${position.y}-line-${lines.length}`, alchData.element, nodePos, nextPos, "white", size));
+					const nodePos: Position = SVGHelpers.GetHexPointPos(i, position.x, position.y, size);
+					const nextPos: Position = SVGHelpers.GetHexPointPos(i + 1, position.x, position.y, size);
+					lines.push(SVGHelpers.GetSVGLine(`${position.x}-${position.y}-line-${lines.length}`, alchData.element, nodePos, nextPos, "white", size));
 				}
 			}
 		}

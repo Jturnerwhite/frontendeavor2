@@ -1,19 +1,23 @@
 'use client';
 import { useEffect, useState } from 'react';
-import '@/app/hex/map/map.css';
-import * as Helpers from '@/app/hex/architecture/helpers';
+import { useDispatch, useSelector } from 'react-redux';
+import * as AlchHelpers from '@/app/hex/architecture/helpers/alchHelpers';
+import * as SVGHelpers from '@/app/hex/architecture/helpers/svgHelpers';
+import Biomes from '@/app/hex/architecture/data/biomes';
 import { HexMap, HexTile } from '@/app/hex/architecture/interfaces';
-import HexGrid from '@/app/hex/sharedComponents/hex/hexGrid';
+import { HexGrid } from '@/app/hex/sharedComponents/hex/hexGrid';
 import InventoryDisplay from '@/app/hex/sharedComponents/inventory/inventory';
-import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
+import PlayerStoreSlice from '@/store/features/playerSlice';
+import '@/app/hex/map/map.css';
 
 export default function MapPage() {
+	const dispatch = useDispatch();
 	const inventoryItems = useSelector((state: RootState) => state.Player.inventory.crafted);
 	const ingredients = useSelector((state: RootState) => state.Player.inventory.raw);
 
 	const TILE_SIZE = 40;
-	const MAP_LAYER_SIZE = 2;
+	const MAP_LAYER_SIZE = 4;
 	const [hexMap, setHexMap] = useState<HexMap | undefined>(undefined);
 	const [centerHexGridX, setCenterHexGridX] = useState<number>((window.innerWidth * 0.7) / 2);
 	const [centerHexGridY, setCenterHexGridY] = useState<number>(window.innerHeight / 2);
@@ -21,26 +25,30 @@ export default function MapPage() {
 		{
 			tileIndexes: [0],
 			icon: 'village',
-			description: 'Town'
+			biome: null,
 		},
 		{
 			tileIndexes: [1, 7, 8, 9, 19, 20, 21, 22],
 			icon: 'pine-tree',
-			description: 'A dense forest'
+			biome: Biomes.PineBarrens,
 		},
 		{
 			tileIndexes: [2, 3, 4, 5, 6, 10, 11, 12, 15, 17, 18, 32, 33, 34, 35, 36],
 			icon: 'high-grass',
-			description: 'An open field'
+			biome: Biomes.FlowingFields,
 		},
 		{
 			tileIndexes: [13, 14, 16, 23, 24, 25, 26, 27, 28, 29, 30, 31],
 			icon: 'peaks',
-			description: 'A mountain'
+			biome: Biomes.ValleyRidge,
 		}
 	];
 
 	function hexClick(hex: HexTile) {
+		const content = mapContents.find((content) => content.tileIndexes.includes(hex.index));
+		if(content !== undefined && content.biome !== null) {
+			dispatch(PlayerStoreSlice.actions.gatherInBiome({ biome: content.biome, count: 1 }));
+		}
 	}
 
 	function onHexEnter(hex: HexTile) {
@@ -71,7 +79,7 @@ export default function MapPage() {
 
 	useEffect(() => {
 		if(hexMap) return;
-		setHexMap(Helpers.CreateHexGrid({x: 0, y: 0}, TILE_SIZE, MAP_LAYER_SIZE));
+		setHexMap(AlchHelpers.CreateHexGrid({x: 0, y: 0}, TILE_SIZE, MAP_LAYER_SIZE));
 	}, []);
 
 	useEffect(() => {

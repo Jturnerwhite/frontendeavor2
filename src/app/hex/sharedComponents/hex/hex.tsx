@@ -1,7 +1,7 @@
 'use client';
 
-import { HexTile } from '@/app/hex/architecture/interfaces';
 import { useState } from 'react';
+import { HexTile } from '@/app/hex/architecture/interfaces';
 import './hex.css';
 
 interface HexProps {

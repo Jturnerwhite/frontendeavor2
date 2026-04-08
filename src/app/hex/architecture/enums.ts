@@ -68,3 +68,16 @@ export enum ITEM_TAG {
 	LIQUID = "Liquid",
 	CREATURE_PRODUCT = "Creature Piece",
 }
+
+export enum MAP_TERRAIN {
+	FIELD = "Field",
+	FOREST = "Forest",
+	MOUNTAIN = "Mountain",
+	CAVE = "Cave",
+	FRESHWATER = "Freshwater",
+	OCEAN = "Ocean",
+	DESERT = "Desert",
+	ICE = "Ice",
+	SWAMP = "Swamp",
+	LAVA = "Lava",
+}

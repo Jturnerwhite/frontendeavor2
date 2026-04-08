@@ -62,4 +62,61 @@ export const IngedientBases:Record<string, IngredientBase> = {
 			}
 		]
 	},
+	Pinecap: {
+		name: "Pinecap",
+		types: [ITEM_TAG.NATURAL, ITEM_TAG.PLANT],
+		possibleComps: [
+			{
+				element: ALCH_ELEMENT.EARTH,
+				possibleShapes: [SHAPE_NAME.DOT, SHAPE_NAME.HALFLINE, SHAPE_NAME.LINE, SHAPE_NAME.FINGER],
+			},
+			{
+				element: ALCH_ELEMENT.WIND,
+				possibleShapes: [SHAPE_NAME.DOT, SHAPE_NAME.HALFLINE, SHAPE_NAME.OBTUSE],
+			},
+			{
+				element: ALCH_ELEMENT.FIRE,
+				possibleShapes: [SHAPE_NAME.DOT],
+				chance: 0.4,
+			},
+		],
+	},
+	CragLichen: {
+		name: "Crag Lichen",
+		types: [ITEM_TAG.NATURAL, ITEM_TAG.PLANT],
+		possibleComps: [
+			{
+				element: ALCH_ELEMENT.EARTH,
+				possibleShapes: [SHAPE_NAME.DOT, SHAPE_NAME.HALFLINE, SHAPE_NAME.LINE, SHAPE_NAME.DIAMOND],
+			},
+			{
+				element: ALCH_ELEMENT.WATER,
+				possibleShapes: [SHAPE_NAME.DOT, SHAPE_NAME.HALFLINE, SHAPE_NAME.LINE],
+			},
+			{
+				element: ALCH_ELEMENT.WIND,
+				possibleShapes: [SHAPE_NAME.DOT],
+				chance: 0.45,
+			},
+		],
+	},
+	Sunpetal: {
+		name: "Sunpetal",
+		types: [ITEM_TAG.NATURAL, ITEM_TAG.PLANT],
+		possibleComps: [
+			{
+				element: ALCH_ELEMENT.FIRE,
+				possibleShapes: [SHAPE_NAME.DOT, SHAPE_NAME.HALFLINE, SHAPE_NAME.TRIANGLE, SHAPE_NAME.DIAMOND],
+			},
+			{
+				element: ALCH_ELEMENT.WIND,
+				possibleShapes: [SHAPE_NAME.DOT, SHAPE_NAME.HALFLINE, SHAPE_NAME.FIDGET],
+			},
+			{
+				element: ALCH_ELEMENT.AETHER,
+				possibleShapes: [SHAPE_NAME.DOT],
+				chance: 0.35,
+			},
+		],
+	},
 };
