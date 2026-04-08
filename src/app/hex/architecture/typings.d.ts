@@ -96,5 +96,5 @@ export type MapBiome = {
 	name: string,
 	description: string,
 	terrain: MAP_TERRAIN,
-	nativeIngredients: Array<{ingredient: IngredientBase, rarity: number}>,
+	nativeIngredients: Array<{ingredient: IngredientBase, weighting: number}>,
 }

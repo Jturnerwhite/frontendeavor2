@@ -4,16 +4,21 @@ import { CreateIngredient } from "./alchHelpers";
 
 export function GatherIngredientsInBiome(biome: MapBiome, count: number) {
 	const ingredients: Ingredient[] = [];
-	const totalRarity = biome.nativeIngredients.reduce((acc, curr) => acc + curr.rarity, 0);
-	const rollRarity = Math.random() * totalRarity;
-
+	const totalWeighting = biome.nativeIngredients.reduce((acc, curr) => acc + curr.weighting, 0);
+	console.log(totalWeighting);
 	for(let i = 0; i < count; i++) {
-		biome.nativeIngredients.forEach((nativeIngredient) => {
-			if(rollRarity <= nativeIngredient.rarity) {
-				const ingredient = CreateIngredient(nativeIngredient.ingredient);
-				ingredients.push(ingredient);
+		const roll = Math.random() * totalWeighting; // Roll a number between 0 and the total weighting
+		console.log("Rolled:",roll);
+		let scalingUpperBound = 0;
+
+		for(let j = 0; j < biome.nativeIngredients.length; j++) {
+			scalingUpperBound += biome.nativeIngredients[j].weighting;
+			if(roll < scalingUpperBound) {
+				console.log("Matching ingredient:",biome.nativeIngredients[j].ingredient.name);
+				ingredients.push(CreateIngredient(biome.nativeIngredients[j].ingredient));
+				break;
 			}
-		});
+		}
 	}
 	return ingredients;
 }

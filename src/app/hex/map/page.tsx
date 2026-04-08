@@ -50,6 +50,7 @@ export default function MapPage() {
 		const content = mapContents.find((content) => content.tileIndexes.includes(hex.index));
 		if (content !== undefined && content.biome !== null) {
 			const ingredients = GatherIngredientsInBiome(content.biome, 1);
+			
 			dispatch(PlayerStoreSlice.actions.addGatheredIngredients({ ingredients }));
 			ingredients.forEach((ing) => {
 				dispatch(ToastifyStore.actions.showToast({ message: "Gathered " + ing.base.name }));

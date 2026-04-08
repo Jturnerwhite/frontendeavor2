@@ -8,8 +8,9 @@ const Biomes = {
 		description: "A forest is a dense area of trees and plants.",
 		terrain: MAP_TERRAIN.FOREST,
 		nativeIngredients: [
-			{ ingredient: IngedientBases["FruguBerry"], rarity: 1 },
-			{ ingredient: IngedientBases["Pinecap"], rarity: 2 },
+			{ ingredient: IngedientBases["FruguBerry"], weighting: 1 },
+			{ ingredient: IngedientBases["JarbaLeaf"], weighting: 1 },
+			{ ingredient: IngedientBases["Pinecap"], weighting: 2 },
 		],
 	},
 	ValleyRidge: {
@@ -17,8 +18,8 @@ const Biomes = {
 		description: "A mountain is a tall peak of rock and soil.",
 		terrain: MAP_TERRAIN.MOUNTAIN,
 		nativeIngredients: [
-			{ ingredient: IngedientBases["JarbaLeaf"], rarity: 1 },
-			{ ingredient: IngedientBases["CragLichen"], rarity: 2 },
+			{ ingredient: IngedientBases["JarbaLeaf"], weighting: 1 },
+			{ ingredient: IngedientBases["CragLichen"], weighting: 2 },
 		],
 	},
 	FlowingFields: {
@@ -26,8 +27,8 @@ const Biomes = {
 		description: "A field is a flat area of grass and flowers.",
 		terrain: MAP_TERRAIN.FIELD,
 		nativeIngredients: [
-			{ ingredient: IngedientBases["AeridGrass"], rarity: 1 },
-			{ ingredient: IngedientBases["Sunpetal"], rarity: 2 },
+			{ ingredient: IngedientBases["AeridGrass"], weighting: 1 },
+			{ ingredient: IngedientBases["Sunpetal"], weighting: 2 },
 		],
 	}
 };
