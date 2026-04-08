@@ -12,6 +12,7 @@ import PlayerStoreSlice from '@/store/features/playerSlice';
 import ToastifyStore from '@/store/features/toastifySlice';
 import { GatherIngredientsInBiome } from '@/app/hex/architecture/helpers/mapHelpers';
 import '@/app/hex/map/map.css';
+import MapFog from './components/mapFog';
 
 export default function MapPage() {
 	const dispatch = useDispatch();
@@ -19,7 +20,7 @@ export default function MapPage() {
 	const ingredients = useSelector((state: RootState) => state.Player.inventory.raw);
 
 	const TILE_SIZE = 40;
-	const MAP_LAYER_SIZE = 4;
+	const MAP_LAYER_SIZE = 2;
 	const [hexMap, setHexMap] = useState<HexMap | undefined>(undefined);
 	const [centerHexGridX, setCenterHexGridX] = useState<number>((window.innerWidth * 0.7) / 2);
 	const [centerHexGridY, setCenterHexGridY] = useState<number>(window.innerHeight / 2);
@@ -35,12 +36,12 @@ export default function MapPage() {
 			biome: Biomes.PineBarrens,
 		},
 		{
-			tileIndexes: [2, 3, 4, 5, 6, 10, 11, 12, 15, 17, 18, 32, 33, 34, 35, 36],
+			tileIndexes: [2, 3, 5, 6, 10, 11, 12, 15, 17, 18, 32, 33, 34, 35, 36],
 			icon: 'high-grass',
 			biome: Biomes.FlowingFields,
 		},
 		{
-			tileIndexes: [13, 14, 16, 23, 24, 25, 26, 27, 28, 29, 30, 31],
+			tileIndexes: [4, 13, 14, 16, 23, 24, 25, 26, 27, 28, 29, 30, 31],
 			icon: 'peaks',
 			biome: Biomes.ValleyRidge,
 		}
@@ -50,7 +51,7 @@ export default function MapPage() {
 		const content = mapContents.find((content) => content.tileIndexes.includes(hex.index));
 		if (content !== undefined && content.biome !== null) {
 			const ingredients = GatherIngredientsInBiome(content.biome, 1);
-			
+
 			dispatch(PlayerStoreSlice.actions.addGatheredIngredients({ ingredients }));
 			ingredients.forEach((ing) => {
 				dispatch(ToastifyStore.actions.showToast({ message: "Gathered " + ing.base.name }));
@@ -128,6 +129,12 @@ export default function MapPage() {
 							preventHexPlacementHover={true}
 						/>
 						<g>{renderMapContents()}</g>
+						<MapFog 
+							hexMap={hexMap} 
+							radiusBase={TILE_SIZE} 
+							currentLayers={MAP_LAYER_SIZE} 
+							mapFogLayers={MAP_LAYER_SIZE - 1} 
+						/>
 					</g>
 				</svg>
 				</>
