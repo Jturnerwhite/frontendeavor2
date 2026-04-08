@@ -1,4 +1,6 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+An exploration into Next.js and the /hex/ folder contains a React application puzzle game with redux for state management.
+
+
 
 ## Getting Started
 
