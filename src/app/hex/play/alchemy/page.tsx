@@ -195,9 +195,9 @@ export default function Page() {
 		<div className="alchemy-layout">
 			<aside className="alchemy-left-panel" onContextMenu={(e: React.MouseEvent) => e.preventDefault()}>
 				{ingredients.length > 0 &&
-					ingredients.map((ingredient: Ingredient) => (
+					ingredients.map((ingredient: Ingredient, index: number) => (
 						<IngredientDisplay
-							key={ingredient.base.name}
+							key={ingredient.base.name + '-' + index}
 							ingredient={ingredient}
 							displaySize={20}
 							usePlaceable={true}

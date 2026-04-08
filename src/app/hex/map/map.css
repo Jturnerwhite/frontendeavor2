@@ -52,3 +52,17 @@
 .map-fog-container {
 	user-select: none;
 }
+
+.map-fog-path {
+	fill: transparent;
+	stroke: black;
+}
+
+.map-storm-1 {
+	fill: transparent;
+	stroke: rgb(31, 20, 30);
+}
+.map-storm-2 {
+	fill: transparent;
+	stroke: rgb(26, 16, 25);
+}

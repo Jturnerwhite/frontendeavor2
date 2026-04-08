@@ -1,4 +1,4 @@
-import { useEffect, useId, useState } from "react";
+import { useEffect, useState } from "react";
 import { HexMap } from "../../architecture/interfaces";
 
 interface MapFogProps {
@@ -15,10 +15,9 @@ const MapFog: React.FC<MapFogProps> = ({
 	mapFogLayers,
 }) => {
 	const [counter, setCounter] = useState(0); //used for flipping between possible shapes
-	const waveFidelity = 100;
+	const waveFidelity = 120;
 	const waveSpeed = 100;
-	const waveAmplitude = 8;
-	const fogFillGradientId = useId().replace(/:/g, "");
+	const waveAmplitude = 4;
 	useEffect(() => {
 		const interval = setInterval(() => {
 			setCounter((prev: number) => {
@@ -30,7 +29,7 @@ const MapFog: React.FC<MapFogProps> = ({
 	}, []);
 
 	const { x, y } = { x: 0, y: 0 };
-	const mapFogRadius = (radiusBase * (mapFogLayers + 2.5)); // (GetApothem(radiusBase) * 2 * mapFogLayers) + (radiusBase / 2);
+	const mapFogRadius = ((radiusBase * 2.4) * (mapFogLayers)); // (GetApothem(radiusBase) * 2 * mapFogLayers) + (radiusBase / 2);
 	let fogCorners: [number, number][] = [
 		[x + mapFogRadius, y],
 		[x + mapFogRadius * Math.cos(Math.PI / 3), y + mapFogRadius * Math.sin(Math.PI / 3)],
@@ -55,27 +54,23 @@ const MapFog: React.FC<MapFogProps> = ({
 
 	return (
 		<g className="map-fog-container">
-			<defs>
-				<radialGradient
-					id={fogFillGradientId}
-					cx="50%"
-					cy="50%"
-					r="50%"
-					fx="50%"
-					fy="50%"
-					gradientUnits="objectBoundingBox"
-				>
-					<stop offset="0%" stopColor="#000000" stopOpacity="0" />
-					<stop offset="70%" stopColor="#000000" stopOpacity="0" />
-					<stop offset="80%" stopColor="#000000" stopOpacity="1" />
-					<stop offset="100%" stopColor="#000000" stopOpacity="1" />
-				</radialGradient>
-			</defs>
 			<path
+				className="map-fog-path"
+				transform="rotate(30)"
 				d={fogPathD}
-				stroke="black"
 				strokeWidth={50}
-				fill={`url(#${fogFillGradientId})`}
+			/>
+			<path
+				className="map-storm-1"
+				transform={`rotate(${(counter % 60) * 3})`}
+				d={fogPathD}
+				strokeWidth={18}
+			/>
+			<path
+				className="map-storm-2"
+				transform={`rotate(${(counter % 60) * 2})`}
+				d={fogPathD}
+				strokeWidth={22}
 			/>
 		</g>
 	)
