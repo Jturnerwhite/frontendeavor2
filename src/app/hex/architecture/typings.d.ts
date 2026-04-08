@@ -95,6 +95,7 @@ export type Recipe = {
 export type MapBiome = {
 	name: string,
 	description: string,
+	icon: string,
 	terrain: MAP_TERRAIN,
 	nativeIngredients: Array<{ingredient: IngredientBase, weighting: number}>,
 }

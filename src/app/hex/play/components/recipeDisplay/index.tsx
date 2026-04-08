@@ -21,7 +21,7 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({recipe, quality, currentEl
 		const matchingScore = currentElementScores?.[element];
 		for(let i = 0; i < eleToCheck.cap; i++) {
 			let classString = 'node ' + element.toLowerCase().replace(/\s+/g, "-");
-			if(i > eleToCheck.softCap) {
+			if(i >= eleToCheck.softCap) {
 				if(matchingScore === undefined || i > matchingScore.links) {
 					classString += ' locked';
 				} else if(matchingScore !== undefined && i < matchingScore.nodes) {
@@ -53,8 +53,8 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({recipe, quality, currentEl
 		}
 
 		resultingComponents = Helpers.GetResultingComponents(recipe, currentElementScores);
-		return resultingComponents.map((component: AlchComponent) => {
-			return <div key={'resulting-' + recipe.id + '-' + component.id}>
+		return resultingComponents.map((component: AlchComponent, index: number) => {
+			return <div key={'resulting-' + recipe.id + '-' + component.id + '-' + index}>
 				<AlchCompWithBacking 
 				keyString={recipe.id + '-' + component.id} 
 				alchData={component} 

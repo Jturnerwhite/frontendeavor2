@@ -20,29 +20,25 @@ export default function MapPage() {
 	const ingredients = useSelector((state: RootState) => state.Player.inventory.raw);
 
 	const TILE_SIZE = 40;
-	const MAP_LAYER_SIZE = 2;
+	const MAP_LAYER_SIZE = 3;
 	const [hexMap, setHexMap] = useState<HexMap | undefined>(undefined);
 	const [centerHexGridX, setCenterHexGridX] = useState<number>((window.innerWidth * 0.7) / 2);
 	const [centerHexGridY, setCenterHexGridY] = useState<number>(window.innerHeight / 2);
 	const mapContents = [
 		{
 			tileIndexes: [0],
-			icon: 'village',
 			biome: null,
 		},
 		{
 			tileIndexes: [1, 7, 8, 9, 19, 20, 21, 22],
-			icon: 'pine-tree',
 			biome: Biomes.PineBarrens,
 		},
 		{
 			tileIndexes: [2, 3, 5, 6, 10, 11, 12, 15, 17, 18, 32, 33, 34, 35, 36],
-			icon: 'high-grass',
 			biome: Biomes.FlowingFields,
 		},
 		{
 			tileIndexes: [4, 13, 14, 16, 23, 24, 25, 26, 27, 28, 29, 30, 31],
-			icon: 'peaks',
 			biome: Biomes.ValleyRidge,
 		}
 	];
@@ -78,7 +74,7 @@ export default function MapPage() {
 					width={TILE_SIZE}
 					height={TILE_SIZE}
 					className="map-content-icon" 
-					href={`/icons/${content.icon}.svg`} />
+					href={`/icons/${content.biome?.icon ?? "village"}.svg`} />
 				);
 			}
 			return acc;

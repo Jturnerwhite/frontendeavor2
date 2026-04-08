@@ -343,13 +343,18 @@ function GetResultingComponents(recipe: Recipe, elementScores: Record<ALCH_ELEME
 	recipe.resultingComponents.forEach((resultComps: Array<RecipeResultingComponent>) => {
 		let finalComponent: AlchComponent|null = null;
 		resultComps.forEach((resultCompGoal: RecipeResultingComponent) => {
-			if(elementScores[resultCompGoal.element] && 
-				elementScores[resultCompGoal.element].nodes >= resultCompGoal.scoreRequirement) {
-				finalComponent = {
-					element: resultCompGoal.element,
-					shape: resultCompGoal.shape,
-					linkSpots: resultCompGoal.linkSpots,
-				};
+			let matchingElementScoreRequirements = recipe.elementScores.find((elementScore: RecipeElementScore) => elementScore.element === resultCompGoal.element);
+			let maxScorePossible = matchingElementScoreRequirements?.cap ?? 0;
+			if(matchingElementScoreRequirements && elementScores[resultCompGoal.element]) {
+				// only allow the score to be as high as the soft cap + the number of links
+				maxScorePossible = Math.min(maxScorePossible, (matchingElementScoreRequirements.softCap + elementScores[resultCompGoal.element].links));
+				if(Math.min(elementScores[resultCompGoal.element].nodes, maxScorePossible) >= resultCompGoal.scoreRequirement) {
+					finalComponent = {
+						element: resultCompGoal.element,
+						shape: resultCompGoal.shape,
+						linkSpots: resultCompGoal.linkSpots,
+					};
+				}
 			}
 		});
 		if(finalComponent)
