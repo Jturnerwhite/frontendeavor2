@@ -317,3 +317,7 @@
 .alchemy-setup-link:hover {
 	color: var(--alchemy-parchment);
 }
+
+.alchemy-main-panel .node-sheen, .component-cursor-ghost .node-sheen {
+	fill: transparent;
+}

@@ -47,7 +47,7 @@ export const AlchemicalElements:Record<ALCH_ELEMENT, AlchEleData> = {
 	[ALCH_ELEMENT.WATER]: {
 		id: 3,
 		type: ALCH_ELEMENT.WATER,
-		colorHex: "#0c66ef",
+		colorHex: "#3384ff",
 		iconClass: `typeicon-${ALCH_ELEMENT.WATER}`
 	},
 	[ALCH_ELEMENT.AETHER]: {

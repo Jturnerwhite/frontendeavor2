@@ -68,7 +68,8 @@ export default function Page() {
 				alchData={component.comp} 
 				position={component.position}
 				size={alchCompSize} 
-				rotation={component.rotation} />
+				rotation={component.rotation}
+				hexGridCircumradius={size} />
 		});
 	}
 
@@ -197,7 +198,7 @@ export default function Page() {
 						<IngredientDisplay
 							key={ingredient.base.name}
 							ingredient={ingredient}
-							displaySize={alchCompSize / 2}
+							displaySize={35}
 							usePlaceable={true}
 							compPlaced={getCompPlaced(ingredient)}
 						/>

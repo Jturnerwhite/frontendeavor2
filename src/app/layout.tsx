@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 import { store } from "@/store/store";
 import { AlchemyRehydrate } from "@/store/alchemyRehydrate";
 import { ToastifyBridge } from "@/store/toastifyBridge";
+import { AlchSvgDefs } from "@/app/hex/sharedComponents/alchComponent/AlchSvgDefs";
 import { AlchemicalElements, type AlchEleData } from "@/app/hex/architecture/data/elements";
 import type { ALCH_ELEMENT } from "@/app/hex/architecture/enums";
 import "./globals.css";
@@ -56,6 +57,7 @@ export default function RootLayout({
 	return (
 		<html lang="en" style={alchElementColorCssVars()}>
 			<body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+				<AlchSvgDefs />
 				<Providers>
 					{children}
 				</Providers>

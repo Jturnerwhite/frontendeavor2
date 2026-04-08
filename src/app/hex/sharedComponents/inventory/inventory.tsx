@@ -14,7 +14,7 @@ interface InventoryProps {
 }
 
 const InventoryDisplay: React.FC<InventoryProps> = ({ inventoryItems, ingredients, hideFiltering = false, hideSorting = false, hideSubFiltering = false, hideSubSorting = false }) => {
-	const DISPLAY_SIZE = 25;
+	const DISPLAY_SIZE = 20;
 	function renderInventoryItems(): JSX.Element[] {
 		let output:JSX.Element[] = [];
 		output.push(...inventoryItems.map((item, index) => {

@@ -54,7 +54,9 @@ const ComponentCursorGhost: React.FC<ComponentCursorGhostProps> = ({ displaySize
 	}
 
 	return (
-		<div style={{ 
+		<div 
+		className="component-cursor-ghost"
+		style={{ 
 		  position: 'fixed', 
 		  left: cursorPosition.x,
 		  top: cursorPosition.y,

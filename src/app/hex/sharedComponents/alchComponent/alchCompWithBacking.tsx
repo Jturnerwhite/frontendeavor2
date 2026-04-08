@@ -23,15 +23,19 @@ const AlchCompWithBacking: React.FC<CompProps> = ({
 	usePlaceable = false,
 	additionalClassString = "",
 }): JSX.Element => {
-	let areaSize = 100;
-	switch(displaySize) {
-		case 25:
-			areaSize = 75;
-			break;
-		case 35:
-			areaSize = 100;
-			break;
+	let areaSize = 140;
+	if(displaySize <= 20) {
+		areaSize = 70;
+	} else if(displaySize <= 25) {
+		areaSize = 80;
+	} else if(displaySize <= 30) {
+		areaSize = 100;
+	} else if(displaySize <= 35) {
+		areaSize = 120;
 	}
+
+	const hexSize = displaySize / 1.7;
+
 	return (
 		<svg 
 		key={keyString} 
@@ -41,15 +45,31 @@ const AlchCompWithBacking: React.FC<CompProps> = ({
 		style={{ position: "relative", display:"inline-block" }}>
 			<g transform={`translate(${areaSize / 2} ${areaSize / 2})`}>
 				<AlchHexGrid
-					hexMap={Helpers.CreateHexGrid({ x: 0, y: 0 }, displaySize / 2, 2)}
-					radius={displaySize / 2}
+					hexMap={Helpers.CreateHexGrid({ x: 0, y: 0 }, hexSize, 2)}
+					radius={hexSize}
 					displayIndex={false}
 					preventHexHover={true}
 					preventHexPlacementHover={true}
 				/>
 			</g>
-			{usePlaceable && (<PlaceableAlchComponent alchData={alchData} position={{x:areaSize / 2, y:areaSize / 2}} size={displaySize * 0.85} rotation={0} />)}
-			{!usePlaceable && (<AlchComponentDisplay alchData={alchData} position={{x:areaSize / 2, y:areaSize / 2}} size={displaySize * 0.85} rotation={0} />)}
+			{usePlaceable && (
+				<PlaceableAlchComponent
+					alchData={alchData}
+					position={{ x: areaSize / 2, y: areaSize / 2 }}
+					size={displaySize}
+					rotation={0}
+					hexGridCircumradius={hexSize}
+				/>
+			)}
+			{!usePlaceable && (
+				<AlchComponentDisplay
+					alchData={alchData}
+					position={{ x: areaSize / 2, y: areaSize / 2 }}
+					size={displaySize}
+					rotation={0}
+					hexGridCircumradius={hexSize}
+				/>
+			)}
 		</svg>
 	);
 };

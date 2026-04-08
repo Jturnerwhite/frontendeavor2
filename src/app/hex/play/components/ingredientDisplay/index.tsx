@@ -1,7 +1,7 @@
 'use client';
 
 import * as Helpers from '@/app/hex/architecture/helpers/alchHelpers';
-import AlchHexGrid from '@/app/hex/sharedComponents/hex/hexGrid';
+import { AlchHexGrid } from '@/app/hex/sharedComponents/hex/hexGrid';
 import { AlchComponent, Ingredient } from '@/app/hex/architecture/typings';
 import { AlchComponentDisplay, PlaceableAlchComponent } from '@/app/hex/sharedComponents/alchComponent';
 import AlchCompWithBacking from '@/app/hex/sharedComponents/alchComponent/alchCompWithBacking';

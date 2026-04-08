@@ -103,10 +103,10 @@ export default function MapPage() {
 			<InventoryDisplay 
 				inventoryItems={inventoryItems} 
 				ingredients={ingredients}
-				hideFiltering={false} 
-				hideSorting={false} 
-				hideSubFiltering={false} 
-				hideSubSorting={false}/>
+				hideFiltering={true} 
+				hideSorting={true} 
+				hideSubFiltering={true} 
+				hideSubSorting={true}/>
 		</aside>
 		<main className="map-main-panel" onContextMenu={(e: React.MouseEvent) => {}}>
 			{hexMap && (

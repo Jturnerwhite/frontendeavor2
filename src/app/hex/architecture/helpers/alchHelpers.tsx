@@ -1,4 +1,5 @@
 import { HexMap, HexTile, LinkedComponents, PlacedComponent, Position } from "@/app/hex/architecture/interfaces";
+import { getHexNeighborStep } from "./svgHelpers";
 import { Ingredient, IngredientBase, IngredientCompSpec, AlchComponent, Recipe, RecipeElementScore, RecipeResultingComponent } from "../typings";
 import { ALCH_ELEMENT, COMPONENT_SHAPE_VALUES } from "../enums";
 
@@ -112,15 +113,13 @@ function CreateHexGrid(center:Position, radius:number, layers:number):HexMap {
 			index: count,
 			occupied: undefined
 		};
-		// Calculate potential neighbor positions
-		const neighborPositions = new Array<Position|null>();
+		// Calculate potential neighbor positions (same offsets as GetHexPointPos + hex grid)
+		const neighborPositions = new Array<Position | null>();
 		neighborPositions[0] = null;
-		neighborPositions[1] = { x: pos.x, y: pos.y - hexagonOffsetY * 2 };
-		neighborPositions[2] = { x: pos.x + hexagonOffsetX, y: pos.y - hexagonOffsetY };
-		neighborPositions[3] = { x: pos.x + hexagonOffsetX, y: pos.y + hexagonOffsetY };
-		neighborPositions[4] = { x: pos.x, y: pos.y + hexagonOffsetY * 2 };
-		neighborPositions[5] = { x: pos.x - hexagonOffsetX, y: pos.y + hexagonOffsetY };
-		neighborPositions[6] = { x: pos.x - hexagonOffsetX, y: pos.y - hexagonOffsetY };
+		for (let d = 1; d <= 6; d++) {
+			const step = getHexNeighborStep(d, radius);
+			neighborPositions[d] = { x: pos.x + step.x, y: pos.y + step.y };
+		}
 
 		// Connect existing neighbors
 		neighborPositions.map((neighborPos, direction) => {

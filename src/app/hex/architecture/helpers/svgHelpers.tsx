@@ -1,9 +1,44 @@
 import type { Position } from '@/app/hex/architecture/interfaces';
 
+/**
+ * Integer neighbor offset from a hex center to an adjacent hex center, matching
+ * `CreateHexGrid` (floored `hexagonOffsetX` / `hexagonOffsetY`). Direction 1..6.
+ */
+export function getHexNeighborStep(direction: number, hexCircumradius: number): Position {
+	const hexagonOffsetX = Math.floor(1.5 * hexCircumradius);
+	const hexagonOffsetY = Math.floor(hexCircumradius * Math.cos(Math.PI / 6));
+	switch (direction) {
+		case 1:
+			return { x: 0, y: -2 * hexagonOffsetY };
+		case 2:
+			return { x: hexagonOffsetX, y: -hexagonOffsetY };
+		case 3:
+			return { x: hexagonOffsetX, y: hexagonOffsetY };
+		case 4:
+			return { x: 0, y: 2 * hexagonOffsetY };
+		case 5:
+			return { x: -hexagonOffsetX, y: hexagonOffsetY };
+		case 6:
+			return { x: -hexagonOffsetX, y: -hexagonOffsetY };
+		default:
+			return { x: 0, y: 0 };
+	}
+}
+
 /** Corner / node positions for hex-based component SVG layout. */
-export function GetHexPointPos(point: number, x: number, y: number, r: number): Position {
+export function GetHexPointPos(
+	point: number,
+	x: number,
+	y: number,
+	r: number,
+	hexGridCircumradius?: number,
+): Position {
 	if (point === 0) {
 		return { x, y };
+	}
+	if (hexGridCircumradius !== undefined && point >= 1 && point <= 6) {
+		const step = getHexNeighborStep(point, hexGridCircumradius);
+		return { x: x + step.x, y: y + step.y };
 	}
 	const angle = (Math.PI / 3) * (point - 1);
 
@@ -38,6 +73,15 @@ export function GetSVGLine(
 	lineStroke: string,
 	size: number,
 ): JSX.Element {
+	let strokeWidth = 10;
+	if (size <= 20) {
+		strokeWidth = 0;
+	} else if (size <= 35) {
+		strokeWidth = 0;
+	} else if (size <= 40) {
+		strokeWidth = 10;
+	}
+
 	return (
 		<line
 			key={key}
@@ -47,7 +91,7 @@ export function GetSVGLine(
 			x2={nextPos.x}
 			y2={nextPos.y}
 			stroke={lineStroke}
-			strokeWidth={size / 3}
+			strokeWidth={strokeWidth}
 		/>
 	);
 }
