@@ -102,7 +102,7 @@ export const IngedientBases:Record<string, IngredientBase> = {
 	},
 	Sunpetal: {
 		name: "Sunpetal",
-		types: [ITEM_TAG.NATURAL, ITEM_TAG.PLANT],
+		types: [ITEM_TAG.NATURAL, ITEM_TAG.PLANT, ITEM_TAG.MAGICAL],
 		possibleComps: [
 			{
 				element: ALCH_ELEMENT.FIRE,

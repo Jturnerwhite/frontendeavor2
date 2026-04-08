@@ -8,7 +8,7 @@ const Biomes = {
 		description: "A forest is a dense area of trees and plants.",
 		terrain: MAP_TERRAIN.FOREST,
 		nativeIngredients: [
-			{ ingredient: IngedientBases["FruguBerry"], rarity: 12 },
+			{ ingredient: IngedientBases["FruguBerry"], rarity: 1 },
 			{ ingredient: IngedientBases["Pinecap"], rarity: 2 },
 		],
 	},

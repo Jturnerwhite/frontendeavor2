@@ -64,6 +64,12 @@ export type RecipeElementScore = {
 	cap: number
 }
 
+export type RecipeRequiredIngredient = {
+	type: IngredientBase | ITEM_TAG,
+	qty?: number,
+	quality?: number,
+}
+
 /**
  * These act like "goals" that are conditionally met depending on how
  * the recipe is completed.
@@ -81,7 +87,7 @@ export type Recipe = {
 	types: ITEM_TAG[],
 	elementScores: RecipeElementScore[],
 	resultingComponents: Array<Array<RecipeResultingComponent>>,
-	requiredIngredients?: Array<IngredientBase|ITEM_TAG>,
+	requiredIngredients?: RecipeRequiredIngredient[],
 	requirements?: RecipeRequirement[],
 	forbidden?: RecipeRequirement[],
 }

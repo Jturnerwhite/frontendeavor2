@@ -2,48 +2,254 @@
 
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Suspense, useCallback, useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import AlchemyStoreSlice from '@/store/features/alchemySlice';
-import { IngedientBases } from '@/app/hex/architecture/data/ingedientBases';
 import { Recipes } from '@/app/hex/architecture/data/recipes';
-import * as Helpers from '@/app/hex/architecture/helpers/alchHelpers';
+import type { Ingredient, Item, Recipe } from '@/app/hex/architecture/typings';
+import InventoryDisplay, { craftedRowKey } from '@/app/hex/sharedComponents/inventory/inventory';
+import { RootState } from '@/store/store';
+import {
+	countSelectionUnits,
+	filterInventoryAfterConsumption,
+	formatRequiredIngredientEntry,
+	getInventoryForRequirement,
+	ingredientsFromInventorySelection,
+} from '@/app/hex/architecture/helpers/recipeRequirements';
 import '../alchemy.css';
 
-const BASE_KEYS = Object.keys(IngedientBases) as Array<keyof typeof IngedientBases>;
+type StageInventory = {
+	ingredients: Ingredient[];
+	craftedItems: Item[];
+	getCraftedRowKey: (item: Item, i: number) => string;
+};
 
-function SelectIngredientsInner() {
+function buildStageInventory(
+	recipe: Recipe,
+	stageIndex: number,
+	rawIngredients: Ingredient[],
+	inventoryItems: Item[],
+	consumedRawIds: Set<string>,
+	consumedCraftedIndices: Set<number>,
+): StageInventory {
+	const reqList = recipe.requiredIngredients ?? [];
+	if (reqList.length === 0) {
+		const craftedEntries = inventoryItems.map((item, index) => ({ item, index }));
+		return {
+			ingredients: rawIngredients,
+			craftedItems: inventoryItems,
+			getCraftedRowKey: (_item: Item, i: number) => craftedRowKey(craftedEntries[i].index),
+		};
+	}
+	const currentReq = reqList[stageIndex];
+	const base = getInventoryForRequirement(currentReq, rawIngredients, inventoryItems);
+	const after = filterInventoryAfterConsumption(
+		base.ingredients,
+		base.craftedEntries,
+		consumedRawIds,
+		consumedCraftedIndices,
+	);
+	return {
+		ingredients: after.ingredients,
+		craftedItems: after.craftedEntries.map((e) => e.item),
+		getCraftedRowKey: (_item: Item, i: number) => craftedRowKey(after.craftedEntries[i].index),
+	};
+}
+
+function collectConsumptionFromKeys(selectedKeys: Set<string>): { rawIds: string[]; craftedIndices: number[] } {
+	const rawIds: string[] = [];
+	const craftedIndices: number[] = [];
+	for (const k of selectedKeys) {
+		if (k.startsWith('crafted:')) {
+			const idx = Number(k.slice('crafted:'.length));
+			if (!Number.isNaN(idx)) craftedIndices.push(idx);
+		} else {
+			rawIds.push(k);
+		}
+	}
+	return { rawIds, craftedIndices };
+}
+
+export default function SelectIngredientsPage() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const dispatch = useDispatch();
 	const recipeId = searchParams.get('recipeId');
+
+	const inventoryItems = useSelector((state: RootState) => state.Player.inventory.crafted);
+	const rawIngredients = useSelector((state: RootState) => state.Player.inventory.raw);
 
 	const recipe = useMemo(
 		() => (recipeId ? Recipes.find((r) => r.id === recipeId) : undefined),
 		[recipeId],
 	);
 
+	const requiredList = recipe?.requiredIngredients ?? [];
+	const isStaged = requiredList.length > 0;
+
+	const [stageIndex, setStageIndex] = useState(0);
+	/** One batch per completed stage (same order as `consumptionLog`). */
+	const [committedBatches, setCommittedBatches] = useState<Ingredient[][]>([]);
+	const [consumptionLog, setConsumptionLog] = useState<Array<{ rawIds: string[]; craftedIndices: number[] }>>([]);
+	const [consumedRawIds, setConsumedRawIds] = useState<Set<string>>(() => new Set());
+	const [consumedCraftedIndices, setConsumedCraftedIndices] = useState<Set<number>>(() => new Set());
 	const [selectedKeys, setSelectedKeys] = useState<Set<string>>(() => new Set());
 
-	const toggleKey = useCallback((key: string) => {
-		setSelectedKeys((prev) => {
-			const next = new Set(prev);
-			if (next.has(key)) next.delete(key);
-			else next.add(key);
-			return next;
-		});
-	}, []);
+	useEffect(() => {
+		setSelectedKeys(new Set());
+	}, [stageIndex]);
 
-	const onContinue = useCallback(() => {
-		if (!recipe || selectedKeys.size === 0) return;
-		const ingredients = Array.from(selectedKeys).map((key) =>
-			Helpers.CreateIngredient(IngedientBases[key as keyof typeof IngedientBases]),
-		);
-		dispatch(AlchemyStoreSlice.actions.clearPlayGrid());
-		dispatch(AlchemyStoreSlice.actions.setCurrentRecipe(recipe.id));
-		dispatch(AlchemyStoreSlice.actions.addIngredients(ingredients));
-		router.push('/hex/play/alchemy');
-	}, [recipe, selectedKeys, dispatch, router]);
+	useEffect(() => {
+		setStageIndex(0);
+		setCommittedBatches([]);
+		setConsumptionLog([]);
+		setConsumedRawIds(new Set());
+		setConsumedCraftedIndices(new Set());
+		setSelectedKeys(new Set());
+	}, [recipeId]);
+
+	const currentReq = isStaged ? requiredList[stageIndex] : undefined;
+
+	const stageInventory = useMemo(() => {
+		if (!recipe) {
+			return {
+				ingredients: [] as Ingredient[],
+				craftedItems: [] as Item[],
+				getCraftedRowKey: (_item: Item, i: number) => craftedRowKey(i),
+			};
+		}
+		return buildStageInventory(recipe, stageIndex, rawIngredients, inventoryItems, consumedRawIds, consumedCraftedIndices);
+	}, [recipe, stageIndex, rawIngredients, inventoryItems, consumedRawIds, consumedCraftedIndices]);
+
+	const needForStage = currentReq ? (currentReq.qty ?? 1) : 0;
+
+	const selectionCount = useMemo(
+		() => countSelectionUnits(selectedKeys, inventoryItems, rawIngredients),
+		[selectedKeys, inventoryItems, rawIngredients],
+	);
+
+	const toggleKey = useCallback(
+		(key: string) => {
+			setSelectedKeys((prev) => {
+				const next = new Set(prev);
+				if (next.has(key)) {
+					next.delete(key);
+					return next;
+				}
+				if (isStaged && currentReq) {
+					const cap = currentReq.qty ?? 1;
+					if (countSelectionUnits(prev, inventoryItems, rawIngredients) >= cap) {
+						return prev;
+					}
+				}
+				next.add(key);
+				return next;
+			});
+		},
+		[isStaged, currentReq, inventoryItems, rawIngredients],
+	);
+
+	const hasAnythingInStage =
+		stageInventory.ingredients.length > 0 || stageInventory.craftedItems.length > 0;
+
+	const hasAnythingInInventory = rawIngredients.length > 0 || inventoryItems.length > 0;
+
+	const canProceedStaged =
+		isStaged &&
+		currentReq &&
+		hasAnythingInStage &&
+		selectionCount >= needForStage &&
+		needForStage > 0;
+
+	const chosenIngredientsLegacy = useMemo(
+		() => ingredientsFromInventorySelection(selectedKeys, inventoryItems, rawIngredients),
+		[selectedKeys, inventoryItems, rawIngredients],
+	);
+
+	const canProceedLegacy = !isStaged && chosenIngredientsLegacy.length > 0;
+
+	const handlePrimary = useCallback(() => {
+		if (!recipe) return;
+		if (!isStaged) {
+			if (chosenIngredientsLegacy.length === 0) return;
+			dispatch(AlchemyStoreSlice.actions.clearPlayGrid());
+			dispatch(AlchemyStoreSlice.actions.setCurrentRecipe(recipe.id));
+			dispatch(AlchemyStoreSlice.actions.addIngredients(chosenIngredientsLegacy));
+			router.push('/hex/play/alchemy');
+			return;
+		}
+		if (!currentReq || !canProceedStaged) return;
+		const batch = ingredientsFromInventorySelection(selectedKeys, inventoryItems, rawIngredients);
+		const consumption = collectConsumptionFromKeys(selectedKeys);
+		setConsumedRawIds((prev) => {
+			const n = new Set(prev);
+			consumption.rawIds.forEach((id) => n.add(id));
+			return n;
+		});
+		setConsumedCraftedIndices((prev) => {
+			const n = new Set(prev);
+			consumption.craftedIndices.forEach((idx) => n.add(idx));
+			return n;
+		});
+		setSelectedKeys(new Set());
+		const isLast = stageIndex + 1 >= requiredList.length;
+		if (isLast) {
+			const allIngredients = [...committedBatches.flat(), ...batch];
+			dispatch(AlchemyStoreSlice.actions.clearPlayGrid());
+			dispatch(AlchemyStoreSlice.actions.setCurrentRecipe(recipe.id));
+			dispatch(AlchemyStoreSlice.actions.addIngredients(allIngredients));
+			router.push('/hex/play/alchemy');
+		} else {
+			setCommittedBatches((prev) => [...prev, batch]);
+			setConsumptionLog((prev) => [...prev, consumption]);
+			setStageIndex((i) => i + 1);
+		}
+	}, [
+		recipe,
+		isStaged,
+		currentReq,
+		canProceedStaged,
+		chosenIngredientsLegacy,
+		selectedKeys,
+		inventoryItems,
+		rawIngredients,
+		committedBatches,
+		stageIndex,
+		requiredList.length,
+		dispatch,
+		router,
+	]);
+
+	const handleBack = useCallback(() => {
+		if (!isStaged || stageIndex === 0) {
+			router.push('/hex/play/alchemy/selectRecipe');
+			return;
+		}
+		const last = consumptionLog[consumptionLog.length - 1];
+		if (!last) {
+			router.push('/hex/play/alchemy/selectRecipe');
+			return;
+		}
+		setCommittedBatches((prev) => prev.slice(0, -1));
+		setConsumptionLog((prev) => prev.slice(0, -1));
+		setConsumedRawIds((prev) => {
+			const n = new Set(prev);
+			last.rawIds.forEach((id) => n.delete(id));
+			return n;
+		});
+		setConsumedCraftedIndices((prev) => {
+			const n = new Set(prev);
+			last.craftedIndices.forEach((idx) => n.delete(idx));
+			return n;
+		});
+		setStageIndex((i) => i - 1);
+		setSelectedKeys(new Set());
+	}, [isStaged, stageIndex, consumptionLog, router]);
+
+	const primaryDisabled = isStaged ? !canProceedStaged : !canProceedLegacy;
+
+	const primaryLabel =
+		isStaged && stageIndex + 1 < requiredList.length ? 'Next requirement' : 'Continue to lab';
 
 	if (!recipeId || !recipe) {
 		return (
@@ -67,52 +273,59 @@ function SelectIngredientsInner() {
 					Recipe: <strong>{recipe.description}</strong> ({recipe.id})
 				</p>
 			</header>
-			<p className="alchemy-setup-hint">Select one or more ingredient bases to bring to the lab.</p>
-			<ul className="alchemy-ingredient-pick-list">
-				{BASE_KEYS.map((key) => {
-					const base = IngedientBases[key];
-					const checked = selectedKeys.has(key);
-					return (
-						<li key={key}>
-							<label className="alchemy-ingredient-pick-row">
-								<input
-									type="checkbox"
-									checked={checked}
-									onChange={() => toggleKey(key)}
-								/>
-								<span>{base.name}</span>
-							</label>
-						</li>
-					);
-				})}
-			</ul>
+			{isStaged && currentReq && (
+				<p className="alchemy-setup-hint">
+					Stage {stageIndex + 1} of {requiredList.length}:{' '}
+					<strong>{formatRequiredIngredientEntry(currentReq)}</strong>
+					{needForStage > 1 ? ` — pick ${needForStage} (stacked counts as separate selections).` : ''}
+				</p>
+			)}
+			{!isStaged && (
+				<p className="alchemy-setup-hint">
+					Choose raw materials or crafted items from your inventory. Crafted items add the ingredients they were
+					made from.
+				</p>
+			)}
+			{!hasAnythingInInventory ? (
+				<p className="alchemy-setup-lead">
+					Your inventory is empty. Gather ingredients on the{' '}
+					<Link href="/hex/map" className="alchemy-setup-link">
+						map
+					</Link>{' '}
+					first.
+				</p>
+			) : isStaged && !hasAnythingInStage ? (
+				<p className="alchemy-setup-lead alchemy-required-list--missing">
+					Nothing left in your inventory matches this requirement. Gather more or finish other stages first.
+				</p>
+			) : (
+				<InventoryDisplay
+					inventoryItems={stageInventory.craftedItems}
+					ingredients={stageInventory.ingredients}
+					hideFiltering={true}
+					hideSorting={true}
+					hideSubFiltering={true}
+					hideSubSorting={true}
+					selectable={true}
+					selectedKeys={selectedKeys}
+					onToggleKey={toggleKey}
+					showTitle={false}
+					getCraftedRowKey={stageInventory.getCraftedRowKey}
+				/>
+			)}
 			<div className="alchemy-setup-actions">
 				<button
 					type="button"
 					className="alchemy-setup-primary"
-					disabled={selectedKeys.size === 0}
-					onClick={onContinue}
+					disabled={primaryDisabled || (isStaged && !hasAnythingInStage)}
+					onClick={handlePrimary}
 				>
-					Continue
+					{isStaged ? primaryLabel : 'Continue'}
 				</button>
-				<Link href="/hex/play/alchemy/selectRecipe" className="alchemy-setup-secondary">
+				<button type="button" className="alchemy-setup-secondary" onClick={handleBack}>
 					Back
-				</Link>
+				</button>
 			</div>
 		</div>
-	);
-}
-
-export default function SelectIngredientsPage() {
-	return (
-		<Suspense
-			fallback={
-				<div className="alchemy-setup-flow">
-					<p className="alchemy-setup-lead">Loading…</p>
-				</div>
-			}
-		>
-			<SelectIngredientsInner />
-		</Suspense>
 	);
 }

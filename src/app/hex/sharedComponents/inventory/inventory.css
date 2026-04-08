@@ -35,3 +35,22 @@
 	flex-direction: column;
 	gap: 0;
 }
+
+.inventory-select-row {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+	gap: 10px;
+	cursor: pointer;
+}
+
+.inventory-select-row > input {
+	margin-top: 10px;
+	flex-shrink: 0;
+}
+
+.inventory-select-row-body {
+	flex: 1;
+	min-width: 0;
+	display: block;
+}
