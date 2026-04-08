@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { RootState } from "@/store/store";
 import AlchemyStoreSlice from '@/store/features/alchemySlice';
 import PlayerStoreSlice from '@/store/features/playerSlice';
+import ToastifyStore from '@/store/features/toastifySlice';
 import HistoryStoreSlice from '@/store/features/historySlice';
 import { AlchComponent, Ingredient, Item } from '@/app/hex/architecture/typings';	
 import { AlchHexGrid } from '@/app/hex/sharedComponents/hex/hexGrid';
@@ -129,6 +130,7 @@ export default function Page() {
 			ingredients: structuredClone(ingredients),
 		};
 		dispatch(PlayerStoreSlice.actions.completeCraft({ item }));
+		dispatch(ToastifyStore.actions.showToast({ message: item.name }));
 		dispatch(
 			HistoryStoreSlice.actions.recordCompletedCraft({
 				item,

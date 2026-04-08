@@ -8,6 +8,8 @@ import { initialPlayerState } from '@/store/features/playerSlice'
 import History from '@/store/features/historySlice'
 import type { CompletedCraftSnapshot, PersistedHistoryState } from '@/store/features/historySlice'
 import { initialHistoryState } from '@/store/features/historySlice'
+import Toastify from '@/store/features/toastifySlice'
+import { initialToastifyState } from '@/store/features/toastifySlice'
 
 export const ALCHEMY_STORAGE_KEY = 'frontendeavor-alchemy-v1'
 export const PLAYER_STORAGE_KEY = 'frontendeavor-player-v1'
@@ -113,6 +115,7 @@ const preloadedState = {
 				}
 			: initialPlayerState,
 	History: buildHistoryState(),
+	Toastify: initialToastifyState,
 }
 
 export const store = configureStore({
@@ -120,6 +123,7 @@ export const store = configureStore({
 		Alchemy: Alchemy.reducer,
 		Player: Player.reducer,
 		History: History.reducer,
+		Toastify: Toastify.reducer,
 	},
 	preloadedState,
 })

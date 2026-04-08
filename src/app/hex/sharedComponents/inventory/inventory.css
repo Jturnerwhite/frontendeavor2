@@ -3,6 +3,13 @@
 	color: #e8dcc8;
 }
 
+.inventory-display-items {
+	max-height: calc(100vh - 150px);
+	overflow-y: auto;
+	padding-right: 18px;
+	margin-right: -18px;
+}
+
 .inventory-display h1 {
 	font-size: 1.35rem;
 	font-weight: 600;
@@ -17,7 +24,10 @@
 	text-transform: uppercase;
 	letter-spacing: 0.06em;
 	color: rgba(232, 220, 200, 0.5);
-	margin: 8px 0;
+	border-bottom: 1px solid black;
+	margin: 12px 0;
+
+	text-align: center;
 }
 
 .inventory-display > div:last-child {

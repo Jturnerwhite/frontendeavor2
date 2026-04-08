@@ -14,13 +14,24 @@ interface InventoryProps {
 }
 
 const InventoryDisplay: React.FC<InventoryProps> = ({ inventoryItems, ingredients, hideFiltering = false, hideSorting = false, hideSubFiltering = false, hideSubSorting = false }) => {
+	const DISPLAY_SIZE = 25;
 	function renderInventoryItems(): JSX.Element[] {
 		let output:JSX.Element[] = [];
 		output.push(...inventoryItems.map((item, index) => {
-			return <ComplexInventoryItem item={item} key={item.name + "-" + index} hideFiltering={hideSubFiltering} hideSorting={hideSubSorting} />;
+			return <ComplexInventoryItem 
+				key={item.name + "-" + index} 
+				item={item} 
+				hideFiltering={hideSubFiltering} 
+				hideSorting={hideSubSorting} 
+				displaySize={DISPLAY_SIZE} />;
 		}));
 		output.push(...ingredients.map((ingredient, index) => {
-			return <ComplexInventoryItem ingredient={ingredient} key={ingredient.id + "-" + index} hideFiltering={hideSubFiltering} hideSorting={hideSubSorting} />;
+			return <ComplexInventoryItem 
+				key={ingredient.id + "-" + index} 
+				ingredient={ingredient} 
+				hideFiltering={hideSubFiltering} 
+				hideSorting={hideSubSorting} 
+				displaySize={DISPLAY_SIZE} />;
 		}));
 		return output;
 	}
@@ -29,7 +40,7 @@ const InventoryDisplay: React.FC<InventoryProps> = ({ inventoryItems, ingredient
 		<h1>Inventory</h1>
 		{!hideFiltering && <div><h2>Filtering</h2></div>}
 		{!hideSorting && <div><h2>Sorting</h2></div>}
-		<div>
+		<div className="inventory-display-items">
 			{renderInventoryItems()}
 		</div>
 	</div>;

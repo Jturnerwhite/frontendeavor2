@@ -5,6 +5,7 @@ import localFont from "next/font/local";
 import { Provider } from "react-redux";
 import { store } from "@/store/store";
 import { AlchemyRehydrate } from "@/store/alchemyRehydrate";
+import { ToastifyBridge } from "@/store/toastifyBridge";
 import { AlchemicalElements, type AlchEleData } from "@/app/hex/architecture/data/elements";
 import type { ALCH_ELEMENT } from "@/app/hex/architecture/enums";
 import "./globals.css";
@@ -41,6 +42,7 @@ function Providers({ children }: { children: React.ReactNode }) {
 	return (
 		<Provider store={store}>
 			<AlchemyRehydrate />
+			<ToastifyBridge />
 			{children}
 		</Provider>
 	);

@@ -9,6 +9,8 @@ import { HexGrid } from '@/app/hex/sharedComponents/hex/hexGrid';
 import InventoryDisplay from '@/app/hex/sharedComponents/inventory/inventory';
 import { RootState } from '@/store/store';
 import PlayerStoreSlice from '@/store/features/playerSlice';
+import ToastifyStore from '@/store/features/toastifySlice';
+import { GatherIngredientsInBiome } from '@/app/hex/architecture/helpers/mapHelpers';
 import '@/app/hex/map/map.css';
 
 export default function MapPage() {
@@ -46,8 +48,12 @@ export default function MapPage() {
 
 	function hexClick(hex: HexTile) {
 		const content = mapContents.find((content) => content.tileIndexes.includes(hex.index));
-		if(content !== undefined && content.biome !== null) {
-			dispatch(PlayerStoreSlice.actions.gatherInBiome({ biome: content.biome, count: 1 }));
+		if (content !== undefined && content.biome !== null) {
+			const ingredients = GatherIngredientsInBiome(content.biome, 1);
+			dispatch(PlayerStoreSlice.actions.addGatheredIngredients({ ingredients }));
+			ingredients.forEach((ing) => {
+				dispatch(ToastifyStore.actions.showToast({ message: "Gathered " + ing.base.name }));
+			});
 		}
 	}
 
@@ -100,7 +106,7 @@ export default function MapPage() {
 				hideFiltering={false} 
 				hideSorting={false} 
 				hideSubFiltering={false} 
-				hideSubSorting={false} />
+				hideSubSorting={false}/>
 		</aside>
 		<main className="map-main-panel" onContextMenu={(e: React.MouseEvent) => {}}>
 			{hexMap && (
