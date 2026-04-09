@@ -1,6 +1,6 @@
 
 import { Ingredient, MapBiome } from "@/app/hex/architecture/typings";
-import { CreateIngredient } from "./alchHelpers";
+import { CreateIngredient } from '@/app/hex/architecture/factories/ingredientFactory';
 
 export function GatherIngredientsInBiome(biome: MapBiome, count: number) {
 	const ingredients: Ingredient[] = [];

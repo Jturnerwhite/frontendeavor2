@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from "react";
 import { AlchComponent, Ingredient, IngredientBase, IngredientCompSpec, Item } from "@/app/hex/architecture/typings";
+import { IngedientBases } from "@/app/hex/architecture/data/ingedientBases";
 import AlchCompWithBacking from "@/app/hex/sharedComponents/alchComponent/alchCompWithBacking";
 import './itemDisplay.css';
 
@@ -36,11 +37,11 @@ const InventoryLineItem: React.FC<InventoryLineItemProps> = ({ item, ingredient,
 		comps = item.comps;
 	} else if(ingredient) {
 		key = ingredient.id;
-		name = ingredient.base.name;
-		types = ingredient.base.types;
+		name = IngedientBases[ingredient.baseIngId].name;
+		types = IngedientBases[ingredient.baseIngId].types;
 		comps = ingredient.comps;
 	} else if(ingredientBase) {
-		key = ingredientBase.name;
+		key = ingredientBase.id;
 		name = ingredientBase.name;
 		types = ingredientBase.types;
 		possibleComps = ingredientBase.possibleComps;
@@ -109,19 +110,29 @@ const ComplexInventoryItem: React.FC<ComplexInventoryItemProps> = ({ item, ingre
 		types = item.types;
 	} else if(ingredient) {
 		key = ingredient.id;
-		name = ingredient.base.name;
-		types = ingredient.base.types;
+		name = IngedientBases[ingredient.baseIngId].name;
+		types = IngedientBases[ingredient.baseIngId].types;
 	} else if(ingredientBase) {
 		key = ingredientBase.name;
 		name = ingredientBase.name;
 		types = ingredientBase.types;
 	}
 
+	let image = '';
+	if(ingredientBase) {
+		image = ingredientBase.image ?? "";
+	} else if(ingredient) {
+		image = IngedientBases[ingredient.baseIngId].image ?? "";
+		//image = ingredient.image ?? "";
+	} else if(item) {
+		//image = item.image ?? "";
+	}
+
 	return (
 		<div className="item-display-complex">
 			<div className="item-display-complex-row">
 				<div className="item-display-complex-icon" aria-hidden>
-					Icon
+					{ image && (<img src={image} alt={name} />) }
 				</div>
 				<div className="item-display-complex-main">
 					<div className="item-display-complex-text">

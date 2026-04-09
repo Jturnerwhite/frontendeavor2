@@ -11,8 +11,9 @@ import { RootState } from '@/store/store';
 import PlayerStoreSlice from '@/store/features/playerSlice';
 import ToastifyStore from '@/store/features/toastifySlice';
 import { GatherIngredientsInBiome } from '@/app/hex/architecture/helpers/mapHelpers';
-import '@/app/hex/map/map.css';
+import { IngedientBases } from '@/app/hex/architecture/data/ingedientBases';
 import MapFog from './components/mapFog';
+import '@/app/hex/map/map.css';
 
 export default function MapPage() {
 	const dispatch = useDispatch();
@@ -50,7 +51,7 @@ export default function MapPage() {
 
 			dispatch(PlayerStoreSlice.actions.addGatheredIngredients({ ingredients }));
 			ingredients.forEach((ing) => {
-				dispatch(ToastifyStore.actions.showToast({ message: "Gathered " + ing.base.name }));
+				dispatch(ToastifyStore.actions.showToast({ message: "Gathered " + IngedientBases[ing.baseIngId].name + " (Quality: " + ing.quality + "%)" }));
 			});
 		}
 	}

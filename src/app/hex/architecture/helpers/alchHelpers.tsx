@@ -1,6 +1,6 @@
 import { HexMap, HexTile, LinkedComponents, PlacedComponent, Position } from "@/app/hex/architecture/interfaces";
 import { getHexNeighborStep } from "./svgHelpers";
-import { Ingredient, IngredientBase, IngredientCompSpec, AlchComponent, Recipe, RecipeElementScore, RecipeResultingComponent } from "../typings";
+import { IngredientCompSpec, AlchComponent, Recipe, RecipeElementScore, RecipeResultingComponent } from "../typings";
 import { ALCH_ELEMENT, COMPONENT_SHAPE_VALUES } from "../enums";
 
 let tempIdSeq = 0;
@@ -242,44 +242,6 @@ function GetLinks(hexMap: HexMap, placedComponent: PlacedComponent):Array<Linked
 	return links;
 }
 
-function CreateIngredient(ingBase:IngredientBase):Ingredient {
-	let newIng = {
-		id: GenerateTempId(),
-		base:ingBase,
-		comps: [],
-	} as Ingredient;
-	ingBase.possibleComps.forEach((compSpec, index) => {
-		let newComp = null as AlchComponent|null;
-		//compSpec.linkSpots = [1,1,1,1,1,1,1]; for debugging
-
-		if ('possibleShapes' in compSpec) { // It's an IngredientCompSpec
-			if(compSpec.chance == undefined || compSpec.chance > 0 || ((Math.random() * 100) <= compSpec.chance)) {
-				const shapeIndex = Math.floor(Math.random() * compSpec.possibleShapes.length);
-				newComp = {
-					id: GenerateTempId(),
-					element: compSpec.element,
-					shape: compSpec.possibleShapes[shapeIndex],
-					linkSpots:  compSpec.linkSpots ? Object.values(COMPONENT_SHAPE_VALUES[compSpec.possibleShapes[shapeIndex]]).map((a, i) => a & compSpec.linkSpots![i]) : undefined,
-					sourceIngredientId: newIng.id,
-					ingredientIndex: index
-				};
-				newIng.comps.push(newComp);
-			}
-		} else { // It's already an AlchComponent
-			newComp = {
-				element: compSpec.element,
-				shape: compSpec.shape,
-				linkSpots: compSpec.linkSpots ? compSpec.linkSpots.slice() : undefined,
-				sourceIngredientId: newIng.id,
-				ingredientIndex: index
-			};
-			newIng.comps.push(newComp);
-		}
-	});
-
-	return newIng;
-}
-
 function CompilePlacedComponent(hexMap: HexMap, centerHex:HexTile, position:Position, rotation:number, comp:AlchComponent):PlacedComponent {
 	const newPlacedComponent:PlacedComponent = {
 		comp: comp,
@@ -368,7 +330,6 @@ export {
 	CalculateQuality,
 	CompilePlacedComponent,
 	CreateHexGrid,
-	CreateIngredient,
 	GenerateTempId,
 	GetApothem,
 	GetHexId,

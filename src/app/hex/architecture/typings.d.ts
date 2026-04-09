@@ -24,14 +24,17 @@ export type IngredientCompSpec = {
 }
 
 export type IngredientBase = {
+	id: string,
 	name: string,
+	image?: string,
 	types: ITEM_TAG[]
 	possibleComps: Array<IngredientCompSpec|AlchComponent>
 }
 
 export type Ingredient = {
 	id: string,
-	base: IngredientBase
+	baseIngId: string,
+	quality: number,
 	comps: AlchComponent[],
 }
 

@@ -197,7 +197,7 @@ export default function Page() {
 				{ingredients.length > 0 &&
 					ingredients.map((ingredient: Ingredient, index: number) => (
 						<IngredientDisplay
-							key={ingredient.base.name + '-' + index}
+							key={ingredient.baseIngId + '-' + index}
 							ingredient={ingredient}
 							displaySize={20}
 							usePlaceable={true}

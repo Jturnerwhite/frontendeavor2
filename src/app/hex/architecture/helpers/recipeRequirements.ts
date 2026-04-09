@@ -5,6 +5,7 @@ import type {
 	Item,
 	RecipeRequiredIngredient,
 } from '@/app/hex/architecture/typings';
+import { IngedientBases } from '@/app/hex/architecture/data/ingedientBases';
 
 export function isIngredientBaseRef(t: IngredientBase | ITEM_TAG): t is IngredientBase {
 	return typeof t === 'object' && t !== null && 'name' in t;
@@ -29,15 +30,15 @@ export function playerMeetsRequirement(
 ): boolean {
 	const need = req.qty ?? 1;
 	if (isIngredientBaseRef(req.type)) {
-		const baseName = req.type.name;
-		const count = rawIngredients.filter((i) => i.base.name === baseName).length;
+		const baseName = req.type.id;
+		const count = rawIngredients.filter((i) => i.baseIngId === baseName).length;
 		return count >= need;
 	}
 	const tag = req.type as ITEM_TAG;
 	let count = inventoryItems.filter(
 		(i) => i.types.includes(tag) && (req.quality == null || i.quality >= req.quality),
 	).length;
-	count += rawIngredients.filter((i) => i.base.types.includes(tag) && req.quality == null).length;
+	count += rawIngredients.filter((i) => IngedientBases[i.baseIngId].types.includes(tag) && req.quality == null).length;
 	return count >= need;
 }
 
@@ -53,7 +54,7 @@ export function getInventoryForRequirement(
 ): { ingredients: Ingredient[]; craftedEntries: CraftedWithIndex[] } {
 	if (isIngredientBaseRef(req.type)) {
 		const base = req.type;
-		const ingredients = raw.filter((i) => i.base.name === base.name);
+		const ingredients = raw.filter((i) => i.baseIngId === base.id);
 		return { ingredients, craftedEntries: [] };
 	}
 	const tag = req.type as ITEM_TAG;
@@ -64,7 +65,7 @@ export function getInventoryForRequirement(
 				item.types.includes(tag) && (req.quality == null || item.quality >= req.quality),
 		);
 	const ingredients =
-		req.quality == null ? raw.filter((i) => i.base.types.includes(tag)) : [];
+		req.quality == null ? raw.filter((i) => IngedientBases[i.baseIngId].types.includes(tag)) : [];
 	return { ingredients, craftedEntries };
 }
 

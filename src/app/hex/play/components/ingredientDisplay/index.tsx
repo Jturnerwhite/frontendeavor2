@@ -5,6 +5,7 @@ import { AlchHexGrid } from '@/app/hex/sharedComponents/hex/hexGrid';
 import { AlchComponent, Ingredient } from '@/app/hex/architecture/typings';
 import { AlchComponentDisplay, PlaceableAlchComponent } from '@/app/hex/sharedComponents/alchComponent';
 import AlchCompWithBacking from '@/app/hex/sharedComponents/alchComponent/alchCompWithBacking';
+import { IngedientBases } from '@/app/hex/architecture/data/ingedientBases';
 import './ingredient-display.css';
 
 interface IngredientDisplayProps {
@@ -24,8 +25,8 @@ const IngredientDisplay: React.FC<IngredientDisplayProps> = ({
 		return ingredient.comps.map((comp, compIndex) => {
 			const placed = compPlaced.length > 0 ? compPlaced[compIndex] : false;
 			return (<AlchCompWithBacking 
-				key={'parent' + ingredient.base.name + '-' + compIndex}
-				keyString={ingredient.base.name + '-' + compIndex} 
+				key={'parent' + ingredient.baseIngId + '-' + compIndex}
+				keyString={ingredient.baseIngId + '-' + compIndex} 
 				additionalClassString={placed ? 'placed' : ''}
 				alchData={comp} 
 				displaySize={displaySize} 
@@ -35,9 +36,9 @@ const IngredientDisplay: React.FC<IngredientDisplayProps> = ({
 
 	return (
 		<div className="ingredient-display">
-			<label>{ingredient.base.name}</label>
+			<label>{ingredient.baseIngId}</label>
 			<hr className="ingredient-display-separator" />
-			<div>{ingredient.base.types.map((type) => <small key={ingredient.base.name + '-' + type}>{type} </small>)}</div>
+			<div>{IngedientBases[ingredient.baseIngId].types.map((type) => <small key={ingredient.baseIngId + '-' + type}>{type} </small>)}</div>
 			<div className="ingredient-display-comps">
 				{getComps()}
 			</div>
