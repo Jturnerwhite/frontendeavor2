@@ -19,13 +19,13 @@ export type AlchComponent = {
 export type IngredientCompSpec = {
 	element: ALCH_ELEMENT,
 	possibleShapes: Array<SHAPE_NAME>,
-	linkSpots?: number[],
 	chance?: number // If not defined, assumed to be 100%
 }
 
 export type IngredientBase = {
 	id: string,
 	name: string,
+	ingTier: number, // A metric for identifying better ingredients, affects comp creation / link generation
 	image?: string,
 	types: ITEM_TAG[]
 	possibleComps: Array<IngredientCompSpec|AlchComponent>

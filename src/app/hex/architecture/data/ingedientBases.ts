@@ -6,6 +6,7 @@ export const IngedientBases:Record<string, IngredientBase> = {
 	JarbaLeaf: {
 		id: "JarbaLeaf",
 		name: "Jarba Leaf",
+		ingTier: 0,
 		image: IMAGE_PATH + "jarba.png",
 		types: [ITEM_TAG.NATURAL, ITEM_TAG.PLANT],
 		possibleComps: [
@@ -29,6 +30,7 @@ export const IngedientBases:Record<string, IngredientBase> = {
 	FruguBerry: {
 		id: "FruguBerry",
 		name: "Frugu Berry",
+		ingTier: 0,
 		image: IMAGE_PATH + "frugu.png",
 		types: [ITEM_TAG.NATURAL, ITEM_TAG.PLANT],
 		possibleComps: [
@@ -50,6 +52,7 @@ export const IngedientBases:Record<string, IngredientBase> = {
 	AeridGrass: {
 		id: "AeridGrass",
 		name: "Aerid Grass",
+		ingTier: 0,
 		image: IMAGE_PATH + "aerid.png",
 		types: [ITEM_TAG.NATURAL, ITEM_TAG.PLANT],
 		possibleComps: [
@@ -72,6 +75,7 @@ export const IngedientBases:Record<string, IngredientBase> = {
 	Pinecap: {
 		id: "Pinecap",
 		name: "Pinecap",
+		ingTier: 0,
 		image: IMAGE_PATH + "pinecap.png",
 		types: [ITEM_TAG.NATURAL, ITEM_TAG.PLANT],
 		possibleComps: [
@@ -93,6 +97,7 @@ export const IngedientBases:Record<string, IngredientBase> = {
 	CragLichen: {
 		id: "CragLichen",
 		name: "Crag Lichen",
+		ingTier: 0,
 		image: IMAGE_PATH + "crag.png",
 		types: [ITEM_TAG.NATURAL, ITEM_TAG.PLANT],
 		possibleComps: [
@@ -114,6 +119,7 @@ export const IngedientBases:Record<string, IngredientBase> = {
 	Sunpetal: {
 		id: "Sunpetal",
 		name: "Sunpetal",
+		ingTier: 0,
 		image: IMAGE_PATH + "sunpetal.png",
 		types: [ITEM_TAG.NATURAL, ITEM_TAG.PLANT, ITEM_TAG.MAGICAL],
 		possibleComps: [
