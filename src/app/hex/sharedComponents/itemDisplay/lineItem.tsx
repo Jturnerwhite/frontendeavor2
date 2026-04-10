@@ -171,7 +171,7 @@ const ComplexInventoryItem: React.FC<ComplexInventoryItemProps> = ({ items, disp
 					</div>
 					<div className="item-display-complex-types">
 						<label>{types.join(', ')}</label>
-						<label>{items.length}x</label>
+						{items.length > 1 && (<label className="item-display-complex-count">Qty: {items.length}</label>)}
 					</div>
 				</div>
 				<div className="item-display-complex-end" aria-hidden>

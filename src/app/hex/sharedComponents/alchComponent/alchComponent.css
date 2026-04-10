@@ -73,6 +73,7 @@
 
 .alch-comp-with-backing {
 	background-color: var(--misc-container);
+	box-shadow: 3px 3px 6px #2c1f1475, inset 2px 2px 4px #ffffff7d;
 	border-radius: 8px;
 }
 

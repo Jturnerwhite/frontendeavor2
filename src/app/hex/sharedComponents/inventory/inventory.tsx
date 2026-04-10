@@ -60,22 +60,53 @@ const InventoryDisplay: React.FC<InventoryProps> = ({
 
 	function renderInventoryItems(): JSX.Element[] {
 		const output: JSX.Element[] = [];
+
+		// Selection (e.g. alchemy ingredient stages) needs one row per stack slot with keys that
+		// match `ingredient.id` and `crafted:${globalIndex}` — not grouped `ING:baseId` keys.
+		if (canSelect) {
+			inventoryItems.forEach((item, index) => {
+				const rowKey = getCraftedRowKey ? getCraftedRowKey(item, index) : craftedRowKey(index);
+				const inner = (
+					<ComplexInventoryItem
+						key={item.name + '-' + index}
+						items={[item]}
+						displaySize={DISPLAY_SIZE}
+						hideFiltering={hideSubFiltering}
+						hideSorting={hideSubSorting}
+					/>
+				);
+				output.push(wrapRow(rowKey, inner));
+			});
+			ingredients.forEach((ingredient, index) => {
+				const inner = (
+					<ComplexInventoryItem
+						key={ingredient.id + '-' + index}
+						items={[ingredient]}
+						displaySize={DISPLAY_SIZE}
+						hideFiltering={hideSubFiltering}
+						hideSorting={hideSubSorting}
+					/>
+				);
+				output.push(wrapRow(ingredient.id, inner));
+			});
+			return output;
+		}
+
 		const allItems = [...inventoryItems, ...ingredients];
 
 		const groupedItems = Object.groupBy(allItems, (item) => {
-			if("baseRecipeId" in item && item.baseRecipeId !== undefined) {
-				return "BRI:"+item.baseRecipeId;
-			} else if("baseIngId" in item && item.baseIngId !== undefined) {
-				return "ING:"+item.baseIngId;
+			if ("baseRecipeId" in item && item.baseRecipeId !== undefined) {
+				return "BRI:" + item.baseRecipeId;
+			} else if ("baseIngId" in item && item.baseIngId !== undefined) {
+				return "ING:" + item.baseIngId;
 			} else if ("ingTier" in item && item.ingTier !== undefined) {
-				return "INGB:"+item.ingTier;
+				return "INGB:" + item.ingTier;
 			} else {
 				return "UNK";
-				//return "REC:"+(item as Recipe).id;
 			}
 		});
 
-		Object.keys(groupedItems).forEach((objKey, index) => {
+		Object.keys(groupedItems).forEach((objKey) => {
 			const inner = (
 				<ComplexInventoryItem
 					key={objKey}
@@ -88,36 +119,6 @@ const InventoryDisplay: React.FC<InventoryProps> = ({
 			output.push(wrapRow(objKey, inner));
 		});
 
-		console.log(output);
-		//output.push(wrapRow(rowKey, inner));
-		/*
-		inventoryItems.forEach((item, index) => {
-			const key = item.name + '-' + index;
-			const rowKey = getCraftedRowKey ? getCraftedRowKey(item, index) : craftedRowKey(index);
-			const inner = (
-				<ComplexInventoryItem
-					key={key}
-					item={item}
-					hideFiltering={hideSubFiltering}
-					hideSorting={hideSubSorting}
-					displaySize={DISPLAY_SIZE}
-				/>
-			);
-			output.push(wrapRow(rowKey, inner));
-		});
-		ingredients.forEach((ingredient, index) => {
-			const inner = (
-				<ComplexInventoryItem
-					key={ingredient.id + '-' + index}
-					ingredient={ingredient}
-					hideFiltering={hideSubFiltering}
-					hideSorting={hideSubSorting}
-					displaySize={DISPLAY_SIZE}
-				/>
-			);
-			output.push(wrapRow(ingredient.id, inner));
-		});
-		*/
 		return output;
 	}
 

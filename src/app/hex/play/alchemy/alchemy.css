@@ -145,6 +145,8 @@
 	margin: 0 0 8px;
 	font-size: 1.75rem;
 	color: var(--alchemy-parchment);
+	justify-content: center;
+	text-align: center;
 }
 
 .alchemy-setup-lead {
@@ -160,7 +162,6 @@
 	font-size: 0.9rem;
 }
 
-/* Select recipe: two-column picker + detail (Ryza-style) */
 .alchemy-select-recipe-page {
 	max-width: 960px;
 }

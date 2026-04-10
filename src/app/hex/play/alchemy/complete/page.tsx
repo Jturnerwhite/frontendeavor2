@@ -29,9 +29,6 @@ export default function AlchemyCompletePage() {
 		<div className="alchemy-setup-flow">
 			<header className="alchemy-setup-header">
 				<h1>Craft complete</h1>
-				<p className="alchemy-setup-lead">
-					<strong>{item.name}</strong> — quality <strong>{item.quality}</strong>
-				</p>
 			</header>
 			<div className="alchemy-complete-recipe-wrap">
 				<RecipeDisplay

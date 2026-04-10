@@ -68,6 +68,9 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({recipe, quality, currentEl
 			<div className="recipe-display-header">
 				<h1>{recipe.description}</h1>
 			</div>
+			<div className="recipe-display-image">
+				{recipe.image && (<img src={recipe.image} alt={recipe.description} />)}
+			</div>
 			<div className="resulting-comps">
 				{getResultingComponents()}
 			</div>
