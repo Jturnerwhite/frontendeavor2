@@ -11,14 +11,14 @@ export const Recipes:Array<Recipe> = [
 		image: IMAGE_PATH + 'hp.png',
 		types: [ITEM_TAG.LIQUID, ITEM_TAG.MAGICAL],
 		elementScores: [
-			{ element: ALCH_ELEMENT.WATER, softCap: 2, cap: 5 },
-			{ element: ALCH_ELEMENT.FIRE, softCap: 1, cap: 6 },
-			{ element: ALCH_ELEMENT.WIND, softCap: 3, cap: 5 },
+			{ element: ALCH_ELEMENT.WATER, softCap: 3, cap: 8 },
+			{ element: ALCH_ELEMENT.EARTH, softCap: 3, cap: 8 },
+			{ element: ALCH_ELEMENT.WIND, softCap: 3, cap: 8 },
 		],
 		requiredIngredients: [
-			{ type: IngredientBases['JarbaLeaf'] },
+			{ type: IngredientBases['Pinecap'] },
 			{ type: IngredientBases['FruguBerry'] },
-			{ type: IngredientBases['AeridGrass'] },
+			{ type: IngredientBases['CragLichen'] },
 		],
 		resultingComponents: [
 			[
@@ -31,31 +31,31 @@ export const Recipes:Array<Recipe> = [
 					element: ALCH_ELEMENT.WATER, 
 					shape: SHAPE_NAME.HALFLINE,
 					linkSpots: [1, 0, 0, 0, 0, 0, 0],
-					scoreRequirement: 3,
+					scoreRequirement: 4,
 				},
 				{ 
 					element: ALCH_ELEMENT.WATER, 
 					shape: SHAPE_NAME.LINE,
 					linkSpots: [1, 0, 0, 0, 0, 0, 0],
-					scoreRequirement: 5,
+					scoreRequirement: 8,
 				},
 			],
 			[
 				{ 
-					element: ALCH_ELEMENT.FIRE, 
+					element: ALCH_ELEMENT.EARTH, 
 					shape: SHAPE_NAME.DOT,
 					scoreRequirement: 1,
 				},
 				{ 
-					element: ALCH_ELEMENT.FIRE, 
+					element: ALCH_ELEMENT.EARTH, 
 					shape: SHAPE_NAME.HALFLINE,
-					scoreRequirement: 3,
+					scoreRequirement: 4,
 				},
 				{ 
-					element: ALCH_ELEMENT.FIRE, 
+					element: ALCH_ELEMENT.EARTH, 
 					shape: SHAPE_NAME.TRIANGLE,
 					linkSpots: [1, 0, 0, 0, 0, 0, 0],
-					scoreRequirement: 6,
+					scoreRequirement: 8,
 				},
 			],
 			[
@@ -69,13 +69,13 @@ export const Recipes:Array<Recipe> = [
 					element: ALCH_ELEMENT.WIND, 
 					shape: SHAPE_NAME.HALFLINE,
 					linkSpots: [1, 0, 0, 0, 0, 0, 0],
-					scoreRequirement: 3,
+					scoreRequirement: 4,
 				},
 				{ 
 					element: ALCH_ELEMENT.WIND, 
 					shape: SHAPE_NAME.OBTUSE,
 					linkSpots: [0, 0, 1, 0, 0, 0, 0],
-					scoreRequirement: 5,
+					scoreRequirement: 8,
 				},
 			]
 		],
@@ -96,15 +96,75 @@ export const Recipes:Array<Recipe> = [
 		description: 'Mana Potion',
 		types: [ITEM_TAG.LIQUID, ITEM_TAG.MAGICAL],
 		elementScores: [
-			{ element: ALCH_ELEMENT.WATER, softCap: 2, cap: 5 },
-			{ element: ALCH_ELEMENT.FIRE, softCap: 1, cap: 6 },
-			{ element: ALCH_ELEMENT.WIND, softCap: 3, cap: 5 },
+			{ element: ALCH_ELEMENT.WATER, softCap: 4, cap: 10 },
+			{ element: ALCH_ELEMENT.WIND, softCap: 3, cap: 8 },
+			{ element: ALCH_ELEMENT.AETHER, softCap: 3, cap: 10 },
 		],
-		resultingComponents: [],
 		requiredIngredients: [
 			{ type: IngredientBases['FruguBerry'], qty: 2 },
-			{ type: IngredientBases['Pinecap'] },
+			{ type: IngredientBases['AeridGrass'], qty: 2 },
 			{ type: ITEM_TAG.MAGICAL },
+		],
+		resultingComponents: [
+			[
+				{ 
+					element: ALCH_ELEMENT.WATER, 
+					shape: SHAPE_NAME.HALFLINE,
+					scoreRequirement: 1,
+				},
+				{ 
+					element: ALCH_ELEMENT.WATER, 
+					shape: SHAPE_NAME.TRIANGLE,
+					linkSpots: [1, 0, 0, 0, 0, 0, 0],
+					scoreRequirement: 5,
+				},
+				{ 
+					element: ALCH_ELEMENT.WATER, 
+					shape: SHAPE_NAME.DIAMOND,
+					linkSpots: [1, 1, 0, 0, 0, 0, 0],
+					scoreRequirement: 10,
+				},
+			],
+			[
+				{ 
+					element: ALCH_ELEMENT.WIND, 
+					shape: SHAPE_NAME.HALFLINE,
+					linkSpots: [1, 0, 0, 0, 0, 0, 0],
+					scoreRequirement: 1,
+				},
+				{ 
+					element: ALCH_ELEMENT.WIND, 
+					shape: SHAPE_NAME.LINE,
+					linkSpots: [1, 0, 0, 0, 0, 0, 0],
+					scoreRequirement: 4,
+				},
+				{ 
+					element: ALCH_ELEMENT.WIND, 
+					shape: SHAPE_NAME.CLAW,
+					linkSpots: [0, 0, 1, 0, 0, 0, 0],
+					scoreRequirement: 8,
+				},
+			],
+			[
+				{ 
+					element: ALCH_ELEMENT.AETHER, 
+					shape: SHAPE_NAME.OBTUSE,
+					linkSpots: [1, 0, 0, 0, 0, 0, 0],
+					scoreRequirement: 1,
+				},
+				{ 
+					element: ALCH_ELEMENT.AETHER, 
+					shape: SHAPE_NAME.DIAMOND,
+					linkSpots: [1, 0, 0, 0, 0, 0, 0],
+					scoreRequirement: 4,
+				},
+				{ 
+					element: ALCH_ELEMENT.AETHER, 
+					shape: SHAPE_NAME.WAKA,
+					linkSpots: [0, 0, 1, 0, 0, 0, 0],
+					scoreRequirement: 12,
+				},
+			]
 		],
 	}
 ];

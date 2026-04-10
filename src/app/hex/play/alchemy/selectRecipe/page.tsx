@@ -66,7 +66,11 @@ export default function SelectRecipePage() {
 										}
 										onClick={() => setSelectedRecipe(recipe)}
 									>
-										<span className="alchemy-recipe-picker-icon" aria-hidden />
+										<span className="alchemy-recipe-picker-icon" aria-hidden>
+											{recipe.image ? (
+												<img src={recipe.image} alt="" />
+											) : null}
+										</span>
 										<span className="alchemy-recipe-picker-name">{recipe.description}</span>
 									</button>
 								</li>
