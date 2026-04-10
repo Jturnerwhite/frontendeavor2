@@ -1,6 +1,6 @@
 import { ALCH_ELEMENT, ITEM_TAG, SHAPE_NAME } from '@/app/hex/architecture/enums'
 import { Recipe } from '@/app/hex/architecture/typings'
-import { IngedientBases } from './ingedientBases';
+import { IngredientBases } from './ingredientBases';
 
 const IMAGE_PATH = "/art/potions/";
 
@@ -16,9 +16,9 @@ export const Recipes:Array<Recipe> = [
 			{ element: ALCH_ELEMENT.WIND, softCap: 3, cap: 5 },
 		],
 		requiredIngredients: [
-			{ type: IngedientBases['JarbaLeaf'] },
-			{ type: IngedientBases['FruguBerry'] },
-			{ type: IngedientBases['AeridGrass'] },
+			{ type: IngredientBases['JarbaLeaf'] },
+			{ type: IngredientBases['FruguBerry'] },
+			{ type: IngredientBases['AeridGrass'] },
 		],
 		resultingComponents: [
 			[
@@ -99,8 +99,8 @@ export const Recipes:Array<Recipe> = [
 		],
 		resultingComponents: [],
 		requiredIngredients: [
-			{ type: IngedientBases['FruguBerry'], qty: 2 },
-			{ type: IngedientBases['Pinecap'] },
+			{ type: IngredientBases['FruguBerry'], qty: 2 },
+			{ type: IngredientBases['Pinecap'] },
 			{ type: ITEM_TAG.MAGICAL },
 		],
 	}

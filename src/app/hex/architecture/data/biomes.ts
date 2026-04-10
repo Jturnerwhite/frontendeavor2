@@ -1,6 +1,6 @@
 import { MAP_TERRAIN } from "@/app/hex/architecture/enums";
 import { MapBiome } from "@/app/hex/architecture/typings";
-import { IngedientBases } from "./ingedientBases";
+import { IngredientBases } from './ingredientBases';
 
 const Biomes = {
 	PineBarrens: {
@@ -9,8 +9,8 @@ const Biomes = {
 		terrain: MAP_TERRAIN.FOREST,
 		icon: "pine-tree",
 		nativeIngredients: [
-			{ ingredient: IngedientBases["FruguBerry"], weighting: 1 },
-			{ ingredient: IngedientBases["Pinecap"], weighting: 1 },
+			{ ingredient: IngredientBases["FruguBerry"], weighting: 1 },
+			{ ingredient: IngredientBases["Pinecap"], weighting: 1 },
 		],
 	},
 	ValleyRidge: {
@@ -19,8 +19,8 @@ const Biomes = {
 		terrain: MAP_TERRAIN.MOUNTAIN,
 		icon: "peaks",
 		nativeIngredients: [
-			{ ingredient: IngedientBases["JarbaLeaf"], weighting: 1 },
-			{ ingredient: IngedientBases["CragLichen"], weighting: 2 },
+			{ ingredient: IngredientBases["JarbaLeaf"], weighting: 1 },
+			{ ingredient: IngredientBases["CragLichen"], weighting: 2 },
 		],
 	},
 	FlowingFields: {
@@ -29,8 +29,8 @@ const Biomes = {
 		terrain: MAP_TERRAIN.FIELD,
 		icon: "high-grass",
 		nativeIngredients: [
-			{ ingredient: IngedientBases["AeridGrass"], weighting: 1 },
-			{ ingredient: IngedientBases["Sunpetal"], weighting: 2 },
+			{ ingredient: IngredientBases["AeridGrass"], weighting: 1 },
+			{ ingredient: IngredientBases["Sunpetal"], weighting: 2 },
 		],
 	}
 };

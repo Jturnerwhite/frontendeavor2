@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from "react";
 import { AlchComponent, Ingredient, IngredientBase, IngredientCompSpec, Item, Recipe } from "@/app/hex/architecture/typings";
-import { IngedientBases } from "@/app/hex/architecture/data/ingedientBases";
+import { IngredientBases } from '@/app/hex/architecture/data/ingredientBases';
 import AlchCompWithBacking from "@/app/hex/sharedComponents/alchComponent/alchCompWithBacking";
 import './itemDisplay.css';
 import { Recipes } from "../../architecture/data/recipes";
@@ -38,8 +38,8 @@ const InventoryLineItem: React.FC<InventoryLineItemProps> = ({ item, ingredient,
 		comps = item.comps;
 	} else if(ingredient) {
 		key = ingredient.id;
-		name = IngedientBases[ingredient.baseIngId].name;
-		types = IngedientBases[ingredient.baseIngId].types;
+		name = IngredientBases[ingredient.baseIngId].name;
+		types = IngredientBases[ingredient.baseIngId].types;
 		comps = ingredient.comps;
 	} else if(ingredientBase) {
 		key = ingredientBase.id;
@@ -122,7 +122,7 @@ const ComplexInventoryItem: React.FC<ComplexInventoryItemProps> = ({ items, disp
 		}
 	} else if("baseIngId" in anyItem && anyItem.baseIngId !== undefined) {
 		type = 2;
-		let matchingIngredientBase = IngedientBases[anyItem.baseIngId];
+		let matchingIngredientBase = IngredientBases[anyItem.baseIngId];
 		if(matchingIngredientBase) {
 			image = matchingIngredientBase.image ?? "";
 			name = matchingIngredientBase.name ?? "";

@@ -5,7 +5,7 @@ import { AlchHexGrid } from '@/app/hex/sharedComponents/hex/hexGrid';
 import { AlchComponent, Ingredient } from '@/app/hex/architecture/typings';
 import { AlchComponentDisplay, PlaceableAlchComponent } from '@/app/hex/sharedComponents/alchComponent';
 import AlchCompWithBacking from '@/app/hex/sharedComponents/alchComponent/alchCompWithBacking';
-import { IngedientBases } from '@/app/hex/architecture/data/ingedientBases';
+import { IngredientBases } from '@/app/hex/architecture/data/ingredientBases';
 import './ingredient-display.css';
 
 interface IngredientDisplayProps {
@@ -38,7 +38,7 @@ const IngredientDisplay: React.FC<IngredientDisplayProps> = ({
 		<div className="ingredient-display">
 			<label>{ingredient.baseIngId}</label>
 			<hr className="ingredient-display-separator" />
-			<div>{IngedientBases[ingredient.baseIngId].types.map((type) => <small key={ingredient.baseIngId + '-' + type}>{type} </small>)}</div>
+			<div>{IngredientBases[ingredient.baseIngId].types.map((type) => <small key={ingredient.baseIngId + '-' + type}>{type} </small>)}</div>
 			<div className="ingredient-display-comps">
 				{getComps()}
 			</div>

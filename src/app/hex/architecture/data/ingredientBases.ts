@@ -1,9 +1,9 @@
 import { ALCH_ELEMENT, ITEM_TAG, SHAPE_NAME } from '@/app/hex/architecture/enums'
-import { AlchComponent, IngredientBase, IngredientCompSpec } from "../typings";
+import { AlchComponent, IngredientBase, IngredientCompSpec } from '../typings';
 
 const IMAGE_PATH = "/art/ingredients/";
 
-export const IngedientBases:Record<string, IngredientBase> = {
+export const IngredientBases:Record<string, IngredientBase> = {
 	JarbaLeaf: {
 		id: "JarbaLeaf",
 		name: "Jarba Leaf",

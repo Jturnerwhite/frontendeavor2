@@ -3,8 +3,6 @@
 import { Item, Ingredient } from "@/app/hex/architecture/typings";
 import { ComplexInventoryItem } from "@/app/hex/sharedComponents/itemDisplay/lineItem";
 import '@/app/hex/sharedComponents/inventory/inventory.css';
-import { IngedientBases } from "@/app/hex/architecture/data/ingedientBases";
-
 interface InventoryProps {
 	inventoryItems: Array<Item>;
 	ingredients: Array<Ingredient>;

@@ -1,6 +1,6 @@
 'use client'
 import { AlchComponent, IngredientBase, IngredientCompSpec } from "@/app/hex/architecture/typings";
-import { IngedientBases } from '@/app/hex/architecture/data/ingedientBases';
+import { IngredientBases } from '@/app/hex/architecture/data/ingredientBases';
 import { AlchComponentDisplay } from "@/app/hex/sharedComponents/alchComponent";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -20,7 +20,7 @@ export default function Page() {
 
 	function getIngredientBases():Array<JSX.Element> {
 		let output:Array<JSX.Element> = [];
-		Object.values(IngedientBases).forEach((base:IngredientBase) => {
+		Object.values(IngredientBases).forEach((base:IngredientBase) => {
 			let comps:Array<JSX.Element> = [];
 			base.possibleComps.forEach((compOrSpec, compIndex) => {
 				if ('possibleShapes' in compOrSpec && compOrSpec.possibleShapes !== undefined && compOrSpec.possibleShapes.length > 0) { // It's an IngredientCompSpec

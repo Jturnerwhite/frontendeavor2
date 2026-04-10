@@ -5,7 +5,7 @@ import type {
 	Item,
 	RecipeRequiredIngredient,
 } from '@/app/hex/architecture/typings';
-import { IngedientBases } from '@/app/hex/architecture/data/ingedientBases';
+import { IngredientBases } from '@/app/hex/architecture/data/ingredientBases';
 
 export function isIngredientBaseRef(t: IngredientBase | ITEM_TAG): t is IngredientBase {
 	return typeof t === 'object' && t !== null && 'name' in t;
@@ -38,7 +38,7 @@ export function playerMeetsRequirement(
 	let count = inventoryItems.filter(
 		(i) => i.types.includes(tag) && (req.quality == null || i.quality >= req.quality),
 	).length;
-	count += rawIngredients.filter((i) => IngedientBases[i.baseIngId].types.includes(tag) && req.quality == null).length;
+	count += rawIngredients.filter((i) => IngredientBases[i.baseIngId].types.includes(tag) && req.quality == null).length;
 	return count >= need;
 }
 
@@ -65,7 +65,7 @@ export function getInventoryForRequirement(
 				item.types.includes(tag) && (req.quality == null || item.quality >= req.quality),
 		);
 	const ingredients =
-		req.quality == null ? raw.filter((i) => IngedientBases[i.baseIngId].types.includes(tag)) : [];
+		req.quality == null ? raw.filter((i) => IngredientBases[i.baseIngId].types.includes(tag)) : [];
 	return { ingredients, craftedEntries };
 }
 
