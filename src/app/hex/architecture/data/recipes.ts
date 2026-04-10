@@ -2,10 +2,13 @@ import { ALCH_ELEMENT, ITEM_TAG, SHAPE_NAME } from '@/app/hex/architecture/enums
 import { Recipe } from '@/app/hex/architecture/typings'
 import { IngedientBases } from './ingedientBases';
 
+const IMAGE_PATH = "/art/potions/";
+
 export const Recipes:Array<Recipe> = [
 	{
 		id: 'HP-1', 
 		description: 'Healing Potion', 
+		image: IMAGE_PATH + 'hp.png',
 		types: [ITEM_TAG.LIQUID],
 		elementScores: [
 			{ element: ALCH_ELEMENT.WATER, softCap: 2, cap: 5 },
@@ -86,6 +89,7 @@ export const Recipes:Array<Recipe> = [
 	},
 	{
 		id: 'MANA-1',
+		image: IMAGE_PATH + 'mana.png',
 		description: 'Mana Potion',
 		types: [ITEM_TAG.LIQUID],
 		elementScores: [

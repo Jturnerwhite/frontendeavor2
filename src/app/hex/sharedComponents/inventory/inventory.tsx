@@ -8,6 +8,7 @@ import { IngedientBases } from "@/app/hex/architecture/data/ingedientBases";
 interface InventoryProps {
 	inventoryItems: Array<Item>;
 	ingredients: Array<Ingredient>;
+	groupByBase?: boolean;
 	hideFiltering?: boolean;
 	hideSorting?: boolean;
 	hideSubFiltering?: boolean;
@@ -29,6 +30,7 @@ export function craftedRowKey(index: number): string {
 const InventoryDisplay: React.FC<InventoryProps> = ({
 	inventoryItems,
 	ingredients,
+	groupByBase = false,
 	hideFiltering = false,
 	hideSorting = false,
 	hideSubFiltering = false,
@@ -60,6 +62,37 @@ const InventoryDisplay: React.FC<InventoryProps> = ({
 
 	function renderInventoryItems(): JSX.Element[] {
 		const output: JSX.Element[] = [];
+		const allItems = [...inventoryItems, ...ingredients];
+
+		const groupedItems = Object.groupBy(allItems, (item) => {
+			if("baseRecipeId" in item && item.baseRecipeId !== undefined) {
+				return "BRI:"+item.baseRecipeId;
+			} else if("baseIngId" in item && item.baseIngId !== undefined) {
+				return "ING:"+item.baseIngId;
+			} else if ("ingTier" in item && item.ingTier !== undefined) {
+				return "INGB:"+item.ingTier;
+			} else {
+				return "UNK";
+				//return "REC:"+(item as Recipe).id;
+			}
+		});
+
+		Object.keys(groupedItems).forEach((objKey, index) => {
+			const inner = (
+				<ComplexInventoryItem
+					key={objKey}
+					items={groupedItems[objKey] ?? []}
+					displaySize={DISPLAY_SIZE}
+					hideFiltering={hideSubFiltering}
+					hideSorting={hideSubSorting}
+				/>
+			);
+			output.push(wrapRow(objKey, inner));
+		});
+
+		console.log(output);
+		//output.push(wrapRow(rowKey, inner));
+		/*
 		inventoryItems.forEach((item, index) => {
 			const key = item.name + '-' + index;
 			const rowKey = getCraftedRowKey ? getCraftedRowKey(item, index) : craftedRowKey(index);
@@ -86,6 +119,7 @@ const InventoryDisplay: React.FC<InventoryProps> = ({
 			);
 			output.push(wrapRow(ingredient.id, inner));
 		});
+		*/
 		return output;
 	}
 

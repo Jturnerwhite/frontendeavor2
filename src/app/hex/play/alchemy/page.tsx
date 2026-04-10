@@ -125,6 +125,7 @@ export default function Page() {
 		const quality = AlchHelpers.CalculateQuality(recipe, elementScores);
 		const item: Item = {
 			name: recipe.description,
+			baseRecipeId: recipe.id,
 			description: recipe.description,
 			comps: AlchHelpers.GetResultingComponents(recipe, elementScores),
 			types: [...recipe.types],

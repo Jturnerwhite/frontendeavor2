@@ -1,5 +1,6 @@
 import { ALCH_ELEMENT, ITEM_TAG, SHAPE_NAME } from '@/app/hex/architecture/enums'
 import { AlchComponent, IngredientBase, IngredientCompSpec } from "../typings";
+
 const IMAGE_PATH = "/art/ingredients/";
 
 export const IngedientBases:Record<string, IngredientBase> = {

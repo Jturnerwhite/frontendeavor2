@@ -1,9 +1,10 @@
 'use client';
 import { useEffect, useState } from "react";
-import { AlchComponent, Ingredient, IngredientBase, IngredientCompSpec, Item } from "@/app/hex/architecture/typings";
+import { AlchComponent, Ingredient, IngredientBase, IngredientCompSpec, Item, Recipe } from "@/app/hex/architecture/typings";
 import { IngedientBases } from "@/app/hex/architecture/data/ingedientBases";
 import AlchCompWithBacking from "@/app/hex/sharedComponents/alchComponent/alchCompWithBacking";
 import './itemDisplay.css';
+import { Recipes } from "../../architecture/data/recipes";
 
 interface InventoryLineItemProps {
 	item?: Item;
@@ -95,51 +96,83 @@ const InventoryLineItem: React.FC<InventoryLineItemProps> = ({ item, ingredient,
 	);
 };
 
-interface ComplexInventoryItemProps extends InventoryLineItemProps {
+interface ComplexInventoryItemProps {
+	items: Array<Item|Ingredient|IngredientBase|Recipe>;
+	displaySize?: number;
+	groupByBase?: boolean;
+	hideDescription?: boolean;
 	hideFiltering?: boolean;
 	hideSorting?: boolean;
 }
 
-const ComplexInventoryItem: React.FC<ComplexInventoryItemProps> = ({ item, ingredient, ingredientBase, displaySize = 35, hideFiltering = false, hideSorting = false }) => {
-	let key = '';
+const ComplexInventoryItem: React.FC<ComplexInventoryItemProps> = ({ items, displaySize = 35, groupByBase, hideDescription = false, hideFiltering = false, hideSorting = false }) => {
+	let image = '';
 	let name = '';
 	let types: string[] = [];
-	if(item) {
-		key = item.name;
-		name = item.name;
-		types = item.types;
-	} else if(ingredient) {
-		key = ingredient.id;
-		name = IngedientBases[ingredient.baseIngId].name;
-		types = IngedientBases[ingredient.baseIngId].types;
-	} else if(ingredientBase) {
-		key = ingredientBase.name;
-		name = ingredientBase.name;
-		types = ingredientBase.types;
+	let type:1|2|3|4 = 1; // 1 = Item, 2 = Ingredient, 3 = IngredientBase, 4 = Recipe
+	const anyItem = items[0];
+
+	if("baseRecipeId" in anyItem && anyItem.baseRecipeId !== undefined) {
+		type = 1;
+		let matchingRecipe = Recipes.find((recipe) => recipe.id === anyItem.baseRecipeId);
+		if(matchingRecipe) {
+			image = matchingRecipe.image ?? "";
+			name = matchingRecipe.description ?? "";
+			types = matchingRecipe.types ?? [];
+		}
+	} else if("baseIngId" in anyItem && anyItem.baseIngId !== undefined) {
+		type = 2;
+		let matchingIngredientBase = IngedientBases[anyItem.baseIngId];
+		if(matchingIngredientBase) {
+			image = matchingIngredientBase.image ?? "";
+			name = matchingIngredientBase.name ?? "";
+			types = matchingIngredientBase.types ?? [];
+		}
+	} else if ("ingTier" in anyItem && anyItem.ingTier !== undefined) {
+		type = 3;
+		let ingredientBase = (anyItem as IngredientBase);
+		image = ingredientBase.image ?? "";
+		name = ingredientBase.name ?? "";
+		types = ingredientBase.types ?? [];
+	} else {
+		type = 4;
+		let recipe = (anyItem as Recipe);
+		image = recipe.image ?? "";
+		name = recipe.description ?? "";
+		types = recipe.types ?? [];
 	}
 
-	let image = '';
-	if(ingredientBase) {
-		image = ingredientBase.image ?? "";
-	} else if(ingredient) {
-		image = IngedientBases[ingredient.baseIngId].image ?? "";
-		//image = ingredient.image ?? "";
-	} else if(item) {
-		//image = item.image ?? "";
+	function GetLineItems() {
+		let output:Array<JSX.Element> = [];
+		items.forEach((item, index) => {
+			if(type === 1) {
+				output.push(<InventoryLineItem key={"t1-"+(item as Item).name+"-"+index} item={item as Item} displaySize={displaySize} />);
+			} else if(type === 2) {
+				output.push(<InventoryLineItem key={"t2-"+(item as Ingredient).id+"-"+index} ingredient={item as Ingredient} displaySize={displaySize} />);
+			} else if(type === 3) {
+				output.push(<InventoryLineItem key={"t3-"+(item as IngredientBase).id+"-"+index} ingredientBase={item as IngredientBase} displaySize={displaySize} />);
+			} else if(type === 4) {
+				//output.push(<InventoryLineItem key={item.id} recipe={item as Recipe} displaySize={displaySize} />);
+			}
+		});
+		return output;
 	}
 
 	return (
 		<div className="item-display-complex">
 			<div className="item-display-complex-row">
 				<div className="item-display-complex-icon" aria-hidden>
-					{ image && (<img src={image} alt={name} />) }
+					{ image && (<img src={image} alt={name} style={{ height: "100%" }}/>) }
 				</div>
 				<div className="item-display-complex-main">
 					<div className="item-display-complex-text">
 						<label className="item-display-complex-name">{name}</label>
-						<label className="item-display-complex-desc">description</label>
+						{!hideDescription && (<label className="item-display-complex-desc">description</label>)}
 					</div>
-					<div className="item-display-complex-types">{types.join(', ')}</div>
+					<div className="item-display-complex-types">
+						<label>{types.join(', ')}</label>
+						<label>{items.length}x</label>
+					</div>
 				</div>
 				<div className="item-display-complex-end" aria-hidden>
 					V
@@ -156,8 +189,8 @@ const ComplexInventoryItem: React.FC<ComplexInventoryItemProps> = ({ item, ingre
 						<h3>Sorting</h3>
 					</div>
 				)}
-				<InventoryLineItem item={item} ingredient={ingredient} ingredientBase={ingredientBase} displaySize={displaySize} />
 			</div>
+			<div className="item-display-complex-lineitems">{GetLineItems()}</div>
 		</div>
 	);
 };

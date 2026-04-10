@@ -40,6 +40,7 @@ export type Ingredient = {
 
 export type Item = {
 	name: string,
+	baseRecipeId?: string,
 	description: string,
 	comps: AlchComponent[],
 	types: ITEM_TAG[],
@@ -86,6 +87,7 @@ export type RecipeResultingComponent = {
 
 export type Recipe = {
 	id: string,
+	image?: string,
 	description: string,
 	types: ITEM_TAG[],
 	elementScores: RecipeElementScore[],

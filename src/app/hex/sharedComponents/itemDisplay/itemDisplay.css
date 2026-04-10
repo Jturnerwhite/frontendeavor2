@@ -81,6 +81,9 @@
 	text-align: right;
 	max-width: 40%;
 }
+.item-display-complex-types label {
+	display:block;
+}
 
 .item-display-complex-end {
 	flex-shrink: 0;
