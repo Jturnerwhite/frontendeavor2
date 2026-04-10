@@ -5,68 +5,14 @@ import { useSelector } from 'react-redux';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Recipes } from '@/app/hex/architecture/data/recipes';
-import type { Recipe, RecipeRequiredIngredient } from '@/app/hex/architecture/typings';
+import type { Recipe } from '@/app/hex/architecture/typings';
 import {
 	formatRequiredIngredientEntry,
 	playerMeetsRequirement,
 } from '@/app/hex/architecture/helpers/recipeRequirements';
 import { RootState } from '@/store/store';
+import RecipeDisplay from '@/app/hex/play/components/recipeDisplay';
 import '../alchemy.css';
-
-function RecipeCardContents({
-	recipe,
-	canChoose,
-	onChoose,
-	meetsRequirement,
-}: {
-	recipe: Recipe;
-	canChoose: boolean;
-	onChoose: () => void;
-	meetsRequirement: (req: RecipeRequiredIngredient) => boolean;
-}) {
-	return (
-		<div className="alchemy-recipe-card">
-			<div className="alchemy-recipe-card-head">
-				<h2>{recipe.description}</h2>
-				<span className="alchemy-recipe-id">{recipe.id}</span>
-			</div>
-			<section className="alchemy-recipe-section">
-				<h3>Element scores</h3>
-				<ul className="alchemy-element-scores">
-					{recipe.elementScores.map((es) => (
-						<li key={es.element}>
-							<strong>{es.element}</strong>
-							<span className="alchemy-score-meta">
-								soft cap {es.softCap}, cap {es.cap}
-							</span>
-						</li>
-					))}
-				</ul>
-			</section>
-			{recipe.requiredIngredients && recipe.requiredIngredients.length > 0 && (
-				<section className="alchemy-recipe-section">
-					<h3>Required ingredients</h3>
-					<ul className="alchemy-required-list">
-						{recipe.requiredIngredients.map((req, i) => {
-							const met = meetsRequirement(req);
-							return (
-								<li
-									key={i}
-									className={met ? undefined : 'alchemy-required-list--missing'}
-								>
-									{formatRequiredIngredientEntry(req)}
-								</li>
-							);
-						})}
-					</ul>
-				</section>
-			)}
-			<button type="button" className="alchemy-setup-primary" disabled={!canChoose} onClick={onChoose}>
-				Choose this recipe
-			</button>
-		</div>
-	);
-}
 
 export default function SelectRecipePage() {
 	const router = useRouter();
@@ -129,12 +75,35 @@ export default function SelectRecipePage() {
 					</ul>
 				</aside>
 				<div className="alchemy-recipe-detail-panel">
-					<RecipeCardContents
-						recipe={selectedRecipe}
-						canChoose={playerHasIngredientsForRecipe(selectedRecipe)}
-						onChoose={() => chooseRecipe(selectedRecipe)}
-						meetsRequirement={(req) => playerMeetsRequirement(req, rawIngredients, inventoryItems)}
-					/>
+					<RecipeDisplay recipe={selectedRecipe} />
+					{selectedRecipe.requiredIngredients && selectedRecipe.requiredIngredients.length > 0 && (
+						<section className="alchemy-recipe-req-section">
+							<h3>Required Ingredients</h3>
+							<div className="alchemy-required-list">
+								<ul>
+									{selectedRecipe.requiredIngredients.map((req, i) => {
+										const met = playerMeetsRequirement(req, rawIngredients, inventoryItems);
+										return (
+											<li
+												key={i}
+												className={met ? undefined : 'alchemy-required-list--missing'}
+											>
+												{formatRequiredIngredientEntry(req)}
+											</li>
+										);
+									})}
+								</ul>
+							</div>
+						</section>
+					)}
+					<button
+						type="button"
+						className="alchemy-setup-primary"
+						disabled={!playerHasIngredientsForRecipe(selectedRecipe)}
+						onClick={() => chooseRecipe(selectedRecipe)}
+					>
+						Choose this recipe
+					</button>
 				</div>
 			</div>
 			<p className="alchemy-setup-back">

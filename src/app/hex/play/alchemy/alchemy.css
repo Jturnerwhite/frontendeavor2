@@ -37,7 +37,7 @@
 	width: 20%;
 	flex-shrink: 0;
 	box-sizing: border-box;
-	padding: 16px 18px;
+    padding: 32px 18px 16px 18px;
 	overflow-y: auto;
 	background: var(--alchemy-parchment);
 	color: var(--alchemy-ink);
@@ -268,48 +268,41 @@
 	gap: 16px;
 }
 
-.alchemy-recipe-card {
-	background: var(--alchemy-parchment);
-	border: 1px solid var(--alchemy-frame);
-	border-radius: 8px;
-	padding: 16px 18px;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-.alchemy-recipe-card-head {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: baseline;
-	justify-content: space-between;
-	gap: 8px;
-	margin-bottom: 12px;
-}
-
-.alchemy-recipe-card-head h2 {
-	margin: 0;
-	font-size: 1.25rem;
-}
-
 .alchemy-recipe-id {
 	font-size: 0.8rem;
 	color: var(--alchemy-ink-muted);
 	font-family: ui-monospace, monospace;
 }
 
-.alchemy-recipe-section h3 {
-	margin: 0 0 8px;
-	font-size: 0.85rem;
-	text-transform: uppercase;
-	letter-spacing: 0.04em;
-	color: var(--alchemy-ink-muted);
+.alchemy-recipe-id--below-display {
+	text-align: center;
+	margin: 0 0 12px;
 }
 
-.alchemy-element-scores,
-.alchemy-required-list {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-	font-size: 0.95rem;
+.alchemy-recipe-req-section {
+    margin: 16px 4px;
+    border: 4px solid #c2af9a;
+    border-radius: 16px;
+    background: linear-gradient(90deg, #e0cfbc 0%, #ecdecc 30% 60%, #e3d1c0 100%);
+    box-shadow: 0px 0px 0px 4px #e7d7c5;
+}
+
+.alchemy-required-list li {
+	border-bottom: 4px dashed #c2af9a;
+}
+
+.alchemy-required-list li:last-child {
+	border-bottom: none;
+}
+
+.alchemy-recipe-req-section h3 {
+	display:block;
+	margin: 0 0 8px;
+	font-size: 1.25rem;
+	text-transform: uppercase;
+	color: var(--alchemy-ink-muted);
+	text-align: center;
+	margin: 8px 0px;
 }
 
 .alchemy-element-scores li {

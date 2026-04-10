@@ -59,14 +59,15 @@ export const COMPONENT_SHAPE_VALUES = {
 }
 
 export enum ITEM_TAG {
-	NATURAL = "Natural",
-	MAGICAL = "Magical",
-	IMMATERIAL = "Immaterial",
-	MANUFACTURED = "Manufactured",
-	ORE = "Ore",
-	PLANT = "Plant",
+	ANIMAL_MAT = "Animal Mat",
+	CRYSTAL = "Crystal",
+	FUEL = "Fuel",
 	LIQUID = "Liquid",
-	CREATURE_PRODUCT = "Creature Piece",
+	MAGICAL = "Magical",
+	PLANT = "Plant",
+	STONE = "Stone",
+	METAL = "Metal",
+	FUNGUS = "Fungus",
 }
 
 export enum MAP_TERRAIN {

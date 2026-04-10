@@ -235,7 +235,7 @@ export default function Page() {
 				<ComponentCursorGhost displaySize={alchCompSize} />
 			</main>
 			<aside className="alchemy-right-panel" onContextMenu={(e: React.MouseEvent) => e.preventDefault()}>
-				<RecipeDisplay recipe={recipe} quality={recipeQuality} currentElementScores={currentElementScores} />
+				<RecipeDisplay recipe={recipe} quality={recipeQuality} currentElementScores={currentElementScores} hideImage={true} />
 				<button
 					type="button"
 					className="alchemy-complete-button"

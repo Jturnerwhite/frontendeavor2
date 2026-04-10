@@ -9,7 +9,7 @@ export const Recipes:Array<Recipe> = [
 		id: 'HP-1', 
 		description: 'Healing Potion', 
 		image: IMAGE_PATH + 'hp.png',
-		types: [ITEM_TAG.LIQUID],
+		types: [ITEM_TAG.LIQUID, ITEM_TAG.MAGICAL],
 		elementScores: [
 			{ element: ALCH_ELEMENT.WATER, softCap: 2, cap: 5 },
 			{ element: ALCH_ELEMENT.FIRE, softCap: 1, cap: 6 },
@@ -30,6 +30,7 @@ export const Recipes:Array<Recipe> = [
 				{ 
 					element: ALCH_ELEMENT.WATER, 
 					shape: SHAPE_NAME.HALFLINE,
+					linkSpots: [1, 0, 0, 0, 0, 0, 0],
 					scoreRequirement: 3,
 				},
 				{ 
@@ -61,11 +62,13 @@ export const Recipes:Array<Recipe> = [
 				{ 
 					element: ALCH_ELEMENT.WIND, 
 					shape: SHAPE_NAME.DOT,
+					linkSpots: [1, 0, 0, 0, 0, 0, 0],
 					scoreRequirement: 1,
 				},
 				{ 
 					element: ALCH_ELEMENT.WIND, 
 					shape: SHAPE_NAME.HALFLINE,
+					linkSpots: [1, 0, 0, 0, 0, 0, 0],
 					scoreRequirement: 3,
 				},
 				{ 
@@ -91,7 +94,7 @@ export const Recipes:Array<Recipe> = [
 		id: 'MANA-1',
 		image: IMAGE_PATH + 'mana.png',
 		description: 'Mana Potion',
-		types: [ITEM_TAG.LIQUID],
+		types: [ITEM_TAG.LIQUID, ITEM_TAG.MAGICAL],
 		elementScores: [
 			{ element: ALCH_ELEMENT.WATER, softCap: 2, cap: 5 },
 			{ element: ALCH_ELEMENT.FIRE, softCap: 1, cap: 6 },

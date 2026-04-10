@@ -9,7 +9,7 @@ export const IngredientBases:Record<string, IngredientBase> = {
 		name: "Jarba Leaf",
 		ingTier: 0,
 		image: IMAGE_PATH + "jarba.png",
-		types: [ITEM_TAG.NATURAL, ITEM_TAG.PLANT],
+		types: [ITEM_TAG.PLANT],
 		possibleComps: [
 			{
 				element: ALCH_ELEMENT.FIRE,
@@ -33,7 +33,7 @@ export const IngredientBases:Record<string, IngredientBase> = {
 		name: "Frugu Berry",
 		ingTier: 0,
 		image: IMAGE_PATH + "frugu.png",
-		types: [ITEM_TAG.NATURAL, ITEM_TAG.PLANT],
+		types: [ITEM_TAG.PLANT],
 		possibleComps: [
 			{
 				element: ALCH_ELEMENT.WATER,
@@ -55,7 +55,7 @@ export const IngredientBases:Record<string, IngredientBase> = {
 		name: "Aerid Grass",
 		ingTier: 0,
 		image: IMAGE_PATH + "aerid.png",
-		types: [ITEM_TAG.NATURAL, ITEM_TAG.PLANT],
+		types: [ITEM_TAG.PLANT],
 		possibleComps: [
 			{
 				element: ALCH_ELEMENT.WIND,
@@ -78,7 +78,7 @@ export const IngredientBases:Record<string, IngredientBase> = {
 		name: "Pinecap",
 		ingTier: 0,
 		image: IMAGE_PATH + "pinecap.png",
-		types: [ITEM_TAG.NATURAL, ITEM_TAG.PLANT],
+		types: [ITEM_TAG.PLANT],
 		possibleComps: [
 			{
 				element: ALCH_ELEMENT.EARTH,
@@ -100,7 +100,7 @@ export const IngredientBases:Record<string, IngredientBase> = {
 		name: "Crag Lichen",
 		ingTier: 0,
 		image: IMAGE_PATH + "crag.png",
-		types: [ITEM_TAG.NATURAL, ITEM_TAG.PLANT],
+		types: [ITEM_TAG.PLANT],
 		possibleComps: [
 			{
 				element: ALCH_ELEMENT.EARTH,
@@ -122,7 +122,7 @@ export const IngredientBases:Record<string, IngredientBase> = {
 		name: "Sunpetal",
 		ingTier: 0,
 		image: IMAGE_PATH + "sunpetal.png",
-		types: [ITEM_TAG.NATURAL, ITEM_TAG.PLANT, ITEM_TAG.MAGICAL],
+		types: [ITEM_TAG.PLANT, ITEM_TAG.MAGICAL],
 		possibleComps: [
 			{
 				element: ALCH_ELEMENT.FIRE,
