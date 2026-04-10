@@ -12,7 +12,24 @@ export function ToastifyBridge() {
 
 	useEffect(() => {
 		if (!next) return;
-		toast.success(next.message, { autoClose: 3000, toastId: next.id });
+		const imagePath = next.imagePath;
+		toast.success(next.message, {
+			autoClose: 3000,
+			toastId: next.id,
+			...(imagePath
+				? {
+						icon: () => (
+							<img
+								src={imagePath}
+								alt=""
+								width={28}
+								height={28}
+								style={{ objectFit: 'cover', borderRadius: 4, flexShrink: 0 }}
+							/>
+						),
+					}
+				: {}),
+		});
 		dispatch(ToastifyStore.actions.acknowledgeToast({ id: next.id }));
 	}, [next, dispatch]);
 

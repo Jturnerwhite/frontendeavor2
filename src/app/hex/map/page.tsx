@@ -51,7 +51,13 @@ export default function MapPage() {
 
 			dispatch(PlayerStoreSlice.actions.addGatheredIngredients({ ingredients }));
 			ingredients.forEach((ing) => {
-				dispatch(ToastifyStore.actions.showToast({ message: "Gathered " + IngedientBases[ing.baseIngId].name + " (Quality: " + ing.quality + "%)" }));
+				const base = IngedientBases[ing.baseIngId];
+				dispatch(
+					ToastifyStore.actions.showToast({
+						message: 'Gathered ' + base.name + ' (Quality: ' + ing.quality + '%)',
+						...(base.image ? { imagePath: base.image } : {}),
+					}),
+				);
 			});
 		}
 	}
