@@ -10,8 +10,7 @@ const Biomes = {
 		icon: "pine-tree",
 		nativeIngredients: [
 			{ ingredient: IngedientBases["FruguBerry"], weighting: 1 },
-			{ ingredient: IngedientBases["JarbaLeaf"], weighting: 1 },
-			{ ingredient: IngedientBases["Pinecap"], weighting: 2 },
+			{ ingredient: IngedientBases["Pinecap"], weighting: 1 },
 		],
 	},
 	ValleyRidge: {

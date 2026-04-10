@@ -22,7 +22,7 @@ export const IngedientBases:Record<string, IngredientBase> = {
 			},
 			{
 				element: ALCH_ELEMENT.EARTH,
-				possibleShapes: [SHAPE_NAME.DOT],
+				possibleShapes: [SHAPE_NAME.DOT, SHAPE_NAME.HALFLINE, SHAPE_NAME.OBTUSE],
 				chance: 0.5
 			}
 		]
@@ -44,8 +44,8 @@ export const IngedientBases:Record<string, IngredientBase> = {
 			},
 			{
 				element: ALCH_ELEMENT.CHAOS,
-				possibleShapes: [SHAPE_NAME.DOT],
-				chance: 0.5
+				possibleShapes: [SHAPE_NAME.DOT, SHAPE_NAME.HALFLINE, SHAPE_NAME.TRIANGLE],
+				chance: 0.25
 			}
 		]
 	},
@@ -67,8 +67,8 @@ export const IngedientBases:Record<string, IngredientBase> = {
 			},
 			{
 				element: ALCH_ELEMENT.AETHER,
-				possibleShapes: [SHAPE_NAME.DOT],
-				chance: 0.5
+				possibleShapes: [SHAPE_NAME.DOT, SHAPE_NAME.HALFLINE, SHAPE_NAME.TRIANGLE],
+				chance: 0.25
 			}
 		]
 	},
@@ -89,8 +89,8 @@ export const IngedientBases:Record<string, IngredientBase> = {
 			},
 			{
 				element: ALCH_ELEMENT.FIRE,
-				possibleShapes: [SHAPE_NAME.DOT],
-				chance: 0.4,
+				possibleShapes: [SHAPE_NAME.DOT, SHAPE_NAME.HALFLINE, SHAPE_NAME.TRIANGLE, SHAPE_NAME.DIAMOND],
+				chance: 0.25,
 			},
 		],
 	},
@@ -107,12 +107,12 @@ export const IngedientBases:Record<string, IngredientBase> = {
 			},
 			{
 				element: ALCH_ELEMENT.WATER,
-				possibleShapes: [SHAPE_NAME.DOT, SHAPE_NAME.HALFLINE, SHAPE_NAME.LINE],
+				possibleShapes: [SHAPE_NAME.DOT, SHAPE_NAME.HALFLINE, SHAPE_NAME.TRIANGLE, SHAPE_NAME.OBTUSE, SHAPE_NAME.DIAMOND],
 			},
 			{
 				element: ALCH_ELEMENT.WIND,
-				possibleShapes: [SHAPE_NAME.DOT],
-				chance: 0.45,
+				possibleShapes: [SHAPE_NAME.DOT, SHAPE_NAME.HALFLINE, SHAPE_NAME.LINE, SHAPE_NAME.FINGER],
+				chance: 0.25,
 			},
 		],
 	},
@@ -134,7 +134,7 @@ export const IngedientBases:Record<string, IngredientBase> = {
 			{
 				element: ALCH_ELEMENT.AETHER,
 				possibleShapes: [SHAPE_NAME.DOT],
-				chance: 0.35,
+				chance: 0.25,
 			},
 		],
 	},
