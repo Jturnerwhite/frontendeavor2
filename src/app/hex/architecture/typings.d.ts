@@ -104,3 +104,21 @@ export type MapBiome = {
 	terrain: MAP_TERRAIN,
 	nativeIngredients: Array<{ingredient: IngredientBase, weighting: number}>,
 }
+
+export type QuestRequirement = {
+	itemType: IngredientBase | ITEM_TAG | Recipe,
+	qty?: number,
+	quality?: number,
+	components?: Array<AlchComponent>,
+}
+
+export type Quest = {
+	id: string,
+	name: string,
+	description: string,
+	rewards: Array<Item|IngredientBase>,
+	requirements: Array<QuestRequirement>,
+	repeatable: boolean,
+	gold?: number,
+	xp?: number,
+}
