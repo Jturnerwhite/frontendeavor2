@@ -506,3 +506,11 @@
 	stroke: var(--misc-container-mid);
 	stroke-width: 4px;
 }
+
+.alchemy-main-panel .alch-hex-grid--hover-invalid .hex-tile:hover {
+	fill: #c62828;
+}
+
+.alchemy-main-panel .alch-hex-grid--hover-valid .hex-tile:hover {
+	fill: #2e7d32;
+}

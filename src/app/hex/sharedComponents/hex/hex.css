@@ -18,12 +18,12 @@
 	stroke: #ffcdd2;
 }
 
-.hex-tile--hover-valid {
+.hex-tile.hex-tile--hover-valid {
 	fill: #2e7d32;
 	stroke: #a5d6a7;
 }
 
-.hex-tile--hover-invalid {
+.hex-tile.hex-tile--hover-invalid {
 	fill: #c62828;
 	stroke: #ffcdd2;
 }

@@ -59,7 +59,6 @@ const HexGrid: React.FC<HexGridProps> = ({
 						onLeave={hexLeave}
 						onHexClick={hexClick}
 						displayIndex={displayIndex}
-						preventHover={preventHexHover}
 					/>
 				);
 			})}
@@ -116,9 +115,20 @@ const AlchHexGrid: React.FC<HexGridProps> = ({
 		calcIsValidHover(hexHovered);
 	}, [cursorState.rotation, hexHovered]);
 
+	let gridClassString = "alch-hex-grid";
+	if(!preventHexHover) {
+		if(cursorState.isPlacing && cursorState.selectedComponent) {
+			if(!validTileHover) {
+				gridClassString += " alch-hex-grid--hover-invalid";
+			} else {
+				gridClassString += " alch-hex-grid--hover-valid";
+			}
+		}
+	}
+
 	return (
 		<>
-			<g className="alch-hex-grid">
+			<g className={gridClassString}>
 				<HexGrid
 					hexMap={hexMap}
 					radius={radius}

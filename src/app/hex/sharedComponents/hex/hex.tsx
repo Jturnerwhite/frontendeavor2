@@ -11,26 +11,6 @@ interface HexProps {
 	onLeave?: Function;
 	onHexClick?: Function;
 	displayIndex?: boolean;
-	preventHover?: boolean;
-	isValidHover?: boolean;
-	/** When true, occupied tiles render a red fill (e.g. brief debug flash). */
-	flashOccupied?: boolean;
-}
-
-function tileClassName(
-	flashOccupied: boolean,
-	occupied: HexTile['occupied'],
-	isHovered: boolean,
-	preventHover: boolean,
-	isValidHover: boolean
-): string {
-	if (flashOccupied && occupied) {
-		return 'hex-tile hex-tile--flash-occupied';
-	}
-	if (isHovered && !preventHover) {
-		return `hex-tile ${isValidHover ? 'hex-tile--hover-valid' : 'hex-tile--hover-invalid'}`;
-	}
-	return 'hex-tile';
 }
 
 const Hex: React.FC<HexProps> = ({
@@ -39,10 +19,7 @@ const Hex: React.FC<HexProps> = ({
 	onEnter,
 	onLeave,
 	onHexClick,
-	displayIndex = false,
-	preventHover = false,
-	isValidHover = false,
-	flashOccupied = false,
+	displayIndex = false
 }): JSX.Element => {
 	const { x, y } = hexData.position;
 	const points = [
@@ -71,13 +48,7 @@ const Hex: React.FC<HexProps> = ({
 	return (
 		<>
 			<polygon
-				className={tileClassName(
-					flashOccupied,
-					hexData.occupied,
-					isHovered,
-					preventHover,
-					isValidHover
-				)}
+				className={'hex-tile'}
 				points={points}
 				pointerEvents="fill"
 				onMouseEnter={hexEnter}
