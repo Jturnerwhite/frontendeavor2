@@ -8,7 +8,10 @@ import PlayerStoreSlice from '@/store/features/playerSlice';
 import ToastifyStore from '@/store/features/toastifySlice';
 import HistoryStoreSlice from '@/store/features/historySlice';
 import type { AlchemyLabSource, AlchComponent, Item } from '@/app/hex/architecture/typings';
-import { flattenLabSourcesToIngredients } from '@/app/hex/architecture/helpers/alchemyLabSources';
+import {
+	collectConsumptionFromLabSources,
+	flattenLabSourcesToIngredients,
+} from '@/app/hex/architecture/helpers/alchemyLabSources';
 import { AlchHexGrid } from '@/app/hex/sharedComponents/hex/hexGrid';
 import * as AlchHelpers from '@/app/hex/architecture/helpers/alchHelpers';
 import * as SVGHelpers from '@/app/hex/architecture/helpers/svgHelpers';
@@ -140,6 +143,10 @@ export default function Page() {
 			quality,
 			ingredients: flattenLabSourcesToIngredients(ingredients),
 		};
+		const { rawIds, craftedIndices } = collectConsumptionFromLabSources(ingredients);
+		if (rawIds.length > 0 || craftedIndices.length > 0) {
+			dispatch(PlayerStoreSlice.actions.removeInventorySlots({ rawIds, craftedIndices }));
+		}
 		dispatch(PlayerStoreSlice.actions.completeCraft({ item }));
 		dispatch(ToastifyStore.actions.showToast({ message: item.name }));
 		dispatch(

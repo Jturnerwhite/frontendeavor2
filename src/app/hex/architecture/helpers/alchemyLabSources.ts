@@ -35,7 +35,13 @@ export function labSourcesFromInventorySelection(
 			seenCraftedIdx.add(idx)
 			const item = crafted[idx]
 			if (item?.comps?.length) {
-				out.push({ labKind: 'item', ...normalizeItemForLab(item) })
+				const { labSlotId, item: itemForLab } = normalizeItemForLab(item)
+				out.push({
+					labKind: 'item',
+					labSlotId,
+					item: itemForLab,
+					playerCraftedInventoryIndex: idx,
+				})
 			}
 		} else {
 			const ing = raw.find((i) => i.id === k)
@@ -77,4 +83,30 @@ export function flattenLabSourcesToIngredients(sources: AlchemyLabSource[]): Ing
 		}
 	}
 	return dedupeIngredientsById(out)
+}
+
+/** Raw ids and crafted inventory indices to remove after a successful craft (indices are for the stash *before* removal). */
+export function collectConsumptionFromLabSources(sources: AlchemyLabSource[]): {
+	rawIds: string[]
+	craftedIndices: number[]
+} {
+	const rawIds: string[] = []
+	const craftedIndices: number[] = []
+	const seenRaw = new Set<string>()
+	const seenCrafted = new Set<number>()
+	for (const row of sources) {
+		if (row.labKind === 'ingredient') {
+			if (!seenRaw.has(row.ingredient.id)) {
+				seenRaw.add(row.ingredient.id)
+				rawIds.push(row.ingredient.id)
+			}
+		} else if (row.playerCraftedInventoryIndex != null) {
+			const idx = row.playerCraftedInventoryIndex
+			if (!seenCrafted.has(idx)) {
+				seenCrafted.add(idx)
+				craftedIndices.push(idx)
+			}
+		}
+	}
+	return { rawIds, craftedIndices }
 }
