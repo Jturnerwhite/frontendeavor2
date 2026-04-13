@@ -7,12 +7,14 @@ import AlchemyStoreSlice from '@/store/features/alchemySlice';
 import PlayerStoreSlice from '@/store/features/playerSlice';
 import ToastifyStore from '@/store/features/toastifySlice';
 import HistoryStoreSlice from '@/store/features/historySlice';
-import { AlchComponent, Ingredient, Item } from '@/app/hex/architecture/typings';	
+import type { AlchemyLabSource, AlchComponent, Item } from '@/app/hex/architecture/typings';
+import { flattenLabSourcesToIngredients } from '@/app/hex/architecture/helpers/alchemyLabSources';
 import { AlchHexGrid } from '@/app/hex/sharedComponents/hex/hexGrid';
 import * as AlchHelpers from '@/app/hex/architecture/helpers/alchHelpers';
 import * as SVGHelpers from '@/app/hex/architecture/helpers/svgHelpers';
 import ComponentCursorGhost from '@/app/hex/play/components/compCursorGhost';
 import IngredientDisplay from '@/app/hex/play/components/ingredientDisplay';
+import CraftedItemLabDisplay from '@/app/hex/play/components/ingredientDisplay/craftedItemLabDisplay';
 import { HexTile, LinkedComponents, Position } from '@/app/hex/architecture/interfaces';
 import { AlchComponentDisplay } from '@/app/hex/sharedComponents/alchComponent';
 import { Recipes } from '@/app/hex/architecture/data/recipes';
@@ -34,8 +36,9 @@ export default function Page() {
 
 	const [centerHexGridX, setCenterHexGridX] = useState<number>((window.innerWidth * 0.6) / 2);
 	const [centerHexGridY, setCenterHexGridY] = useState<number>(window.innerHeight / 2);
-	const [lastPlacedCompCount, setLastPlacedCompCount] = useState(0);
 	const [crossComponentLinks, setLinks] = useState<LinkedComponents[]>([]);
+	const canUndoPlacement = useSelector((state: RootState) => state.Alchemy.placementUndoPast.length > 0);
+	const canRedoPlacement = useSelector((state: RootState) => state.Alchemy.placementUndoFuture.length > 0);
 
 	const playGridLayers = 4;
 	const size = 40;
@@ -74,14 +77,14 @@ export default function Page() {
 		});
 	}
 
-	function getCompPlaced(ingredient: Ingredient): boolean[] {
-		return ingredient.comps.map((comp, index) => {
+	function getCompPlacedForSource(sourceId: string, comps: AlchComponent[]): boolean[] {
+		return comps.map((comp, index) => {
 			return placedComponents.some((component: {
 				comp: AlchComponent;
 				position: Position;
 				rotation: number;
 				centerHexId: string;
-			}) => component.comp.sourceIngredientId === ingredient.id && component.comp.ingredientIndex === index);
+			}) => component.comp.sourceIngredientId === sourceId && component.comp.ingredientIndex === index);
 		});
 	}
 
@@ -115,7 +118,12 @@ export default function Page() {
 	const canComplete = useMemo(
 		() =>
 			ingredients.length > 0 &&
-			ingredients.every((ing) => getCompPlaced(ing).some(Boolean)),
+			ingredients.every((row: AlchemyLabSource) => {
+				if (row.labKind === 'ingredient') {
+					return getCompPlacedForSource(row.ingredient.id, row.ingredient.comps).some(Boolean);
+				}
+				return getCompPlacedForSource(row.labSlotId, row.item.comps).some(Boolean);
+			}),
 		[ingredients, placedComponents],
 	);
 
@@ -130,7 +138,7 @@ export default function Page() {
 			comps: AlchHelpers.GetResultingComponents(recipe, elementScores),
 			types: [...recipe.types],
 			quality,
-			ingredients: structuredClone(ingredients),
+			ingredients: flattenLabSourcesToIngredients(ingredients),
 		};
 		dispatch(PlayerStoreSlice.actions.completeCraft({ item }));
 		dispatch(ToastifyStore.actions.showToast({ message: item.name }));
@@ -168,22 +176,20 @@ export default function Page() {
 	}, []);
 
 	useEffect(() => {
-		if(placedComponents.length === lastPlacedCompCount) return;
-		if(placedComponents.length === 0) return;
-		if(placedComponents.length > lastPlacedCompCount) {
-			const newLinks = AlchHelpers.GetLinks(playGrid!, placedComponents[placedComponents.length - 1]);
-			setLinks((prev) => [...prev, ...newLinks]);
-			setLastPlacedCompCount(placedComponents.length);
-		} else { // Remove links for the removed components
-			const updatedLinks = crossComponentLinks.filter((link) => {
-				return !placedComponents.some((component) => {
-					return component.comp.id === link.component1Id || component.comp.id === link.component2Id;
-				});
-			});
-			setLinks(updatedLinks);
-			setLastPlacedCompCount(placedComponents.length);
+		if (!playGrid) {
+			setLinks([]);
+			return;
 		}
-	}, [placedComponents]);
+		if (placedComponents.length === 0) {
+			setLinks([]);
+			return;
+		}
+		const rebuilt: LinkedComponents[] = [];
+		for (const pc of placedComponents) {
+			rebuilt.push(...AlchHelpers.GetLinks(playGrid, pc));
+		}
+		setLinks(rebuilt);
+	}, [placedComponents, playGrid]);
 
 	const currentElementScores = getCurrentElementScores();
 	const recipeQuality = recipe ? AlchHelpers.CalculateQuality(recipe, currentElementScores) : 0;
@@ -196,17 +202,45 @@ export default function Page() {
 		<div className="alchemy-layout">
 			<aside className="alchemy-left-panel" onContextMenu={(e: React.MouseEvent) => e.preventDefault()}>
 				{ingredients.length > 0 &&
-					ingredients.map((ingredient: Ingredient, index: number) => (
-						<IngredientDisplay
-							key={ingredient.baseIngId + '-' + index}
-							ingredient={ingredient}
-							displaySize={20}
-							usePlaceable={true}
-							compPlaced={getCompPlaced(ingredient)}
-						/>
-					))}
+					ingredients.map((row: AlchemyLabSource, index: number) =>
+						row.labKind === 'ingredient' ? (
+							<IngredientDisplay
+								key={row.ingredient.id + '-' + index}
+								ingredient={row.ingredient}
+								displaySize={20}
+								usePlaceable={true}
+								compPlaced={getCompPlacedForSource(row.ingredient.id, row.ingredient.comps)}
+							/>
+						) : (
+							<CraftedItemLabDisplay
+								key={row.labSlotId + '-' + index}
+								item={row.item}
+								displaySize={20}
+								usePlaceable={true}
+								compPlaced={getCompPlacedForSource(row.labSlotId, row.item.comps)}
+							/>
+						),
+					)}
 			</aside>
 			<main className="alchemy-main-panel" onContextMenu={(e: React.MouseEvent) => e.preventDefault()}>
+				<div className="alchemy-undo-redo" role="group" aria-label="Placement undo and redo">
+					<button
+						type="button"
+						className="alchemy-undo-redo-button"
+						disabled={!canUndoPlacement}
+						onClick={() => dispatch(AlchemyStoreSlice.actions.undoPlacement())}
+					>
+						Undo
+					</button>
+					<button
+						type="button"
+						className="alchemy-undo-redo-button"
+						disabled={!canRedoPlacement}
+						onClick={() => dispatch(AlchemyStoreSlice.actions.redoPlacement())}
+					>
+						Redo
+					</button>
+				</div>
 				{playGrid && (
 					<svg
 						className="alchemy-hex-svg"

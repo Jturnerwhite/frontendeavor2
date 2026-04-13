@@ -48,6 +48,11 @@ export type Item = {
 	ingredients: Ingredient[],
 }
 
+/** One row in the alchemy lab sidebar: raw ingredient or a crafted item used as a source (not expanded into its nested ingredients). */
+export type AlchemyLabSource =
+	| { labKind: 'ingredient'; ingredient: Ingredient }
+	| { labKind: 'item'; labSlotId: string; item: Item }
+
 /**
  * Used for defining functions that will be used to filter possible ingredients.
  * Separated for ease of component display later

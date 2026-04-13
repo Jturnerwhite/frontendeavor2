@@ -27,8 +27,8 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({recipe, quality, currentEl
 		const matchingScore = currentElementScores?.[element];
 		for(let i = 0; i < eleToCheck.cap; i++) {
 			let classString = 'node ' + element.toLowerCase().replace(/\s+/g, "-");
-			if(i >= eleToCheck.softCap) {
-				if(matchingScore === undefined || i > matchingScore.links) {
+			if(i >= eleToCheck.softCap + (matchingScore?.links ?? 0)) {
+				if(matchingScore === undefined || (i > matchingScore.links)) {
 					classString += ' locked';
 				} else if(matchingScore !== undefined && i < matchingScore.nodes) {
 					classString += ' filled';

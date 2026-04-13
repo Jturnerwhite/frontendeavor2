@@ -28,26 +28,37 @@ const ComponentCursorGhost: React.FC<ComponentCursorGhostProps> = ({ displaySize
 	}, []);
 
 	useEffect(() => {
-		const handleMouseBtn = (event: MouseEvent) => {
-			if(event.button === 1) {
-				event.preventDefault();
-				event.stopPropagation();
-				event.stopImmediatePropagation();
-				dispatch(AlchemyStoreSlice.actions.resetCursor());
-			}else if(event.button === 2) {
-				event.preventDefault();
-				event.stopPropagation();
-				event.stopImmediatePropagation();
-				dispatch(AlchemyStoreSlice.actions.setCursorRotation());
-			}
+		if (!cursorState.isPlacing || !cursorState.selectedComponent) {
+			return;
+		}
+
+		const cancelPlacement = (e: Event) => {
+			e.preventDefault();
+			e.stopPropagation();
+			dispatch(AlchemyStoreSlice.actions.resetCursor());
 		};
 
-		window.addEventListener('mouseup', handleMouseBtn);
+		const onContextMenu = (e: MouseEvent) => {
+			cancelPlacement(e);
+		};
+
+		const onWheel = (e: WheelEvent) => {
+			if (e.deltaY === 0) return;
+			e.preventDefault();
+			e.stopPropagation();
+			// Scroll down → clockwise (+1); scroll up → counter-clockwise (-1)
+			const delta = e.deltaY > 0 ? 1 : -1;
+			dispatch(AlchemyStoreSlice.actions.adjustCursorRotation(delta));
+		};
+
+		window.addEventListener('contextmenu', onContextMenu, true);
+		window.addEventListener('wheel', onWheel, { passive: false, capture: true });
 
 		return () => {
-			window.removeEventListener('mouseup', handleMouseBtn);
+			window.removeEventListener('contextmenu', onContextMenu, true);
+			window.removeEventListener('wheel', onWheel, { capture: true } as AddEventListenerOptions);
 		};
-	}, []);
+	}, [cursorState.isPlacing, cursorState.selectedComponent, dispatch]);
 
 	if (!cursorState.isPlacing || !cursorState.selectedComponent)  {
 		return (<></>);

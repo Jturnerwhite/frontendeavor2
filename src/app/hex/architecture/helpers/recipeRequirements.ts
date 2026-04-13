@@ -101,6 +101,19 @@ export function countSelectionUnits(
 	return n;
 }
 
+/** First occurrence wins — use after merging staged selections so the same physical ingredient is not listed twice in the lab. */
+export function dedupeIngredientsById(ingredients: Ingredient[]): Ingredient[] {
+	const seen = new Set<string>()
+	const out: Ingredient[] = []
+	for (const ing of ingredients) {
+		if (!seen.has(ing.id)) {
+			seen.add(ing.id)
+			out.push(ing)
+		}
+	}
+	return out
+}
+
 /**
  * Resolve chosen ingredients for alchemy. `crafted` must be the full crafted inventory array
  * so `crafted:${index}` keys resolve correctly.

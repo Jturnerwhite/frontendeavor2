@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import AlchemyStoreSlice from '@/store/features/alchemySlice';
 import { Recipes } from '@/app/hex/architecture/data/recipes';
-import type { Ingredient, Item, Recipe } from '@/app/hex/architecture/typings';
+import type { AlchemyLabSource, Ingredient, Item, Recipe } from '@/app/hex/architecture/typings';
 import InventoryDisplay, { craftedRowKey } from '@/app/hex/sharedComponents/inventory/inventory';
 import { RootState } from '@/store/store';
 import {
@@ -14,8 +14,11 @@ import {
 	filterInventoryAfterConsumption,
 	formatRequiredIngredientEntry,
 	getInventoryForRequirement,
-	ingredientsFromInventorySelection,
 } from '@/app/hex/architecture/helpers/recipeRequirements';
+import {
+	dedupeLabSources,
+	labSourcesFromInventorySelection,
+} from '@/app/hex/architecture/helpers/alchemyLabSources';
 import '../alchemy.css';
 
 type StageInventory = {
@@ -89,7 +92,7 @@ export default function SelectIngredientsPage() {
 
 	const [stageIndex, setStageIndex] = useState(0);
 	/** One batch per completed stage (same order as `consumptionLog`). */
-	const [committedBatches, setCommittedBatches] = useState<Ingredient[][]>([]);
+	const [committedBatches, setCommittedBatches] = useState<AlchemyLabSource[][]>([]);
 	const [consumptionLog, setConsumptionLog] = useState<Array<{ rawIds: string[]; craftedIndices: number[] }>>([]);
 	const [consumedRawIds, setConsumedRawIds] = useState<Set<string>>(() => new Set());
 	const [consumedCraftedIndices, setConsumedCraftedIndices] = useState<Set<number>>(() => new Set());
@@ -161,25 +164,25 @@ export default function SelectIngredientsPage() {
 		selectionCount >= needForStage &&
 		needForStage > 0;
 
-	const chosenIngredientsLegacy = useMemo(
-		() => ingredientsFromInventorySelection(selectedKeys, inventoryItems, rawIngredients),
+	const chosenLabSourcesLegacy = useMemo(
+		() => labSourcesFromInventorySelection(selectedKeys, inventoryItems, rawIngredients),
 		[selectedKeys, inventoryItems, rawIngredients],
 	);
 
-	const canProceedLegacy = !isStaged && chosenIngredientsLegacy.length > 0;
+	const canProceedLegacy = !isStaged && chosenLabSourcesLegacy.length > 0;
 
 	const handlePrimary = useCallback(() => {
 		if (!recipe) return;
 		if (!isStaged) {
-			if (chosenIngredientsLegacy.length === 0) return;
+			if (chosenLabSourcesLegacy.length === 0) return;
 			dispatch(AlchemyStoreSlice.actions.clearPlayGrid());
 			dispatch(AlchemyStoreSlice.actions.setCurrentRecipe(recipe.id));
-			dispatch(AlchemyStoreSlice.actions.addIngredients(chosenIngredientsLegacy));
+			dispatch(AlchemyStoreSlice.actions.addIngredients(dedupeLabSources(chosenLabSourcesLegacy)));
 			router.push('/hex/play/alchemy');
 			return;
 		}
 		if (!currentReq || !canProceedStaged) return;
-		const batch = ingredientsFromInventorySelection(selectedKeys, inventoryItems, rawIngredients);
+		const batch = labSourcesFromInventorySelection(selectedKeys, inventoryItems, rawIngredients);
 		const consumption = collectConsumptionFromKeys(selectedKeys);
 		setConsumedRawIds((prev) => {
 			const n = new Set(prev);
@@ -194,10 +197,10 @@ export default function SelectIngredientsPage() {
 		setSelectedKeys(new Set());
 		const isLast = stageIndex + 1 >= requiredList.length;
 		if (isLast) {
-			const allIngredients = [...committedBatches.flat(), ...batch];
+			const allSources = dedupeLabSources([...committedBatches.flat(), ...batch]);
 			dispatch(AlchemyStoreSlice.actions.clearPlayGrid());
 			dispatch(AlchemyStoreSlice.actions.setCurrentRecipe(recipe.id));
-			dispatch(AlchemyStoreSlice.actions.addIngredients(allIngredients));
+			dispatch(AlchemyStoreSlice.actions.addIngredients(allSources));
 			router.push('/hex/play/alchemy');
 		} else {
 			setCommittedBatches((prev) => [...prev, batch]);
@@ -209,7 +212,7 @@ export default function SelectIngredientsPage() {
 		isStaged,
 		currentReq,
 		canProceedStaged,
-		chosenIngredientsLegacy,
+		chosenLabSourcesLegacy,
 		selectedKeys,
 		inventoryItems,
 		rawIngredients,

@@ -92,6 +92,7 @@ function buildHistoryState(): typeof initialHistoryState {
 		base.lastCompletedCraft === null
 	) {
 		base = {
+			...base,
 			completedCrafts: [persistedPlayerBundle.legacyLastCraft],
 			lastCompletedCraft: persistedPlayerBundle.legacyLastCraft,
 		}
@@ -140,6 +141,8 @@ if (typeof window !== 'undefined') {
 			playGrid: state.Alchemy.playGrid,
 			ingredients: state.Alchemy.ingredients,
 			placedComponents: state.Alchemy.placedComponents,
+			placementUndoPast: state.Alchemy.placementUndoPast,
+			placementUndoFuture: state.Alchemy.placementUndoFuture,
 		}
 		const playerPersisted: PersistedPlayerState = {
 			inventory: state.Player.inventory,
