@@ -14,6 +14,7 @@ import { GatherIngredientsInBiome } from '@/app/hex/architecture/helpers/mapHelp
 import { IngredientBases } from '@/app/hex/architecture/data/ingredientBases';
 import MapFog from '@/app/hex/map/components/mapFog';
 import '@/app/hex/map/map.css';
+import Link from 'next/link';
 
 export default function MapPage() {
 	const dispatch = useDispatch();
@@ -105,6 +106,7 @@ export default function MapPage() {
 
 	return <div className="map-layout">
 		<aside className="map-left-panel">
+			<Link href="/hex/" className="hover:underline"><h1>Back to Home</h1></Link>
 			<InventoryDisplay 
 				inventoryItems={inventoryItems} 
 				ingredients={ingredients}

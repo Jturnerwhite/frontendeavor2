@@ -12,7 +12,7 @@ const BaseQuests: Array<Quest> = [
 			{
 				requirementKind: 'recipe',
 				itemType: Recipes.find((recipe) => recipe.id === 'HP-1')!,
-				qty: 4,
+				qty: 1,
 			},
 		],
 		repeatable: true,
@@ -27,7 +27,7 @@ const BaseQuests: Array<Quest> = [
 			{
 				requirementKind: 'recipe',
 				itemType: Recipes.find((recipe) => recipe.id === 'MANA-1')!,
-				qty: 4,
+				qty: 1,
 			},
 		],
 		repeatable: true,
