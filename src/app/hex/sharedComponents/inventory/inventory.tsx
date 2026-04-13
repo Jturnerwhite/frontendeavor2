@@ -1,8 +1,11 @@
 'use client';
 
+import { useState } from 'react';
 import { Item, Ingredient } from "@/app/hex/architecture/typings";
 import { ComplexInventoryItem } from "@/app/hex/sharedComponents/itemDisplay/lineItem";
 import '@/app/hex/sharedComponents/inventory/inventory.css';
+
+type InventoryTab = 'ingredients' | 'crafted';
 interface InventoryProps {
 	inventoryItems: Array<Item>;
 	ingredients: Array<Ingredient>;
@@ -39,6 +42,7 @@ const InventoryDisplay: React.FC<InventoryProps> = ({
 	showTitle = true,
 	getCraftedRowKey,
 }) => {
+	const [activeTab, setActiveTab] = useState<InventoryTab>('ingredients');
 	const DISPLAY_SIZE = 20;
 	const canSelect = selectable && selectedKeys !== undefined && onToggleKey !== undefined;
 
@@ -64,35 +68,39 @@ const InventoryDisplay: React.FC<InventoryProps> = ({
 		// Selection (e.g. alchemy ingredient stages) needs one row per stack slot with keys that
 		// match `ingredient.id` and `crafted:${globalIndex}` — not grouped `ING:baseId` keys.
 		if (canSelect) {
-			inventoryItems.forEach((item, index) => {
-				const rowKey = getCraftedRowKey ? getCraftedRowKey(item, index) : craftedRowKey(index);
-				const inner = (
-					<ComplexInventoryItem
-						key={item.name + '-' + index}
-						items={[item]}
-						displaySize={DISPLAY_SIZE}
-						hideFiltering={hideSubFiltering}
-						hideSorting={hideSubSorting}
-					/>
-				);
-				output.push(wrapRow(rowKey, inner));
-			});
-			ingredients.forEach((ingredient, index) => {
-				const inner = (
-					<ComplexInventoryItem
-						key={ingredient.id + '-' + index}
-						items={[ingredient]}
-						displaySize={DISPLAY_SIZE}
-						hideFiltering={hideSubFiltering}
-						hideSorting={hideSubSorting}
-					/>
-				);
-				output.push(wrapRow(ingredient.id, inner));
-			});
+			if (activeTab === 'crafted') {
+				inventoryItems.forEach((item, index) => {
+					const rowKey = getCraftedRowKey ? getCraftedRowKey(item, index) : craftedRowKey(index);
+					const inner = (
+						<ComplexInventoryItem
+							key={item.name + '-' + index}
+							items={[item]}
+							displaySize={DISPLAY_SIZE}
+							hideFiltering={hideSubFiltering}
+							hideSorting={hideSubSorting}
+						/>
+					);
+					output.push(wrapRow(rowKey, inner));
+				});
+			} else {
+				ingredients.forEach((ingredient, index) => {
+					const inner = (
+						<ComplexInventoryItem
+							key={ingredient.id + '-' + index}
+							items={[ingredient]}
+							displaySize={DISPLAY_SIZE}
+							hideFiltering={hideSubFiltering}
+							hideSorting={hideSubSorting}
+						/>
+					);
+					output.push(wrapRow(ingredient.id, inner));
+				});
+			}
 			return output;
 		}
 
-		const allItems = [...inventoryItems, ...ingredients];
+		const allItems: Array<Item | Ingredient> =
+			activeTab === 'ingredients' ? [...ingredients] : [...inventoryItems];
 
 		const groupedItems = Object.groupBy(allItems, (item) => {
 			if ("baseRecipeId" in item && item.baseRecipeId !== undefined) {
@@ -124,6 +132,28 @@ const InventoryDisplay: React.FC<InventoryProps> = ({
 
 	return <div className="inventory-display">
 		{showTitle && <h1>Inventory</h1>}
+		<div className="inventory-tabs" role="tablist" aria-label="Inventory category">
+			<button
+				type="button"
+				role="tab"
+				id="inventory-tab-ingredients"
+				aria-selected={activeTab === 'ingredients'}
+				className={'inventory-tab' + (activeTab === 'ingredients' ? ' inventory-tab--active' : '')}
+				onClick={() => setActiveTab('ingredients')}
+			>
+				Ingredients
+			</button>
+			<button
+				type="button"
+				role="tab"
+				id="inventory-tab-crafted"
+				aria-selected={activeTab === 'crafted'}
+				className={'inventory-tab' + (activeTab === 'crafted' ? ' inventory-tab--active' : '')}
+				onClick={() => setActiveTab('crafted')}
+			>
+				Crafted
+			</button>
+		</div>
 		{!hideFiltering && <div><h2>Filtering</h2></div>}
 		{!hideSorting && <div><h2>Sorting</h2></div>}
 		<div className="inventory-display-items">

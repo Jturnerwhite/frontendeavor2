@@ -99,13 +99,13 @@ const InventoryLineItem: React.FC<InventoryLineItemProps> = ({ item, ingredient,
 interface ComplexInventoryItemProps {
 	items: Array<Item|Ingredient|IngredientBase|Recipe>;
 	displaySize?: number;
-	groupByBase?: boolean;
 	hideDescription?: boolean;
 	hideFiltering?: boolean;
 	hideSorting?: boolean;
 }
 
-const ComplexInventoryItem: React.FC<ComplexInventoryItemProps> = ({ items, displaySize = 35, groupByBase, hideDescription = false, hideFiltering = false, hideSorting = false }) => {
+const ComplexInventoryItem: React.FC<ComplexInventoryItemProps> = ({ items, displaySize = 35, hideDescription = false, hideFiltering = false, hideSorting = false }) => {
+	const [detailsOpen, setDetailsOpen] = useState(false);
 	let image = '';
 	let name = '';
 	let types: string[] = [];
@@ -159,25 +159,29 @@ const ComplexInventoryItem: React.FC<ComplexInventoryItemProps> = ({ items, disp
 	}
 
 	return (
-		<div className="item-display-complex">
-			<div className="item-display-complex-row">
+		<details
+			className="item-display-complex"
+			open={detailsOpen}
+			onToggle={(e) => setDetailsOpen(e.currentTarget.open)}
+		>
+			<summary className="item-display-complex-row">
 				<div className="item-display-complex-icon" aria-hidden>
-					{ image && (<img src={image} alt={name} style={{ height: "100%" }}/>) }
+					{ image && (<img src={image} alt="" style={{ height: "100%" }}/>) }
 				</div>
 				<div className="item-display-complex-main">
 					<div className="item-display-complex-text">
-						<label className="item-display-complex-name">{name}</label>
-						{!hideDescription && (<label className="item-display-complex-desc">description</label>)}
+						<span className="item-display-complex-name">{name}</span>
+						{!hideDescription && (<span className="item-display-complex-desc">description</span>)}
 					</div>
 					<div className="item-display-complex-types">
-						<label>{types.join(', ')}</label>
-						{items.length > 1 && (<label className="item-display-complex-count">Qty: {items.length}</label>)}
+						<span>{types.join(', ')}</span>
+						{items.length > 1 && (<span className="item-display-complex-count">Qty: {items.length}</span>)}
 					</div>
 				</div>
-				<div className="item-display-complex-end" aria-hidden>
+				<span className="item-display-complex-end" aria-hidden>
 					V
-				</div>
-			</div>
+				</span>
+			</summary>
 			<div className="item-display-complex-tools">
 				{!hideFiltering && (
 					<div>
@@ -191,7 +195,7 @@ const ComplexInventoryItem: React.FC<ComplexInventoryItemProps> = ({ items, disp
 				)}
 			</div>
 			<div className="item-display-complex-lineitems">{GetLineItems()}</div>
-		</div>
+		</details>
 	);
 };
 

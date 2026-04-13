@@ -23,11 +23,25 @@
 	color: #e8dcc8;
 }
 
-.item-display-complex-row {
+.item-display-complex > summary.item-display-complex-row {
+	list-style: none;
+	cursor: pointer;
 	display: flex;
 	flex-direction: row;
 	align-items: flex-start;
 	gap: 14px;
+}
+
+.item-display-complex > summary.item-display-complex-row::-webkit-details-marker {
+	display: none;
+}
+
+.item-display-complex > summary.item-display-complex-row::marker {
+	content: '';
+}
+
+.item-display-complex[open] > summary .item-display-complex-end {
+	transform: rotate(180deg);
 }
 
 .item-display-complex-icon {
@@ -82,8 +96,8 @@
 	width: 30%;
     justify-items: flex-end;
 }
-.item-display-complex-types label {
-	display:block;
+.item-display-complex-types > span {
+	display: block;
 }
 .item-display-complex-count {
     font-weight: 600;
@@ -110,6 +124,7 @@
 	font-size: 0.85rem;
 	font-weight: 600;
 	color: #e8f0ff;
+	transition: transform 0.15s ease;
 }
 
 .item-display-complex-tools {
