@@ -106,6 +106,7 @@ export type MapBiome = {
 }
 
 export type QuestRequirement = {
+	requirementKind: 'ingredient' | 'tag' | 'recipe',
 	itemType: IngredientBase | ITEM_TAG | Recipe,
 	qty?: number,
 	quality?: number,

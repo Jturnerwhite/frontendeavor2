@@ -12,7 +12,7 @@ import PlayerStoreSlice from '@/store/features/playerSlice';
 import ToastifyStore from '@/store/features/toastifySlice';
 import { GatherIngredientsInBiome } from '@/app/hex/architecture/helpers/mapHelpers';
 import { IngredientBases } from '@/app/hex/architecture/data/ingredientBases';
-import MapFog from './components/mapFog';
+import MapFog from '@/app/hex/map/components/mapFog';
 import '@/app/hex/map/map.css';
 
 export default function MapPage() {

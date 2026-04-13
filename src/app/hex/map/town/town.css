@@ -16,6 +16,16 @@
 	height: 100%;
 }
 
+.town-nav-panel a {
+	color: inherit;
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.town-nav-panel a:hover {
+	text-decoration: underline;
+}
+
 .town-nav-panel {
 	width: 10%;
 	flex-shrink: 0;

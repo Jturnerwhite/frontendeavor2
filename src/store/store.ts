@@ -48,6 +48,8 @@ function readPersistedPlayer(): {
 		const legacyLastCraft = parsed.lastCompletedCraft ?? null
 		const player: PersistedPlayerState = {
 			inventory: parsed.inventory ?? initialPlayerState.inventory,
+			availableQuestIds:
+				parsed.availableQuestIds ?? [...initialPlayerState.availableQuestIds],
 			xp: parsed.xp ?? initialPlayerState.xp,
 			gold: parsed.gold ?? initialPlayerState.gold,
 		}
@@ -79,6 +81,7 @@ function buildHistoryState(): typeof initialHistoryState {
 					...initialHistoryState,
 					...persistedHistory,
 					completedCrafts: persistedHistory.completedCrafts ?? [],
+					completedQuestIds: persistedHistory.completedQuestIds ?? [],
 				}
 			: { ...initialHistoryState }
 
@@ -140,12 +143,14 @@ if (typeof window !== 'undefined') {
 		}
 		const playerPersisted: PersistedPlayerState = {
 			inventory: state.Player.inventory,
+			availableQuestIds: state.Player.availableQuestIds,
 			xp: state.Player.xp,
 			gold: state.Player.gold,
 		}
 		const historyPersisted: PersistedHistoryState = {
 			completedCrafts: state.History.completedCrafts,
 			lastCompletedCraft: state.History.lastCompletedCraft,
+			completedQuestIds: state.History.completedQuestIds,
 		}
 		try {
 			localStorage.setItem(ALCHEMY_STORAGE_KEY, JSON.stringify(alchemyPersisted))
