@@ -102,10 +102,11 @@ interface ComplexInventoryItemProps {
 	hideDescription?: boolean;
 	hideFiltering?: boolean;
 	hideSorting?: boolean;
+	defaultOpen?: boolean;
 }
 
-const ComplexInventoryItem: React.FC<ComplexInventoryItemProps> = ({ items, displaySize = 35, hideDescription = false, hideFiltering = false, hideSorting = false }) => {
-	const [detailsOpen, setDetailsOpen] = useState(false);
+const ComplexInventoryItem: React.FC<ComplexInventoryItemProps> = ({ items, displaySize = 35, hideDescription = false, hideFiltering = false, hideSorting = false, defaultOpen = false }) => {
+	const [detailsOpen, setDetailsOpen] = useState(defaultOpen);
 	let image = '';
 	let name = '';
 	let types: string[] = [];

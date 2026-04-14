@@ -135,6 +135,7 @@ export default function Page() {
 		const elementScores = getCurrentElementScores();
 		const quality = AlchHelpers.CalculateQuality(recipe, elementScores);
 		const item: Item = {
+			id: AlchHelpers.GenerateTempId(),
 			name: recipe.description,
 			baseRecipeId: recipe.id,
 			description: recipe.description,
@@ -143,9 +144,9 @@ export default function Page() {
 			quality,
 			ingredients: flattenLabSourcesToIngredients(ingredients),
 		};
-		const { rawIds, craftedIndices } = collectConsumptionFromLabSources(ingredients);
-		if (rawIds.length > 0 || craftedIndices.length > 0) {
-			dispatch(PlayerStoreSlice.actions.removeInventorySlots({ rawIds, craftedIndices }));
+		const { rawIds, craftedItemIds } = collectConsumptionFromLabSources(ingredients);
+		if (rawIds.length > 0 || craftedItemIds.length > 0) {
+			dispatch(PlayerStoreSlice.actions.removeInventorySlots({ rawIds, craftedItemIds }));
 		}
 		dispatch(PlayerStoreSlice.actions.completeCraft({ item }));
 		dispatch(ToastifyStore.actions.showToast({ message: item.name }));

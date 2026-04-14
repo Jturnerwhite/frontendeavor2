@@ -7,7 +7,7 @@ import type {
 	Recipe,
 } from '@/app/hex/architecture/typings'
 import { IngredientBases } from '@/app/hex/architecture/data/ingredientBases'
-import type { CraftedWithIndex } from '@/app/hex/architecture/helpers/recipeRequirements'
+import type { CraftedInventoryEntry } from '@/app/hex/architecture/helpers/recipeRequirements'
 import { filterInventoryAfterConsumption } from '@/app/hex/architecture/helpers/recipeRequirements'
 
 /** Slots that can satisfy a quest requirement (full inventory; not consumption-filtered). */
@@ -15,7 +15,7 @@ export function getInventoryForQuestRequirement(
 	qr: QuestRequirement,
 	raw: Ingredient[],
 	crafted: Item[],
-): { ingredients: Ingredient[]; craftedEntries: CraftedWithIndex[] } {
+): { ingredients: Ingredient[]; craftedEntries: CraftedInventoryEntry[] } {
 	const minQ = qr.quality ?? null
 
 	if (qr.requirementKind === 'ingredient') {
@@ -29,7 +29,7 @@ export function getInventoryForQuestRequirement(
 	if (qr.requirementKind === 'tag') {
 		const tag = qr.itemType as ITEM_TAG
 		const craftedEntries = crafted
-			.map((item, index) => ({ item, index }))
+			.map((item) => ({ item, id: item.id }))
 			.filter(
 				({ item }) =>
 					item.types.includes(tag) && (minQ == null || item.quality >= minQ),
@@ -44,7 +44,7 @@ export function getInventoryForQuestRequirement(
 	if (qr.requirementKind === 'recipe') {
 		const recipe = qr.itemType as Recipe
 		const craftedEntries = crafted
-			.map((item, index) => ({ item, index }))
+			.map((item) => ({ item, id: item.id }))
 			.filter(
 				({ item }) =>
 					item.baseRecipeId === recipe.id &&
@@ -77,7 +77,7 @@ export function playerCanCompleteQuestInOrder(
 	crafted: Item[],
 ): boolean {
 	const rawPool = [...raw]
-	const craftedAvailable = new Set(crafted.map((_, i) => i))
+	const craftedAvailable = new Set(crafted.map((item) => item.id))
 
 	for (const qr of requirements) {
 		const need = qr.qty ?? 1
@@ -86,7 +86,7 @@ export function playerCanCompleteQuestInOrder(
 			rawPool,
 			crafted,
 		)
-		const ce = craftedEntries.filter((e) => craftedAvailable.has(e.index))
+		const ce = craftedEntries.filter((e) => craftedAvailable.has(e.id))
 		if (ingredients.length + ce.length < need) return false
 
 		let take = 0
@@ -98,11 +98,11 @@ export function playerCanCompleteQuestInOrder(
 				take++
 			}
 		}
-		const sortedCe = [...ce].sort((a, b) => a.index - b.index)
+		const sortedCe = [...ce].sort((a, b) => a.id.localeCompare(b.id))
 		for (const e of sortedCe) {
 			if (take >= need) break
-			if (craftedAvailable.has(e.index)) {
-				craftedAvailable.delete(e.index)
+			if (craftedAvailable.has(e.id)) {
+				craftedAvailable.delete(e.id)
 				take++
 			}
 		}
@@ -117,18 +117,18 @@ export function buildQuestStageInventory(
 	raw: Ingredient[],
 	crafted: Item[],
 	consumedRawIds: Set<string>,
-	consumedCraftedIndices: Set<number>,
+	consumedCraftedItemIds: Set<string>,
 ): {
 	ingredients: Ingredient[]
 	craftedItems: Item[]
-	craftedEntries: CraftedWithIndex[]
+	craftedEntries: CraftedInventoryEntry[]
 } {
 	const base = getInventoryForQuestRequirement(qr, raw, crafted)
 	const after = filterInventoryAfterConsumption(
 		base.ingredients,
 		base.craftedEntries,
 		consumedRawIds,
-		consumedCraftedIndices,
+		consumedCraftedItemIds,
 	)
 	return {
 		ingredients: after.ingredients,

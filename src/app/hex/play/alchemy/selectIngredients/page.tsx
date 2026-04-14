@@ -7,13 +7,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import AlchemyStoreSlice from '@/store/features/alchemySlice';
 import { Recipes } from '@/app/hex/architecture/data/recipes';
 import type { AlchemyLabSource, Ingredient, Item, Recipe } from '@/app/hex/architecture/typings';
-import InventoryDisplay, { craftedRowKey } from '@/app/hex/sharedComponents/inventory/inventory';
+import InventoryDisplay from '@/app/hex/sharedComponents/inventory/inventory';
 import { RootState } from '@/store/store';
 import {
 	countSelectionUnits,
 	filterInventoryAfterConsumption,
 	formatRequiredIngredientEntry,
 	getInventoryForRequirement,
+	partitionInventorySelectionKeys,
 } from '@/app/hex/architecture/helpers/recipeRequirements';
 import {
 	dedupeLabSources,
@@ -24,7 +25,6 @@ import '../alchemy.css';
 type StageInventory = {
 	ingredients: Ingredient[];
 	craftedItems: Item[];
-	getCraftedRowKey: (item: Item, i: number) => string;
 };
 
 function buildStageInventory(
@@ -33,15 +33,13 @@ function buildStageInventory(
 	rawIngredients: Ingredient[],
 	inventoryItems: Item[],
 	consumedRawIds: Set<string>,
-	consumedCraftedIndices: Set<number>,
+	consumedCraftedItemIds: Set<string>,
 ): StageInventory {
 	const reqList = recipe.requiredIngredients ?? [];
 	if (reqList.length === 0) {
-		const craftedEntries = inventoryItems.map((item, index) => ({ item, index }));
 		return {
 			ingredients: rawIngredients,
 			craftedItems: inventoryItems,
-			getCraftedRowKey: (_item: Item, i: number) => craftedRowKey(craftedEntries[i].index),
 		};
 	}
 	const currentReq = reqList[stageIndex];
@@ -50,27 +48,12 @@ function buildStageInventory(
 		base.ingredients,
 		base.craftedEntries,
 		consumedRawIds,
-		consumedCraftedIndices,
+		consumedCraftedItemIds,
 	);
 	return {
 		ingredients: after.ingredients,
 		craftedItems: after.craftedEntries.map((e) => e.item),
-		getCraftedRowKey: (_item: Item, i: number) => craftedRowKey(after.craftedEntries[i].index),
 	};
-}
-
-function collectConsumptionFromKeys(selectedKeys: Set<string>): { rawIds: string[]; craftedIndices: number[] } {
-	const rawIds: string[] = [];
-	const craftedIndices: number[] = [];
-	for (const k of selectedKeys) {
-		if (k.startsWith('crafted:')) {
-			const idx = Number(k.slice('crafted:'.length));
-			if (!Number.isNaN(idx)) craftedIndices.push(idx);
-		} else {
-			rawIds.push(k);
-		}
-	}
-	return { rawIds, craftedIndices };
 }
 
 export default function SelectIngredientsPage() {
@@ -93,9 +76,9 @@ export default function SelectIngredientsPage() {
 	const [stageIndex, setStageIndex] = useState(0);
 	/** One batch per completed stage (same order as `consumptionLog`). */
 	const [committedBatches, setCommittedBatches] = useState<AlchemyLabSource[][]>([]);
-	const [consumptionLog, setConsumptionLog] = useState<Array<{ rawIds: string[]; craftedIndices: number[] }>>([]);
+	const [consumptionLog, setConsumptionLog] = useState<Array<{ rawIds: string[]; craftedItemIds: string[] }>>([]);
 	const [consumedRawIds, setConsumedRawIds] = useState<Set<string>>(() => new Set());
-	const [consumedCraftedIndices, setConsumedCraftedIndices] = useState<Set<number>>(() => new Set());
+	const [consumedCraftedItemIds, setConsumedCraftedItemIds] = useState<Set<string>>(() => new Set());
 	const [selectedKeys, setSelectedKeys] = useState<Set<string>>(() => new Set());
 
 	useEffect(() => {
@@ -107,7 +90,7 @@ export default function SelectIngredientsPage() {
 		setCommittedBatches([]);
 		setConsumptionLog([]);
 		setConsumedRawIds(new Set());
-		setConsumedCraftedIndices(new Set());
+		setConsumedCraftedItemIds(new Set());
 		setSelectedKeys(new Set());
 	}, [recipeId]);
 
@@ -118,11 +101,10 @@ export default function SelectIngredientsPage() {
 			return {
 				ingredients: [] as Ingredient[],
 				craftedItems: [] as Item[],
-				getCraftedRowKey: (_item: Item, i: number) => craftedRowKey(i),
 			};
 		}
-		return buildStageInventory(recipe, stageIndex, rawIngredients, inventoryItems, consumedRawIds, consumedCraftedIndices);
-	}, [recipe, stageIndex, rawIngredients, inventoryItems, consumedRawIds, consumedCraftedIndices]);
+		return buildStageInventory(recipe, stageIndex, rawIngredients, inventoryItems, consumedRawIds, consumedCraftedItemIds);
+	}, [recipe, stageIndex, rawIngredients, inventoryItems, consumedRawIds, consumedCraftedItemIds]);
 
 	const needForStage = currentReq ? (currentReq.qty ?? 1) : 0;
 
@@ -183,15 +165,19 @@ export default function SelectIngredientsPage() {
 		}
 		if (!currentReq || !canProceedStaged) return;
 		const batch = labSourcesFromInventorySelection(selectedKeys, inventoryItems, rawIngredients);
-		const consumption = collectConsumptionFromKeys(selectedKeys);
+		const consumption = partitionInventorySelectionKeys(
+			selectedKeys,
+			stageInventory.ingredients,
+			stageInventory.craftedItems,
+		);
 		setConsumedRawIds((prev) => {
 			const n = new Set(prev);
 			consumption.rawIds.forEach((id) => n.add(id));
 			return n;
 		});
-		setConsumedCraftedIndices((prev) => {
+		setConsumedCraftedItemIds((prev) => {
 			const n = new Set(prev);
-			consumption.craftedIndices.forEach((idx) => n.add(idx));
+			consumption.craftedItemIds.forEach((id) => n.add(id));
 			return n;
 		});
 		setSelectedKeys(new Set());
@@ -214,6 +200,8 @@ export default function SelectIngredientsPage() {
 		canProceedStaged,
 		chosenLabSourcesLegacy,
 		selectedKeys,
+		stageInventory.ingredients,
+		stageInventory.craftedItems,
 		inventoryItems,
 		rawIngredients,
 		committedBatches,
@@ -240,9 +228,9 @@ export default function SelectIngredientsPage() {
 			last.rawIds.forEach((id) => n.delete(id));
 			return n;
 		});
-		setConsumedCraftedIndices((prev) => {
+		setConsumedCraftedItemIds((prev) => {
 			const n = new Set(prev);
-			last.craftedIndices.forEach((idx) => n.delete(idx));
+			last.craftedItemIds.forEach((id) => n.delete(id));
 			return n;
 		});
 		setStageIndex((i) => i - 1);
@@ -313,7 +301,6 @@ export default function SelectIngredientsPage() {
 					selectedKeys={selectedKeys}
 					onToggleKey={toggleKey}
 					showTitle={false}
-					getCraftedRowKey={stageInventory.getCraftedRowKey}
 				/>
 			)}
 			<div className="alchemy-setup-actions">

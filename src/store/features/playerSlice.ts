@@ -52,15 +52,15 @@ const playerSlice = createSlice({
 		addGatheredIngredients: (state, action: PayloadAction<{ ingredients: Ingredient[] }>) => {
 			state.inventory.raw.push(...action.payload.ingredients)
 		},
-		/** Remove inventory slots; crafted indices are positions in `crafted` before removal. */
+		/** Remove raw ingredients and crafted items by id. */
 		removeInventorySlots: (
 			state,
-			action: PayloadAction<{ rawIds: string[]; craftedIndices: number[] }>,
+			action: PayloadAction<{ rawIds: string[]; craftedItemIds: string[] }>,
 		) => {
 			const rawSet = new Set(action.payload.rawIds)
-			const idxSet = new Set(action.payload.craftedIndices)
+			const craftedIdSet = new Set(action.payload.craftedItemIds)
 			state.inventory.raw = state.inventory.raw.filter((i) => !rawSet.has(i.id))
-			state.inventory.crafted = state.inventory.crafted.filter((_, i) => !idxSet.has(i))
+			state.inventory.crafted = state.inventory.crafted.filter((item) => !craftedIdSet.has(item.id))
 		},
 		applyQuestRewards: (
 			state,

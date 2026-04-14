@@ -9,29 +9,20 @@ type InventoryTab = 'ingredients' | 'crafted';
 interface InventoryProps {
 	inventoryItems: Array<Item>;
 	ingredients: Array<Ingredient>;
-	groupByBase?: boolean;
 	hideFiltering?: boolean;
 	hideSorting?: boolean;
 	hideSubFiltering?: boolean;
 	hideSubSorting?: boolean;
-	/** When set with selectedKeys + onToggleKey, each row shows a checkbox (keys: `crafted:${index}`, ingredient.id). */
+		/** When set with selectedKeys + onToggleKey, each row shows a checkbox (keys: `Item.id`, `Ingredient.id`). */
 	selectable?: boolean;
 	selectedKeys?: Set<string>;
 	onToggleKey?: (key: string) => void;
 	showTitle?: boolean;
-	/** Override crafted row keys (e.g. stable indices into the full inventory array). */
-	getCraftedRowKey?: (item: Item, index: number) => string;
-}
-
-/** Stable key for a crafted row at index (used with selectable inventory). */
-export function craftedRowKey(index: number): string {
-	return `crafted:${index}`;
 }
 
 const InventoryDisplay: React.FC<InventoryProps> = ({
 	inventoryItems,
 	ingredients,
-	groupByBase = false,
 	hideFiltering = false,
 	hideSorting = false,
 	hideSubFiltering = false,
@@ -40,7 +31,6 @@ const InventoryDisplay: React.FC<InventoryProps> = ({
 	selectedKeys,
 	onToggleKey,
 	showTitle = true,
-	getCraftedRowKey,
 }) => {
 	const [activeTab, setActiveTab] = useState<InventoryTab>('ingredients');
 	const DISPLAY_SIZE = 20;
@@ -65,12 +55,11 @@ const InventoryDisplay: React.FC<InventoryProps> = ({
 	function renderInventoryItems(): JSX.Element[] {
 		const output: JSX.Element[] = [];
 
-		// Selection (e.g. alchemy ingredient stages) needs one row per stack slot with keys that
-		// match `ingredient.id` and `crafted:${globalIndex}` — not grouped `ING:baseId` keys.
+		// Selection (e.g. alchemy / quest stages) needs one row per slot with stable ids — not grouped `ING:baseId` keys.
 		if (canSelect) {
 			if (activeTab === 'crafted') {
 				inventoryItems.forEach((item, index) => {
-					const rowKey = getCraftedRowKey ? getCraftedRowKey(item, index) : craftedRowKey(index);
+					const rowKey = item.id;
 					const inner = (
 						<ComplexInventoryItem
 							key={item.name + '-' + index}
@@ -132,6 +121,7 @@ const InventoryDisplay: React.FC<InventoryProps> = ({
 
 	return <div className="inventory-display">
 		{showTitle && <h1>Inventory</h1>}
+		{inventoryItems && inventoryItems.length > 0 && (
 		<div className="inventory-tabs" role="tablist" aria-label="Inventory category">
 			<button
 				type="button"
@@ -154,6 +144,7 @@ const InventoryDisplay: React.FC<InventoryProps> = ({
 				Crafted
 			</button>
 		</div>
+		)}
 		{!hideFiltering && <div><h2>Filtering</h2></div>}
 		{!hideSorting && <div><h2>Sorting</h2></div>}
 		<div className="inventory-display-items">

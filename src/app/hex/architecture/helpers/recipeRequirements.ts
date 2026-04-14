@@ -42,7 +42,11 @@ export function playerMeetsRequirement(
 	return count >= need;
 }
 
-export type CraftedWithIndex = { item: Item; index: number };
+/** Crafted stack eligible for a requirement; `id` is `item.id` (inventory key). */
+export type CraftedInventoryEntry = { item: Item; id: string };
+
+/** @deprecated use CraftedInventoryEntry */
+export type CraftedWithIndex = CraftedInventoryEntry;
 
 /**
  * Items the player may use to satisfy a requirement (full inventory; not consumption-filtered).
@@ -51,7 +55,7 @@ export function getInventoryForRequirement(
 	req: RecipeRequiredIngredient,
 	raw: Ingredient[],
 	crafted: Item[],
-): { ingredients: Ingredient[]; craftedEntries: CraftedWithIndex[] } {
+): { ingredients: Ingredient[]; craftedEntries: CraftedInventoryEntry[] } {
 	if (isIngredientBaseRef(req.type)) {
 		const base = req.type;
 		const ingredients = raw.filter((i) => i.baseIngId === base.id);
@@ -59,7 +63,7 @@ export function getInventoryForRequirement(
 	}
 	const tag = req.type as ITEM_TAG;
 	const craftedEntries = crafted
-		.map((item, index) => ({ item, index }))
+		.map((item) => ({ item, id: item.id }))
 		.filter(
 			({ item }) =>
 				item.types.includes(tag) && (req.quality == null || item.quality >= req.quality),
@@ -71,17 +75,43 @@ export function getInventoryForRequirement(
 
 export function filterInventoryAfterConsumption(
 	ingredients: Ingredient[],
-	craftedEntries: CraftedWithIndex[],
+	craftedEntries: CraftedInventoryEntry[],
 	consumedRawIds: Set<string>,
-	consumedCraftedIndices: Set<number>,
-): { ingredients: Ingredient[]; craftedEntries: CraftedWithIndex[] } {
+	consumedCraftedItemIds: Set<string>,
+): { ingredients: Ingredient[]; craftedEntries: CraftedInventoryEntry[] } {
 	return {
 		ingredients: ingredients.filter((i) => !consumedRawIds.has(i.id)),
-		craftedEntries: craftedEntries.filter((e) => !consumedCraftedIndices.has(e.index)),
+		craftedEntries: craftedEntries.filter((e) => !consumedCraftedItemIds.has(e.id)),
 	};
 }
 
-/** Count selected rows (each raw id or each crafted slot counts as 1 toward qty). */
+/** Classify checkbox keys into raw ingredient ids and crafted item ids (matches `Ingredient.id` / `Item.id`). */
+export function partitionInventorySelectionKeys(
+	selectedKeys: Set<string>,
+	raw: Ingredient[],
+	crafted: Item[],
+): { rawIds: string[]; craftedItemIds: string[] } {
+	const rawIds: string[] = [];
+	const craftedItemIds: string[] = [];
+	const seenR = new Set<string>();
+	const seenC = new Set<string>();
+	for (const k of selectedKeys) {
+		if (raw.some((i) => i.id === k)) {
+			if (!seenR.has(k)) {
+				seenR.add(k);
+				rawIds.push(k);
+			}
+		} else if (crafted.some((i) => i.id === k)) {
+			if (!seenC.has(k)) {
+				seenC.add(k);
+				craftedItemIds.push(k);
+			}
+		}
+	}
+	return { rawIds, craftedItemIds };
+}
+
+/** Count selected rows (each raw id or each crafted item id counts as 1 toward qty). */
 export function countSelectionUnits(
 	selectedKeys: Set<string>,
 	crafted: Item[],
@@ -89,12 +119,9 @@ export function countSelectionUnits(
 ): number {
 	let n = 0;
 	for (const k of selectedKeys) {
-		if (k.startsWith('crafted:')) {
-			const idx = Number(k.slice('crafted:'.length));
-			if (!Number.isNaN(idx) && idx >= 0 && idx < crafted.length) {
-				n += 1;
-			}
-		} else if (raw.some((i) => i.id === k)) {
+		if (raw.some((i) => i.id === k)) {
+			n += 1;
+		} else if (crafted.some((i) => i.id === k)) {
 			n += 1;
 		}
 	}
@@ -115,8 +142,8 @@ export function dedupeIngredientsById(ingredients: Ingredient[]): Ingredient[] {
 }
 
 /**
- * Resolve chosen ingredients for alchemy. `crafted` must be the full crafted inventory array
- * so `crafted:${index}` keys resolve correctly.
+ * Resolve chosen ingredients for alchemy (legacy: expands crafted items into nested ingredients).
+ * Selection keys are `Ingredient.id` or `Item.id` into the passed `raw` / `crafted` arrays.
  */
 export function ingredientsFromInventorySelection(
 	selectedKeys: Set<string>,
@@ -126,22 +153,19 @@ export function ingredientsFromInventorySelection(
 	const out: Ingredient[] = [];
 	const seen = new Set<string>();
 	for (const k of selectedKeys) {
-		if (k.startsWith('crafted:')) {
-			const idx = Number(k.slice('crafted:'.length));
-			const item = crafted[idx];
-			if (item?.ingredients?.length) {
-				for (const ing of item.ingredients) {
-					if (!seen.has(ing.id)) {
-						seen.add(ing.id);
-						out.push(ing);
-					}
+		const ingDirect = raw.find((i) => i.id === k);
+		if (ingDirect && !seen.has(ingDirect.id)) {
+			seen.add(ingDirect.id);
+			out.push(ingDirect);
+			continue;
+		}
+		const item = crafted.find((i) => i.id === k);
+		if (item?.ingredients?.length) {
+			for (const ing of item.ingredients) {
+				if (!seen.has(ing.id)) {
+					seen.add(ing.id);
+					out.push(ing);
 				}
-			}
-		} else {
-			const ing = raw.find((i) => i.id === k);
-			if (ing && !seen.has(ing.id)) {
-				seen.add(ing.id);
-				out.push(ing);
 			}
 		}
 	}

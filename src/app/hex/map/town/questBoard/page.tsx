@@ -12,30 +12,14 @@ import {
 } from '@/app/hex/architecture/helpers/questRequirements'
 import {
 	countSelectionUnits,
+	partitionInventorySelectionKeys,
 } from '@/app/hex/architecture/helpers/recipeRequirements'
 import { CreateIngredient } from '@/app/hex/architecture/factories/ingredientFactory'
-import InventoryDisplay, { craftedRowKey } from '@/app/hex/sharedComponents/inventory/inventory'
+import InventoryDisplay from '@/app/hex/sharedComponents/inventory/inventory'
 import PlayerStoreSlice from '@/store/features/playerSlice'
 import HistoryStoreSlice from '@/store/features/historySlice'
 import { RootState } from '@/store/store'
 import '@/app/hex/play/alchemy/alchemy.css'
-
-function collectConsumptionFromKeys(selectedKeys: Set<string>): {
-	rawIds: string[]
-	craftedIndices: number[]
-} {
-	const rawIds: string[] = []
-	const craftedIndices: number[] = []
-	for (const k of selectedKeys) {
-		if (k.startsWith('crafted:')) {
-			const idx = Number(k.slice('crafted:'.length))
-			if (!Number.isNaN(idx)) craftedIndices.push(idx)
-		} else {
-			rawIds.push(k)
-		}
-	}
-	return { rawIds, craftedIndices }
-}
 
 function isIngredientBaseReward(r: Item | IngredientBase): r is IngredientBase {
 	return 'possibleComps' in r && Array.isArray((r as IngredientBase).possibleComps)
@@ -52,11 +36,11 @@ export default function QuestBoard() {
 	const [showComplete, setShowComplete] = useState(false)
 	const [requirementIndex, setRequirementIndex] = useState(0)
 	const [consumedRawIds, setConsumedRawIds] = useState<Set<string>>(() => new Set())
-	const [consumedCraftedIndices, setConsumedCraftedIndices] = useState<Set<number>>(
+	const [consumedCraftedItemIds, setConsumedCraftedItemIds] = useState<Set<string>>(
 		() => new Set(),
 	)
 	const [consumptionLog, setConsumptionLog] = useState<
-		Array<{ rawIds: string[]; craftedIndices: number[] }>
+		Array<{ rawIds: string[]; craftedItemIds: string[] }>
 	>([])
 	const [selectedKeys, setSelectedKeys] = useState<Set<string>>(() => new Set())
 
@@ -85,7 +69,7 @@ export default function QuestBoard() {
 			return {
 				ingredients: [] as Ingredient[],
 				craftedItems: [] as Item[],
-				craftedEntries: [] as { item: Item; index: number }[],
+				craftedEntries: [],
 			}
 		}
 		return buildQuestStageInventory(
@@ -93,14 +77,14 @@ export default function QuestBoard() {
 			rawIngredients,
 			inventoryItems,
 			consumedRawIds,
-			consumedCraftedIndices,
+			consumedCraftedItemIds,
 		)
 	}, [
 		currentReq,
 		rawIngredients,
 		inventoryItems,
 		consumedRawIds,
-		consumedCraftedIndices,
+		consumedCraftedItemIds,
 	])
 
 	const needForStage = currentReq ? (currentReq.qty ?? 1) : 0
@@ -117,7 +101,7 @@ export default function QuestBoard() {
 	const resetActiveQuestFlow = useCallback(() => {
 		setRequirementIndex(0)
 		setConsumedRawIds(new Set())
-		setConsumedCraftedIndices(new Set())
+		setConsumedCraftedItemIds(new Set())
 		setConsumptionLog([])
 		setSelectedKeys(new Set())
 		setShowComplete(false)
@@ -189,24 +173,28 @@ export default function QuestBoard() {
 
 	const handleContinue = useCallback(() => {
 		if (!selectedQuest || !currentReq || !canProceed) return
-		const batch = collectConsumptionFromKeys(selectedKeys)
+		const batch = partitionInventorySelectionKeys(
+			selectedKeys,
+			stageInventory.ingredients,
+			stageInventory.craftedItems,
+		)
 		const nextConsumedRaw = new Set(consumedRawIds)
 		batch.rawIds.forEach((id) => nextConsumedRaw.add(id))
-		const nextConsumedCrafted = new Set(consumedCraftedIndices)
-		batch.craftedIndices.forEach((i) => nextConsumedCrafted.add(i))
+		const nextConsumedCrafted = new Set(consumedCraftedItemIds)
+		batch.craftedItemIds.forEach((id) => nextConsumedCrafted.add(id))
 		setConsumedRawIds(nextConsumedRaw)
-		setConsumedCraftedIndices(nextConsumedCrafted)
+		setConsumedCraftedItemIds(nextConsumedCrafted)
 		setSelectedKeys(new Set())
 
 		const isLast = requirementIndex + 1 >= requirements.length
 		if (isLast) {
 			const log = [...consumptionLog, batch]
 			const allRawIds = log.flatMap((c) => c.rawIds)
-			const allCrafted = log.flatMap((c) => c.craftedIndices)
+			const allCrafted = log.flatMap((c) => c.craftedItemIds)
 			dispatch(
 				PlayerStoreSlice.actions.removeInventorySlots({
 					rawIds: allRawIds,
-					craftedIndices: allCrafted,
+					craftedItemIds: allCrafted,
 				}),
 			)
 			const rewardItems: Item[] = []
@@ -241,13 +229,14 @@ export default function QuestBoard() {
 		currentReq,
 		canProceed,
 		selectedKeys,
+		stageInventory.ingredients,
+		stageInventory.craftedItems,
 		consumedRawIds,
-		consumedCraftedIndices,
+		consumedCraftedItemIds,
 		requirementIndex,
 		requirements.length,
 		consumptionLog,
 		dispatch,
-		selectedKeys,
 	])
 
 	const handleBackStage = useCallback(() => {
@@ -266,9 +255,9 @@ export default function QuestBoard() {
 			last.rawIds.forEach((id) => n.delete(id))
 			return n
 		})
-		setConsumedCraftedIndices((prev) => {
+		setConsumedCraftedItemIds((prev) => {
 			const n = new Set(prev)
-			last.craftedIndices.forEach((idx) => n.delete(idx))
+			last.craftedItemIds.forEach((id) => n.delete(id))
 			return n
 		})
 		setRequirementIndex((i) => i - 1)
@@ -391,9 +380,6 @@ export default function QuestBoard() {
 					selectedKeys={selectedKeys}
 					onToggleKey={toggleKey}
 					showTitle={false}
-					getCraftedRowKey={(_item, i) =>
-						craftedRowKey(stageInventory.craftedEntries[i]?.index ?? i)
-					}
 				/>
 			)}
 			<div className="alchemy-setup-actions">

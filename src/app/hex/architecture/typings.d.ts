@@ -40,6 +40,7 @@ export type Ingredient = {
 
 export type Item = {
 	name: string,
+	id: string,
 	baseRecipeId?: string,
 	description: string,
 	comps: AlchComponent[],
@@ -55,8 +56,8 @@ export type AlchemyLabSource =
 			labKind: 'item'
 			labSlotId: string
 			item: Item
-			/** Player `inventory.crafted` index when this row came from the stash (for consumption on craft complete). */
-			playerCraftedInventoryIndex?: number
+			/** `Item.id` in the player stash when this row came from crafted inventory (consumption on craft complete). */
+			playerCraftedItemId?: string
 	  }
 
 /**
