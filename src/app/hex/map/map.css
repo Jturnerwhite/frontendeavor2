@@ -1,3 +1,10 @@
+:root {
+	--biome-PineBarrens: #367240;
+	--biome-ValleyRidge: #615751;
+	--biome-FlowingFields: #97b36c;
+	--biome-LacrimoseLake: #007561;
+}
+
 .map-layout {
 	display: flex;
 	width: 100%;
@@ -65,4 +72,17 @@
 .map-storm-2 {
 	fill: transparent;
 	stroke: rgb(26, 16, 25);
+}
+
+.map-main-panel .hex-tile.PineBarrens {
+	fill: var(--biome-PineBarrens);
+}
+.map-main-panel .hex-tile.ValleyRidge {
+	fill: var(--biome-ValleyRidge);
+}
+.map-main-panel .hex-tile.FlowingFields {
+	fill: var(--biome-FlowingFields);
+}
+.map-main-panel .hex-tile.LacrimoseLake {
+	fill: var(--biome-LacrimoseLake);
 }

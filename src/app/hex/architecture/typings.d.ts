@@ -110,6 +110,7 @@ export type Recipe = {
 }
 
 export type MapBiome = {
+	id: string,
 	name: string,
 	description: string,
 	icon: string,

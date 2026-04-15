@@ -139,9 +139,9 @@ export const IngredientBases:Record<string, IngredientBase> = {
 			},
 		],
 	},
-	Frillsh: {
-		id: "Frillsh",
-		name: "Frillsh",
+	Frillish: {
+		id: "Frillish",
+		name: "Frillish",
 		ingTier: 0,
 		image: IMAGE_PATH + "/fish/frilled.png",
 		types: [ITEM_TAG.ANIMAL_MAT],

@@ -4,6 +4,7 @@ import { IngredientBases } from './ingredientBases';
 
 const Biomes = {
 	PineBarrens: {
+		id: "PineBarrens",
 		name: "Pine Barrens",
 		description: "A forest is a dense area of trees and plants.",
 		terrain: MAP_TERRAIN.FOREST,
@@ -14,6 +15,7 @@ const Biomes = {
 		],
 	},
 	ValleyRidge: {
+		id: "ValleyRidge",
 		name: "Valley Ridge",
 		description: "A mountain is a tall peak of rock and soil.",
 		terrain: MAP_TERRAIN.MOUNTAIN,
@@ -24,6 +26,7 @@ const Biomes = {
 		],
 	},
 	FlowingFields: {
+		id: "FlowingFields",
 		name: "Flowing Fields",
 		description: "A field is a flat area of grass and flowers.",
 		terrain: MAP_TERRAIN.FIELD,
@@ -34,12 +37,13 @@ const Biomes = {
 		],
 	},
 	LacrimoseLake: {
+		id: "LacrimoseLake",
 		name: "Lacrimose Lake",
 		description: "A lake is a body of water.",
 		terrain: MAP_TERRAIN.LAKE,
 		icon: "lake",
 		nativeIngredients: [
-			{ ingredient: IngredientBases["Frillsh"], weighting: 10 },
+			{ ingredient: IngredientBases["Frillish"], weighting: 10 },
 			{ ingredient: IngredientBases["JusThead"], weighting: 5 },
 			{ ingredient: IngredientBases["Grumbo"], weighting: 1 },
 		],

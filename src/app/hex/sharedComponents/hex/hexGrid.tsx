@@ -142,4 +142,5 @@ const AlchHexGrid: React.FC<HexGridProps> = ({
 		</>
 	);
 };
+
 export { HexGrid,AlchHexGrid };

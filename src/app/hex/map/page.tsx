@@ -130,9 +130,20 @@ export default function MapPage() {
 		}, [] as JSX.Element[]);
 	}
 
+	function assignAdditionalClassStrings(hexMap: HexMap) {
+		Object.values(hexMap).forEach((hex: HexTile) => {
+			const content = mapContents.find((content) => content.tileIndexes.includes(hex.index));
+			if(content !== undefined) {
+				hex.additionalClassString = content.biome?.id ?? '';
+			}
+		});
+	}
+
 	useEffect(() => {
 		if(hexMap) return;
-		setHexMap(AlchHelpers.CreateHexGrid({x: 0, y: 0}, TILE_SIZE, MAP_LAYER_SIZE));
+		let newMap = AlchHelpers.CreateHexGrid({x: 0, y: 0}, TILE_SIZE, MAP_LAYER_SIZE);
+		assignAdditionalClassStrings(newMap);
+		setHexMap(newMap);
 	}, []);
 
 	useEffect(() => {

@@ -48,7 +48,7 @@ const Hex: React.FC<HexProps> = ({
 	return (
 		<>
 			<polygon
-				className={'hex-tile'}
+				className={`hex-tile ${hexData.additionalClassString ?? ''}`}
 				points={points}
 				pointerEvents="fill"
 				onMouseEnter={hexEnter}

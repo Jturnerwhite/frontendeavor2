@@ -23,6 +23,8 @@ interface HexTile {
 		isLinkSpot: boolean;
 	} | undefined;
 	neighbors: string[];
+
+	additionalClassString?: string;
 }
 
 interface HexMap {
