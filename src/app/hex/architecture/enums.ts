@@ -81,4 +81,5 @@ export enum MAP_TERRAIN {
 	ICE = "Ice",
 	SWAMP = "Swamp",
 	LAVA = "Lava",
+	LAKE = "Lake",
 }

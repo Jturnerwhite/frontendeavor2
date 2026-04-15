@@ -139,4 +139,95 @@ export const IngredientBases:Record<string, IngredientBase> = {
 			},
 		],
 	},
+	Frillsh: {
+		id: "Frillsh",
+		name: "Frillsh",
+		ingTier: 0,
+		image: IMAGE_PATH + "/fish/frilled.png",
+		types: [ITEM_TAG.ANIMAL_MAT],
+		possibleComps: [
+			{
+				element: ALCH_ELEMENT.EARTH,
+				possibleShapes: [SHAPE_NAME.DOT, SHAPE_NAME.HALFLINE, SHAPE_NAME.LINE, SHAPE_NAME.OBTUSE, SHAPE_NAME.CLAW],
+				linkSpots: [0, 0, 0, 0, 0, 1, 0]
+			},
+			{
+				element: ALCH_ELEMENT.WATER,
+				possibleShapes: [SHAPE_NAME.DOT, SHAPE_NAME.HALFLINE, SHAPE_NAME.LINE],
+			},
+			{
+				element: ALCH_ELEMENT.WATER,
+				possibleShapes: [SHAPE_NAME.DOT, SHAPE_NAME.HALFLINE, SHAPE_NAME.LINE, SHAPE_NAME.DIAMOND],
+				chance: 0.1
+			},
+		],
+	},
+	JusThead: {
+		id: "JusThead",
+		name: "Jus Thead",
+		ingTier: 0,
+		image: IMAGE_PATH + "/fish/justhead.png",
+		types: [ITEM_TAG.ANIMAL_MAT],
+		possibleComps: [
+			{
+				element: ALCH_ELEMENT.WATER,
+				possibleShapes: [SHAPE_NAME.DOT],
+				linkSpots: [1, 0, 0, 0, 0, 0, 0]
+			},
+			{
+				element: ALCH_ELEMENT.EARTH,
+				possibleShapes: [SHAPE_NAME.DOT],
+				chance: 0.25
+			},
+			{
+				element: ALCH_ELEMENT.FIRE,
+				possibleShapes: [SHAPE_NAME.DOT],
+				chance: 0.25
+			},
+			{
+				element: ALCH_ELEMENT.WIND,
+				possibleShapes: [SHAPE_NAME.DOT],
+				chance: 0.25
+			},
+			{
+				element: ALCH_ELEMENT.AETHER,
+				possibleShapes: [SHAPE_NAME.DOT],
+				chance: 0.25
+			},
+			{
+				element: ALCH_ELEMENT.CHAOS,
+				possibleShapes: [SHAPE_NAME.DOT],
+				chance: 0.25
+			},
+		],
+	},
+	Grumbo: {
+		id: "Grumbo",
+		name: "Grumbo",
+		ingTier: 0,
+		image: IMAGE_PATH + "/fish/simple.png",
+		types: [ITEM_TAG.ANIMAL_MAT],
+		possibleComps: [
+			{
+				element: ALCH_ELEMENT.WATER,
+				possibleShapes: [
+					SHAPE_NAME.DOT, 
+					SHAPE_NAME.HALFLINE, 
+					SHAPE_NAME.LINE, 
+					SHAPE_NAME.OBTUSE,
+					SHAPE_NAME.TRIANGLE,
+					SHAPE_NAME.DIAMOND,
+					SHAPE_NAME.FINGER,
+					SHAPE_NAME.AXE,
+					SHAPE_NAME.CLAW
+				],
+			},
+			{
+				element: ALCH_ELEMENT.WATER,
+				possibleShapes: [SHAPE_NAME.DOT],
+				linkSpots: [1, 0, 0, 0, 0, 0, 0],
+				chance: 0.01
+			},
+		],
+	}
 };

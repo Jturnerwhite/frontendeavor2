@@ -32,7 +32,18 @@ const Biomes = {
 			{ ingredient: IngredientBases["AeridGrass"], weighting: 1 },
 			{ ingredient: IngredientBases["Sunpetal"], weighting: 2 },
 		],
-	}
+	},
+	LacrimoseLake: {
+		name: "Lacrimose Lake",
+		description: "A lake is a body of water.",
+		terrain: MAP_TERRAIN.LAKE,
+		icon: "lake",
+		nativeIngredients: [
+			{ ingredient: IngredientBases["Frillsh"], weighting: 10 },
+			//{ ingredient: IngredientBases["JusThead"], weighting: 5 },
+			//{ ingredient: IngredientBases["Grumbo"], weighting: 1 },
+		],
+	},
 };
 
 export default Biomes;

@@ -40,13 +40,17 @@ export default function MapPage() {
 			biome: Biomes.PineBarrens,
 		},
 		{
-			tileIndexes: [2, 3, 5, 6, 10, 11, 12, 17, 18, 32, 33, 34, 35, 36],
+			tileIndexes: [2, 3, 5, 6, 11, 12, 17, 18, 32, 33, 34, 35, 36],
 			biome: Biomes.FlowingFields,
 		},
 		{
 			tileIndexes: [4, 13, 14, 16, 23, 24, 25, 26, 27, 28, 29, 30, 31],
 			biome: Biomes.ValleyRidge,
 		},
+		{
+			tileIndexes: [10],
+			biome: Biomes.LacrimoseLake,
+		}
 	];
 
 	function hexClick(hex: HexTile) {
