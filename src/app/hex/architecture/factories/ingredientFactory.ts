@@ -114,8 +114,7 @@ export function CreateIngredient(ingBase: IngredientBase): Ingredient {
 		if ('possibleShapes' in compSpec) {
 			if (
 				compSpec.chance == undefined ||
-				compSpec.chance > 0 ||
-				Math.random() * 100 <= compSpec.chance
+				(compSpec.chance > 0 && Math.random() <= compSpec.chance)
 			) {
 				const shapeName = GenerateShape(ingBase, compSpec, newIng.quality) ?? compSpec.possibleShapes[0];
 				newComp = {

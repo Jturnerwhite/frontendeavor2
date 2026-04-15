@@ -17,7 +17,7 @@ export default function AlchemyCompletePage() {
 				<p className="alchemy-setup-back">
 					<Link href="/hex/play/alchemy">Back to alchemy</Link>
 					{' · '}
-					<Link href="/hex">Return to hub</Link>
+					<Link href="/hex/map/home">Back to home</Link>
 				</p>
 			</div>
 		);
@@ -38,7 +38,7 @@ export default function AlchemyCompletePage() {
 				/>
 			</div>
 			<p className="alchemy-setup-back">
-				<Link href="/hex">Return to hub</Link>
+				<Link href="/hex/map/home">Back to home</Link>
 			</p>
 		</div>
 	);

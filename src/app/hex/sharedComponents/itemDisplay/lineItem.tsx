@@ -28,17 +28,20 @@ const InventoryLineItem: React.FC<InventoryLineItemProps> = ({ item, ingredient,
 
 	let key = '';
 	let name = '';
+	let quality = 0;
 	let types: string[] = [];
 	let comps: AlchComponent[] = [];
 	let possibleComps: (IngredientCompSpec|AlchComponent)[] = [];
 	if(item) {
 		key = item.name;
 		name = item.name;
+		quality = item.quality;
 		types = item.types;
 		comps = item.comps;
 	} else if(ingredient) {
 		key = ingredient.id;
 		name = IngredientBases[ingredient.baseIngId].name;
+		quality = ingredient.quality;
 		types = IngredientBases[ingredient.baseIngId].types;
 		comps = ingredient.comps;
 	} else if(ingredientBase) {
@@ -71,6 +74,21 @@ const InventoryLineItem: React.FC<InventoryLineItemProps> = ({ item, ingredient,
 		return output;
 	}
 
+	let qualityClass = 'quality-10';
+	if(quality > 0) {
+		if(quality >= 100) {
+			qualityClass = 'quality-100';
+		} else if(quality >= 75) {
+			qualityClass = 'quality-75';
+		} else if(quality >= 50) {
+			qualityClass = 'quality-50';
+		} else if(quality >= 20) {
+			qualityClass = 'quality-20';
+		} else {
+			qualityClass = 'quality-10';
+		}
+	}
+
 	return (
 		<div className="item-display-line" key={name}>
 			<div className="item-display-line-header">
@@ -85,13 +103,16 @@ const InventoryLineItem: React.FC<InventoryLineItemProps> = ({ item, ingredient,
 						</div>
 					</>
 				)}
-				{item?.quality != null && (
-					<div>
-						<label>Quality: {item.quality}</label>
+			</div>
+			<div className="item-display-line-inst-data">
+				{quality > 0 && (
+					<div className="item-quality-bar">
+						<span className={`item-quality-bar-fill ${qualityClass}`} style={{ height: `${quality}%` }}></span>
+						{/*<label>Quality: {quality}</label>*/}
 					</div>
 				)}
+				<div className="item-display-line-comps">{getCompsToDisplay()}</div>
 			</div>
-			<div className="item-display-line-comps">{getCompsToDisplay()}</div>
 		</div>
 	);
 };
@@ -172,10 +193,9 @@ const ComplexInventoryItem: React.FC<ComplexInventoryItemProps> = ({ items, disp
 				<div className="item-display-complex-main">
 					<div className="item-display-complex-text">
 						<span className="item-display-complex-name">{name}</span>
-						{!hideDescription && (<span className="item-display-complex-desc">description</span>)}
+						<span>{types.join(', ')}</span>
 					</div>
 					<div className="item-display-complex-types">
-						<span>{types.join(', ')}</span>
 						{items.length > 1 && (<span className="item-display-complex-count">Qty: {items.length}</span>)}
 					</div>
 				</div>

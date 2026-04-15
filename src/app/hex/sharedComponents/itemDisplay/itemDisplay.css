@@ -147,6 +147,14 @@
 /* --- Inventory line (hex comps strip, nested in card) --- */
 .item-display-line {
 	width: 100%;
+	
+    padding-bottom: 8px;
+    border-bottom: 4px dashed;
+    border-color: var(--alchemy-parchment-dark);
+}
+
+.item-display-line:last-child {
+	border-bottom: none;
 }
 
 .item-display-line-header {
@@ -172,6 +180,43 @@
 	color: rgba(232, 220, 200, 0.5);
 }
 
+.item-display-line-inst-data {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
+	gap: 8px;
+}
+
+.item-quality-bar {
+    display: flex;
+    width: 20px;
+    background: var(--misc-container);
+    border-radius: 4px;
+    padding: 2px 2px;
+}
+.item-quality-bar-fill {
+    border-radius: 3px;
+    width: 100%;
+    align-self: flex-end;
+}
+
+.item-quality-bar-fill.quality-100 {
+	background: #58c300;
+}
+.item-quality-bar-fill.quality-75 {
+	background: #58c300;
+}
+.item-quality-bar-fill.quality-50 {
+	background: #be8330;
+}
+.item-quality-bar-fill.quality-20 {
+	background: #be5930;
+}
+.item-quality-bar-fill.quality-10 {
+	background: #be3030;
+}
+
 .item-display-line-comps {
 	display: flex;
 	flex-direction: row;
@@ -179,28 +224,4 @@
 	justify-content: flex-start;
 	align-items: center;
 	gap: 8px;
-}
-
-.map-left-panel .inventory-display * {
-	color: #5c4a3a;
-}
-
-.map-left-panel .inventory-display .item-display-complex {
-	box-sizing: border-box;
-	background: linear-gradient(
-		165deg,
-		rgba(255, 252, 245, 0.65) 0%,
-		rgba(240, 230, 210, 0.9) 100%
-	);
-	border: 1px solid #d4c4a8;
-	border-radius: 8px;
-	padding: 12px 14px;
-	color: #5c4a3a;
-	box-shadow:
-		0 2px 8px rgba(44, 31, 20, 0.08),
-		inset 0 1px 0 rgba(255, 255, 255, 0.35);
-}
-
-.map-left-panel .inventory-display .item-display-complex * {
-	color: #5c4a3a;
 }

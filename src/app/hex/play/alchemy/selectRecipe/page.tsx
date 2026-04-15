@@ -48,7 +48,7 @@ export default function SelectRecipePage() {
 					<p className="alchemy-setup-lead">No recipes are defined yet.</p>
 				</header>
 				<p className="alchemy-setup-back">
-					<Link href="/hex">Back to hub</Link>
+					<Link href="/hex/map/home">Back to home</Link>
 				</p>
 			</div>
 		);
@@ -119,7 +119,7 @@ export default function SelectRecipePage() {
 				</div>
 			</div>
 			<p className="alchemy-setup-back">
-				<Link href="/hex">Back to hub</Link>
+				<Link href="/hex/map/home">Back to home</Link>
 			</p>
 		</div>
 	);
