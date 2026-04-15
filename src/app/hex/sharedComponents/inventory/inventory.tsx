@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Item, Ingredient } from "@/app/hex/architecture/typings";
 import { ComplexInventoryItem } from "@/app/hex/sharedComponents/itemDisplay/lineItem";
 import '@/app/hex/sharedComponents/inventory/inventory.css';
@@ -33,6 +33,8 @@ const InventoryDisplay: React.FC<InventoryProps> = ({
 	showTitle = true,
 }) => {
 	const [activeTab, setActiveTab] = useState<InventoryTab>('ingredients');
+	const [onlyIngredients, setOnlyIngredients] = useState(false);
+	const [onlyCrafted, setOnlyCrafted] = useState(false);
 	const DISPLAY_SIZE = 20;
 	const canSelect = selectable && selectedKeys !== undefined && onToggleKey !== undefined;
 
@@ -119,9 +121,27 @@ const InventoryDisplay: React.FC<InventoryProps> = ({
 		return output;
 	}
 
+	useEffect(() => {
+		console.log('inventoryItems', inventoryItems.length);
+		console.log('ingredients', ingredients.length);
+		if(ingredients.length > 0 && inventoryItems.length === 0) {
+			setOnlyIngredients(true);
+			setOnlyCrafted(false);
+			setActiveTab('ingredients');
+		} else if (ingredients.length === 0 && inventoryItems.length > 0) {
+			setOnlyCrafted(true);
+			setOnlyIngredients(false);
+			setActiveTab('crafted');
+		} else {
+			setOnlyIngredients(false);
+			setOnlyCrafted(false);
+			setActiveTab('ingredients');
+		}
+	}, [inventoryItems, ingredients]);
+
 	return <div className="inventory-display">
 		{showTitle && <h1>Inventory</h1>}
-		{inventoryItems && inventoryItems.length > 0 && (
+		{!(onlyIngredients || onlyCrafted) && (
 		<div className="inventory-tabs" role="tablist" aria-label="Inventory category">
 			<button
 				type="button"

@@ -3,6 +3,9 @@
 import Link from 'next/link'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { RootState } from '@/store/store'
+import PlayerStoreSlice from '@/store/features/playerSlice'
+import HistoryStoreSlice from '@/store/features/historySlice'
 import type { Ingredient, IngredientBase, Item, Quest, QuestRequirement } from '@/app/hex/architecture/typings'
 import { BaseQuests } from '@/app/hex/architecture/data/quests'
 import {
@@ -16,10 +19,6 @@ import {
 } from '@/app/hex/architecture/helpers/recipeRequirements'
 import { CreateIngredient } from '@/app/hex/architecture/factories/ingredientFactory'
 import InventoryDisplay from '@/app/hex/sharedComponents/inventory/inventory'
-import PlayerStoreSlice from '@/store/features/playerSlice'
-import HistoryStoreSlice from '@/store/features/historySlice'
-import { RootState } from '@/store/store'
-import '@/app/hex/play/alchemy/alchemy.css'
 
 function isIngredientBaseReward(r: Item | IngredientBase): r is IngredientBase {
 	return 'possibleComps' in r && Array.isArray((r as IngredientBase).possibleComps)
@@ -271,10 +270,10 @@ export default function QuestBoard() {
 
 	if (!selectedQuest) {
 		return (
-			<div className="alchemy-setup-flow quest-board">
-				<header className="alchemy-setup-header">
-					<h1>Quest board</h1>
-					<p className="alchemy-setup-lead">Choose a quest you can fulfill with your inventory.</p>
+			<div className="quest-board-flow quest-board">
+				<header className="quest-board-header">
+					<h1>Quest Board</h1>
+					<p className="quest-board-lead">Choose a quest you can fulfill with your inventory.</p>
 				</header>
 				<ul className="quest-board-list">
 					{visibleQuests.map((q) => {
@@ -297,21 +296,18 @@ export default function QuestBoard() {
 					})}
 				</ul>
 				{visibleQuests.length === 0 && (
-					<p className="alchemy-setup-lead">No quests available right now.</p>
+					<p className="quest-board-lead">No quests available right now.</p>
 				)}
-				<p className="alchemy-setup-back">
-					<Link href="/hex/map/town">Back to town</Link>
-				</p>
 			</div>
 		)
 	}
 
 	if (showComplete) {
 		return (
-			<div className="alchemy-setup-flow quest-board">
-				<header className="alchemy-setup-header">
+			<div className="quest-board-flow quest-board">
+				<header className="quest-board-header">
 					<h1>Quest complete</h1>
-					<p className="alchemy-setup-lead">
+					<p className="quest-board-lead">
 						<strong>{selectedQuest.name}</strong>
 					</p>
 				</header>
@@ -336,8 +332,8 @@ export default function QuestBoard() {
 						))}
 					</ul>
 				</section>
-				<div className="alchemy-setup-actions">
-					<button type="button" className="alchemy-setup-primary" onClick={closeQuest}>
+				<div className="quest-board-actions">
+					<button type="button" className="quest-board-primary" onClick={closeQuest}>
 						Back to board
 					</button>
 				</div>
@@ -349,13 +345,13 @@ export default function QuestBoard() {
 		stageInventory.ingredients.length > 0 || stageInventory.craftedItems.length > 0
 
 	return (
-		<div className="alchemy-setup-flow quest-board">
-			<header className="alchemy-setup-header">
+		<div className="quest-board">
+			<header className="quest-board-header">
 				<h1>{selectedQuest.name}</h1>
-				<p className="alchemy-setup-lead">{selectedQuest.description}</p>
+				<p className="quest-board-lead">{selectedQuest.description}</p>
 			</header>
-			{currentReq && (
-				<p className="alchemy-setup-hint">
+			{currentReq && (requirements.length > 1) && (
+				<p className="quest-board-hint">
 					Step {requirementIndex + 1} of {requirements.length}:{' '}
 					<strong>{formatQuestRequirement(currentReq)}</strong>
 					{needForStage > 1
@@ -364,7 +360,7 @@ export default function QuestBoard() {
 				</p>
 			)}
 			{!hasStageItems ? (
-				<p className="alchemy-setup-lead alchemy-required-list--missing">
+				<p className="quest-board-lead">
 					Nothing in your inventory matches this step with what you have left to turn in. Use
 					Back to change an earlier choice or gather more.
 				</p>
@@ -382,17 +378,17 @@ export default function QuestBoard() {
 					showTitle={false}
 				/>
 			)}
-			<div className="alchemy-setup-actions">
+			<div className="quest-board-actions">
+				<button type="button" className="quest-board-secondary" onClick={handleBackStage}>
+					{requirementIndex === 0 ? 'Cancel' : 'Back'}
+				</button>
 				<button
 					type="button"
-					className="alchemy-setup-primary"
+					className="quest-board-primary"
 					disabled={!canProceed || !hasStageItems}
 					onClick={handleContinue}
 				>
-					{requirementIndex + 1 < requirements.length ? 'Continue' : 'Complete quest'}
-				</button>
-				<button type="button" className="alchemy-setup-secondary" onClick={handleBackStage}>
-					{requirementIndex === 0 ? 'Cancel' : 'Back'}
+					{requirementIndex + 1 < requirements.length ? 'Continue' : 'Turn In'}
 				</button>
 			</div>
 		</div>

@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import * as AlchHelpers from '@/app/hex/architecture/helpers/alchHelpers';
 import * as SVGHelpers from '@/app/hex/architecture/helpers/svgHelpers';
@@ -17,6 +18,7 @@ import '@/app/hex/map/map.css';
 import Link from 'next/link';
 
 export default function MapPage() {
+	const router = useRouter();
 	const dispatch = useDispatch();
 	const inventoryItems = useSelector((state: RootState) => state.Player.inventory.crafted);
 	const ingredients = useSelector((state: RootState) => state.Player.inventory.raw);
@@ -47,6 +49,10 @@ export default function MapPage() {
 
 	function hexClick(hex: HexTile) {
 		const content = mapContents.find((content) => content.tileIndexes.includes(hex.index));
+		if (content !== undefined && content.biome === null) {
+			router.push('/hex/map/town');
+			return;
+		}
 		if (content !== undefined && content.biome !== null) {
 			const ingredients = GatherIngredientsInBiome(content.biome, 1);
 

@@ -20,7 +20,7 @@ const BaseQuests: Array<Quest> = [
 	},
 	{
 		id: 'quest-mana-supplies',
-		name: 'Mighty Mana Pots Needed',
+		name: 'Mana Pots Needed',
 		description: 'A local mage seems to have an addiction...',
 		rewards: [],
 		requirements: [
