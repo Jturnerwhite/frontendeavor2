@@ -28,29 +28,38 @@ export default function MapPage() {
 	const [hexMap, setHexMap] = useState<HexMap | undefined>(undefined);
 	const [centerHexGridX, setCenterHexGridX] = useState<number>((window.innerWidth * 0.7) / 2);
 	const [centerHexGridY, setCenterHexGridY] = useState<number>(window.innerHeight / 2);
-	const mapContents = [
-		{
-			tileIndexes: [0],
-			biome: null,
-		},
+	const mapContents: Array<{
+		tileIndexes: number[];
+		biome: (typeof Biomes)[keyof typeof Biomes] | null;
+		icon?: string;
+	}> = [
+		{ tileIndexes: [0], biome: null, icon: 'home' },
+		{ tileIndexes: [15], biome: null, icon: 'village' },
 		{
 			tileIndexes: [1, 7, 8, 9, 19, 20, 21, 22],
 			biome: Biomes.PineBarrens,
 		},
 		{
-			tileIndexes: [2, 3, 5, 6, 10, 11, 12, 15, 17, 18, 32, 33, 34, 35, 36],
+			tileIndexes: [2, 3, 5, 6, 10, 11, 12, 17, 18, 32, 33, 34, 35, 36],
 			biome: Biomes.FlowingFields,
 		},
 		{
 			tileIndexes: [4, 13, 14, 16, 23, 24, 25, 26, 27, 28, 29, 30, 31],
 			biome: Biomes.ValleyRidge,
-		}
+		},
 	];
 
 	function hexClick(hex: HexTile) {
 		const content = mapContents.find((content) => content.tileIndexes.includes(hex.index));
 		if (content !== undefined && content.biome === null) {
-			router.push('/hex/map/town');
+			if (hex.index === 0) {
+				router.push('/hex/map/home');
+				return;
+			}
+			if (hex.index === 15) {
+				router.push('/hex/map/town');
+				return;
+			}
 			return;
 		}
 		if (content !== undefined && content.biome !== null) {
@@ -88,7 +97,7 @@ export default function MapPage() {
 					width={TILE_SIZE}
 					height={TILE_SIZE}
 					className="map-content-icon" 
-					href={`/icons/${content.biome?.icon ?? "village"}.svg`} />
+					href={`/icons/${content.biome?.icon ?? content.icon ?? 'village'}.svg`} />
 				);
 			}
 			return acc;
@@ -112,7 +121,6 @@ export default function MapPage() {
 
 	return <div className="map-layout">
 		<aside className="map-left-panel">
-			<Link href="/hex/" className="hover:underline"><h1>Back to Home</h1></Link>
 			<InventoryDisplay 
 				inventoryItems={inventoryItems} 
 				ingredients={ingredients}

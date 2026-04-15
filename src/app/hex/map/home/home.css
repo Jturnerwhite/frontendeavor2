@@ -1,0 +1,32 @@
+.home-hub-layout .town-content {
+	flex-direction: column;
+	align-items: stretch;
+}
+
+.home-hub-body {
+	max-width: 36rem;
+	line-height: 1.5;
+}
+
+.home-page-nav {
+	margin-bottom: 1.25rem;
+}
+
+.home-page-nav ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.home-page-nav a {
+	font-weight: 600;
+	color: inherit;
+	text-decoration: none;
+}
+
+.home-page-nav a:hover {
+	text-decoration: underline;
+}
