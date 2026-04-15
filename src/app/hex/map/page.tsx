@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as AlchHelpers from '@/app/hex/architecture/helpers/alchHelpers';
 import * as SVGHelpers from '@/app/hex/architecture/helpers/svgHelpers';
 import Biomes from '@/app/hex/architecture/data/biomes';
+import { MAP_TERRAIN } from '@/app/hex/architecture/enums';
 import { HexMap, HexTile } from '@/app/hex/architecture/interfaces';
 import { HexGrid } from '@/app/hex/sharedComponents/hex/hexGrid';
 import InventoryDisplay from '@/app/hex/sharedComponents/inventory/inventory';
@@ -53,6 +54,19 @@ export default function MapPage() {
 		}
 	];
 
+	const FISHING_TERRAINS = new Set<MAP_TERRAIN>([
+		MAP_TERRAIN.LAKE,
+		MAP_TERRAIN.FRESHWATER,
+		MAP_TERRAIN.OCEAN,
+	]);
+
+	function biomeKeyFor(biome: (typeof Biomes)[keyof typeof Biomes]): keyof typeof Biomes | undefined {
+		const entry = (Object.entries(Biomes) as [keyof typeof Biomes, (typeof Biomes)[keyof typeof Biomes]][]).find(
+			([, b]) => b === biome,
+		);
+		return entry?.[0];
+	}
+
 	function hexClick(hex: HexTile) {
 		const content = mapContents.find((content) => content.tileIndexes.includes(hex.index));
 		if (content !== undefined && content.biome === null) {
@@ -67,6 +81,14 @@ export default function MapPage() {
 			return;
 		}
 		if (content !== undefined && content.biome !== null) {
+			if (FISHING_TERRAINS.has(content.biome.terrain)) {
+				const key = biomeKeyFor(content.biome);
+				if (key !== undefined) {
+					router.push('/hex/fishing?biome=' + encodeURIComponent(String(key)));
+				}
+				return;
+			}
+
 			const ingredients = GatherIngredientsInBiome(content.biome, 1);
 
 			dispatch(PlayerStoreSlice.actions.addGatheredIngredients({ ingredients }));

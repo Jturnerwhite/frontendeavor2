@@ -40,8 +40,8 @@ const Biomes = {
 		icon: "lake",
 		nativeIngredients: [
 			{ ingredient: IngredientBases["Frillsh"], weighting: 10 },
-			//{ ingredient: IngredientBases["JusThead"], weighting: 5 },
-			//{ ingredient: IngredientBases["Grumbo"], weighting: 1 },
+			{ ingredient: IngredientBases["JusThead"], weighting: 5 },
+			{ ingredient: IngredientBases["Grumbo"], weighting: 1 },
 		],
 	},
 };
