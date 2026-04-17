@@ -1,13 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/store/store';
+import { useAppSelector } from '@/store/hooks';
 import RecipeDisplay from '@/app/hex/play/components/recipeDisplay';
 import '../alchemy.css';
 
 export default function AlchemyCompletePage() {
-	const last = useSelector((state: RootState) => state.History.lastCompletedCraft);
+	const last = useAppSelector((state) => state.History.lastCompletedCraft);
 
 	if (!last) {
 		return (

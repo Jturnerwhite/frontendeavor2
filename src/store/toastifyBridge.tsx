@@ -1,14 +1,13 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { toast, ToastContainer } from 'react-toastify';
-import { RootState } from '@/store/store';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import ToastifyStore from '@/store/features/toastifySlice';
 
 export function ToastifyBridge() {
-	const dispatch = useDispatch();
-	const next = useSelector((state: RootState) => state.Toastify.queue[0]);
+	const dispatch = useAppDispatch();
+	const next = useAppSelector((state) => state.Toastify.queue[0]);
 
 	useEffect(() => {
 		if (!next) return;

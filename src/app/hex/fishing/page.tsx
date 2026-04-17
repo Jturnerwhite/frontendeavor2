@@ -10,7 +10,7 @@ import {
 	useState,
 } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from '@/store/hooks';
 import Biomes from '@/app/hex/architecture/data/biomes';
 import { IngredientBases } from '@/app/hex/architecture/data/ingredientBases';
 import { CreateIngredient } from '@/app/hex/architecture/factories/ingredientFactory';
@@ -53,7 +53,7 @@ function attractionPx(): number {
 function FishingContent() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 	const biomeKey = searchParams.get('biome');
 	const biome =
 		biomeKey && biomeKey in Biomes ? Biomes[biomeKey as keyof typeof Biomes] : null;

@@ -2,8 +2,7 @@
 
 import Link from 'next/link'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { RootState } from '@/store/store'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import PlayerStoreSlice from '@/store/features/playerSlice'
 import HistoryStoreSlice from '@/store/features/historySlice'
 import type { Ingredient, IngredientBase, Item, Quest, QuestRequirement } from '@/app/hex/architecture/typings'
@@ -25,11 +24,11 @@ function isIngredientBaseReward(r: Item | IngredientBase): r is IngredientBase {
 }
 
 export default function QuestBoard() {
-	const dispatch = useDispatch()
-	const inventoryItems = useSelector((state: RootState) => state.Player.inventory.crafted)
-	const rawIngredients = useSelector((state: RootState) => state.Player.inventory.raw)
-	const availableQuestIds = useSelector((state: RootState) => state.Player.availableQuestIds)
-	const completedQuestIds = useSelector((state: RootState) => state.History.completedQuestIds)
+	const dispatch = useAppDispatch()
+	const inventoryItems = useAppSelector((state) => state.Player.inventory.crafted)
+	const rawIngredients = useAppSelector((state) => state.Player.inventory.raw)
+	const availableQuestIds = useAppSelector((state) => state.Player.availableQuestIds)
+	const completedQuestIds = useAppSelector((state) => state.History.completedQuestIds)
 
 	const [selectedQuest, setSelectedQuest] = useState<Quest | null>(null)
 	const [showComplete, setShowComplete] = useState(false)

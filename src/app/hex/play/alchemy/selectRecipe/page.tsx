@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Recipes } from '@/app/hex/architecture/data/recipes';
@@ -11,12 +11,11 @@ import {
 	playerMeetsRequirement,
 } from '@/app/hex/architecture/helpers/recipeRequirements';
 import AlchemyStoreSlice from '@/store/features/alchemySlice';
-import { RootState } from '@/store/store';
 import RecipeDisplay from '@/app/hex/play/components/recipeDisplay';
 import '../alchemy.css';
 
 export default function SelectRecipePage() {
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 	const router = useRouter();
 
 	useEffect(() => {
@@ -24,8 +23,8 @@ export default function SelectRecipePage() {
 		dispatch(AlchemyStoreSlice.actions.clearPlayGrid());
 		dispatch(AlchemyStoreSlice.actions.resetCursor());
 	}, [dispatch]);
-	const inventoryItems = useSelector((state: RootState) => state.Player.inventory.crafted);
-	const rawIngredients = useSelector((state: RootState) => state.Player.inventory.raw);
+	const inventoryItems = useAppSelector((state) => state.Player.inventory.crafted);
+	const rawIngredients = useAppSelector((state) => state.Player.inventory.raw);
 
 	const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(() => Recipes[0] ?? null);
 

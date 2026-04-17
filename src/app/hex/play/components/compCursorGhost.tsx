@@ -1,6 +1,5 @@
 'use client'
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '@/store/store';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { useEffect, useState } from 'react';
 import { AlchComponentDisplay } from '@/app/hex/sharedComponents/alchComponent';
 import AlchemyStoreSlice from '@/store/features/alchemySlice';
@@ -11,8 +10,8 @@ interface ComponentCursorGhostProps {
 }
 
 const ComponentCursorGhost: React.FC<ComponentCursorGhostProps> = ({ displaySize = 30, defaultRotation = 0 }): JSX.Element => {
-	const dispatch = useDispatch();
-	const cursorState = useSelector((state: RootState) => state.Alchemy.cursor);
+	const dispatch = useAppDispatch();
+	const cursorState = useAppSelector((state) => state.Alchemy.cursor);
 	const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
 
 	useEffect(() => {

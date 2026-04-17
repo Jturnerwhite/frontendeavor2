@@ -3,12 +3,11 @@
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import AlchemyStoreSlice from '@/store/features/alchemySlice';
 import { Recipes } from '@/app/hex/architecture/data/recipes';
 import type { AlchemyLabSource, Ingredient, Item, Recipe } from '@/app/hex/architecture/typings';
 import InventoryDisplay from '@/app/hex/sharedComponents/inventory/inventory';
-import { RootState } from '@/store/store';
 import {
 	countSelectionUnits,
 	filterInventoryAfterConsumption,
@@ -59,11 +58,11 @@ function buildStageInventory(
 export default function SelectIngredientsPage() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 	const recipeId = searchParams.get('recipeId');
 
-	const inventoryItems = useSelector((state: RootState) => state.Player.inventory.crafted);
-	const rawIngredients = useSelector((state: RootState) => state.Player.inventory.raw);
+	const inventoryItems = useAppSelector((state) => state.Player.inventory.crafted);
+	const rawIngredients = useAppSelector((state) => state.Player.inventory.raw);
 
 	const recipe = useMemo(
 		() => (recipeId ? Recipes.find((r) => r.id === recipeId) : undefined),

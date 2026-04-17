@@ -1,8 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from 'next/navigation'
-import { RootState } from "@/store/store";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import AlchemyStoreSlice from '@/store/features/alchemySlice';
 import { AlchComponent } from '@/app/hex/architecture/typings';	
 import { AlchHexGrid } from '@/app/hex/sharedComponents/hex/hexGrid';
@@ -13,11 +12,11 @@ import {AlchComponentDisplay, PlaceableAlchComponent} from '@/app/hex/sharedComp
 import ComponentCursorGhost from '@/app/hex/play/components/compCursorGhost';
 
 export default function Page() {
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 	const params = useSearchParams();
-	const playGrid = useSelector((state: RootState) => state.Alchemy.playGrid);
-	const placedComponents = useSelector((state: RootState) => state.Alchemy.placedComponents);
-	const cursorState = useSelector((state: RootState) => state.Alchemy.cursor);
+	const playGrid = useAppSelector((state) => state.Alchemy.playGrid);
+	const placedComponents = useAppSelector((state) => state.Alchemy.placedComponents);
+	const cursorState = useAppSelector((state) => state.Alchemy.cursor);
 
 	const gridLayers = 6;
 	const size = 20;

@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import * as AlchHelpers from '@/app/hex/architecture/helpers/alchHelpers';
 import * as SVGHelpers from '@/app/hex/architecture/helpers/svgHelpers';
 import Biomes from '@/app/hex/architecture/data/biomes';
@@ -9,7 +9,6 @@ import { MAP_TERRAIN } from '@/app/hex/architecture/enums';
 import { HexMap, HexTile } from '@/app/hex/architecture/interfaces';
 import { HexGrid } from '@/app/hex/sharedComponents/hex/hexGrid';
 import InventoryDisplay from '@/app/hex/sharedComponents/inventory/inventory';
-import { RootState } from '@/store/store';
 import PlayerStoreSlice from '@/store/features/playerSlice';
 import ToastifyStore from '@/store/features/toastifySlice';
 import { GatherIngredientsInBiome } from '@/app/hex/architecture/helpers/mapHelpers';
@@ -20,9 +19,9 @@ import Link from 'next/link';
 
 export default function MapPage() {
 	const router = useRouter();
-	const dispatch = useDispatch();
-	const inventoryItems = useSelector((state: RootState) => state.Player.inventory.crafted);
-	const ingredients = useSelector((state: RootState) => state.Player.inventory.raw);
+	const dispatch = useAppDispatch();
+	const inventoryItems = useAppSelector((state) => state.Player.inventory.crafted);
+	const ingredients = useAppSelector((state) => state.Player.inventory.raw);
 
 	const TILE_SIZE = 40;
 	const MAP_LAYER_SIZE = 3;

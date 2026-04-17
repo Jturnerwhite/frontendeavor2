@@ -1,13 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/store/store';
+import { useAppSelector } from '@/store/hooks';
 import RecipeDisplay from '@/app/hex/play/components/recipeDisplay';
 import '../play/alchemy/alchemy.css';
 
 export default function HistoryPage() {
-	const completedCrafts = useSelector((state: RootState) => state.History.completedCrafts);
+	const completedCrafts = useAppSelector((state) => state.History.completedCrafts);
 
 	if (completedCrafts.length === 0) {
 		return (
