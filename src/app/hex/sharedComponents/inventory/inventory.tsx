@@ -6,6 +6,25 @@ import { ComplexInventoryItem } from "@/app/hex/sharedComponents/itemDisplay/lin
 import '@/app/hex/sharedComponents/inventory/inventory.css';
 
 type InventoryTab = 'ingredients' | 'crafted';
+
+function groupItemsForInventoryDisplay(items: Array<Item | Ingredient>): Record<string, Array<Item | Ingredient>> {
+	const grouped: Record<string, Array<Item | Ingredient>> = {};
+	for (const item of items) {
+		let key: string;
+		if ("baseRecipeId" in item && item.baseRecipeId !== undefined) {
+			key = "BRI:" + item.baseRecipeId;
+		} else if ("baseIngId" in item && item.baseIngId !== undefined) {
+			key = "ING:" + item.baseIngId;
+		} else if ("ingTier" in item && item.ingTier !== undefined) {
+			key = "INGB:" + item.ingTier;
+		} else {
+			key = "UNK";
+		}
+		(grouped[key] ??= []).push(item);
+	}
+	return grouped;
+}
+
 interface InventoryProps {
 	inventoryItems: Array<Item>;
 	ingredients: Array<Ingredient>;
@@ -93,17 +112,7 @@ const InventoryDisplay: React.FC<InventoryProps> = ({
 		const allItems: Array<Item | Ingredient> =
 			activeTab === 'ingredients' ? [...ingredients] : [...inventoryItems];
 
-		const groupedItems = Object.groupBy(allItems, (item) => {
-			if ("baseRecipeId" in item && item.baseRecipeId !== undefined) {
-				return "BRI:" + item.baseRecipeId;
-			} else if ("baseIngId" in item && item.baseIngId !== undefined) {
-				return "ING:" + item.baseIngId;
-			} else if ("ingTier" in item && item.ingTier !== undefined) {
-				return "INGB:" + item.ingTier;
-			} else {
-				return "UNK";
-			}
-		});
+		const groupedItems = groupItemsForInventoryDisplay(allItems);
 
 		Object.keys(groupedItems).forEach((objKey) => {
 			const inner = (
