@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { selectAlchemyPlayPageView } from "@/store/selectors/alchemyPlayPage";
 import AlchemyStoreSlice from '@/store/features/alchemySlice';
 import PlayerStoreSlice from '@/store/features/playerSlice';
 import ToastifyStore from '@/store/features/toastifySlice';
@@ -28,19 +29,21 @@ import './alchemy.css';
 export default function Page() {
 	const dispatch = useAppDispatch();
 	const router = useRouter();
-	const playGrid = useAppSelector((state) => state.Alchemy.playGrid);
-	const placedComponents = useAppSelector((state) => state.Alchemy.placedComponents);
-	const ingredients = useAppSelector((state) => state.Alchemy.ingredients);
-	const cursorState = useAppSelector((state) => state.Alchemy.cursor);
-	const currentRecipeId = useAppSelector((state) => state.Alchemy.currentRecipe);
+	const {
+		playGrid,
+		placedComponents,
+		ingredients,
+		cursor: cursorState,
+		currentRecipeId,
+		canUndoPlacement,
+		canRedoPlacement,
+	} = useAppSelector(selectAlchemyPlayPageView);
 
 	const recipe = currentRecipeId ? Recipes.find((r) => r.id === currentRecipeId) : undefined;
 
 	const [centerHexGridX, setCenterHexGridX] = useState<number>((window.innerWidth * 0.6) / 2);
 	const [centerHexGridY, setCenterHexGridY] = useState<number>(window.innerHeight / 2);
 	const [crossComponentLinks, setLinks] = useState<LinkedComponents[]>([]);
-	const canUndoPlacement = useAppSelector((state) => state.Alchemy.placementUndoPast.length > 0);
-	const canRedoPlacement = useAppSelector((state) => state.Alchemy.placementUndoFuture.length > 0);
 
 	const playGridLayers = 4;
 	const size = 40;
