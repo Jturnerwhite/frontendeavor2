@@ -168,7 +168,7 @@ export default function MapPage() {
 				hideSubSorting={true}/>
 		</aside>
 		<main className="map-main-panel" onContextMenu={(e: React.MouseEvent) => {}}>
-			{process.env.NODE_ENV === 'development' && (
+			{(
 				<button
 					type="button"
 					className="map-dev-hard-reset"
