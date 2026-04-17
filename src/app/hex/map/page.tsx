@@ -26,8 +26,8 @@ export default function MapPage() {
 	const TILE_SIZE = 40;
 	const MAP_LAYER_SIZE = 3;
 	const [hexMap, setHexMap] = useState<HexMap | undefined>(undefined);
-	const [centerHexGridX, setCenterHexGridX] = useState<number>((window.innerWidth * 0.7) / 2);
-	const [centerHexGridY, setCenterHexGridY] = useState<number>(window.innerHeight / 2);
+	const [centerHexGridX, setCenterHexGridX] = useState<number>(0);
+	const [centerHexGridY, setCenterHexGridY] = useState<number>(0);
 	const mapContents: Array<{
 		tileIndexes: number[];
 		biome: (typeof Biomes)[keyof typeof Biomes] | null;
@@ -150,7 +150,7 @@ export default function MapPage() {
 			setCenterHexGridY(window.innerHeight / 2);
 			setCenterHexGridX((window.innerWidth * 0.7) / 2);
 		};
-
+		handleResize();
 		window.addEventListener('resize', handleResize);
 		return () => window.removeEventListener('resize', handleResize);
 	}, []);

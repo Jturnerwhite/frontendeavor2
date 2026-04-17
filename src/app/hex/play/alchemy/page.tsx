@@ -41,8 +41,8 @@ export default function Page() {
 
 	const recipe = currentRecipeId ? Recipes.find((r) => r.id === currentRecipeId) : undefined;
 
-	const [centerHexGridX, setCenterHexGridX] = useState<number>((window.innerWidth * 0.6) / 2);
-	const [centerHexGridY, setCenterHexGridY] = useState<number>(window.innerHeight / 2);
+	const [centerHexGridX, setCenterHexGridX] = useState<number>(0);
+	const [centerHexGridY, setCenterHexGridY] = useState<number>(0);
 	const [crossComponentLinks, setLinks] = useState<LinkedComponents[]>([]);
 
 	const playGridLayers = 4;
@@ -180,7 +180,7 @@ export default function Page() {
 			setCenterHexGridY(window.innerHeight / 2);
 			setCenterHexGridX((window.innerWidth * 0.6) / 2);
 		};
-
+		handleResize();
 		window.addEventListener('resize', handleResize);
 		return () => window.removeEventListener('resize', handleResize);
 	}, []);

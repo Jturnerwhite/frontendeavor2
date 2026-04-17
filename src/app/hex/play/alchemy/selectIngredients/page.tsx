@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import AlchemyStoreSlice from '@/store/features/alchemySlice';
 import { Recipes } from '@/app/hex/architecture/data/recipes';
@@ -55,7 +55,7 @@ function buildStageInventory(
 	};
 }
 
-export default function SelectIngredientsPage() {
+function SelectIngredientsPageContent() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const dispatch = useAppDispatch();
@@ -316,5 +316,13 @@ export default function SelectIngredientsPage() {
 				</button>
 			</div>
 		</div>
+	);
+}
+
+export default function SelectIngredientsPage() {
+	return (
+		<Suspense fallback={<div style={{ padding: '1rem' }}>Loading…</div>}>
+			<SelectIngredientsPageContent />
+		</Suspense>
 	);
 }
