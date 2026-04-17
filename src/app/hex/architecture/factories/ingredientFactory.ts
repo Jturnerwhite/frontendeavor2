@@ -107,6 +107,7 @@ export function CreateIngredient(ingBase: IngredientBase): Ingredient {
 		baseIngId: ingBase.id,
 		quality: 1,
 		comps: [],
+		sizeRating: 0,
 	} as Ingredient;
 	ingBase.possibleComps.forEach((compSpec, index) => {
 		let newComp = null as AlchComponent | null;
