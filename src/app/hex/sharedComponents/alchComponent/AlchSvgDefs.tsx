@@ -4,6 +4,7 @@ import {
 	AlchemicalElements,
 	getAlchElementPatternId,
 } from '@/app/hex/architecture/data/elements';
+import { publicAsset } from '@/lib/publicAsset';
 
 const ELEMENT_PATTERN_TILE = 32;
 
@@ -41,7 +42,7 @@ export function AlchSvgDefs() {
 						height={ELEMENT_PATTERN_TILE}
 					>
 						<image
-							href={`/icons/elements/${el.type.toLowerCase()}.svg`}
+							href={publicAsset(`/icons/elements/${el.type.toLowerCase()}.svg`)}
 							width={ELEMENT_PATTERN_TILE}
 							height={ELEMENT_PATTERN_TILE}
 							preserveAspectRatio="xMidYMid meet"

@@ -1,11 +1,12 @@
 import Link from 'next/link';
+import { publicAsset } from '@/lib/publicAsset';
 import '../town/town.css';
 import './home.css';
 
 export default function HomeLayout({ children }: { children: React.ReactNode }) {
 	return (
 		<div className="town-layout home-hub-layout">
-			<img className="town-background" src="/art/landscape/town.png" alt="" />
+			<img className="town-background" src={publicAsset('/art/landscape/town.png')} alt="" />
 			<aside className="town-nav-panel" aria-label="Home">
 				<h1>Home</h1>
 				<h3>Where to?</h3>

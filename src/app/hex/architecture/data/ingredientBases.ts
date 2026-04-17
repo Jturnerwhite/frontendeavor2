@@ -1,7 +1,8 @@
 import { ALCH_ELEMENT, ITEM_TAG, SHAPE_NAME } from '@/app/hex/architecture/enums'
+import { publicAsset } from '@/lib/publicAsset'
 import { AlchComponent, IngredientBase, IngredientCompSpec } from '../typings';
 
-const IMAGE_PATH = "/art/ingredients/";
+const IMAGE_PATH = publicAsset("/art/ingredients/");
 
 export const IngredientBases:Record<string, IngredientBase> = {
 	JarbaLeaf: {

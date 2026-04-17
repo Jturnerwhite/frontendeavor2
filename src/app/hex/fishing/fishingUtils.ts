@@ -1,4 +1,5 @@
 import type { MapBiome } from '@/app/hex/architecture/typings';
+import { publicAsset } from '@/lib/publicAsset';
 
 export type FishSilhouette = 'thick' | 'basic' | 'lean';
 
@@ -39,9 +40,9 @@ export function lerpAngleRad(from: number, to: number, t: number): number {
 }
 
 export const SILHOUETTE_SRC: Record<FishSilhouette, string> = {
-	thick: '/icons/fish/thickFish.svg',
-	basic: '/icons/fish/basicFish.svg',
-	lean: '/icons/fish/leanFish.svg',
+	thick: publicAsset('/icons/fish/thickFish.svg'),
+	basic: publicAsset('/icons/fish/basicFish.svg'),
+	lean: publicAsset('/icons/fish/leanFish.svg'),
 };
 
 export function silhouetteForBaseInBiome(biome: MapBiome, baseIngId: string): FishSilhouette {

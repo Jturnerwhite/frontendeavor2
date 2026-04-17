@@ -1,8 +1,9 @@
 import { ALCH_ELEMENT, ITEM_TAG, SHAPE_NAME } from '@/app/hex/architecture/enums'
+import { publicAsset } from '@/lib/publicAsset'
 import { Recipe } from '@/app/hex/architecture/typings'
 import { IngredientBases } from './ingredientBases';
 
-const IMAGE_PATH = "/art/potions/";
+const IMAGE_PATH = publicAsset("/art/potions/");
 
 export const Recipes:Array<Recipe> = [
 	{

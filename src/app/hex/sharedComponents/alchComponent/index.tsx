@@ -3,6 +3,7 @@ import type { AlchComponent } from '@/app/hex/architecture/typings';
 import type { Position } from '@/app/hex/architecture/interfaces';
 import { ALCH_ELEMENT, COMPONENT_SHAPE_VALUES } from '@/app/hex/architecture/enums';
 import * as SVGHelpers from '@/app/hex/architecture/helpers/svgHelpers';
+import { publicAsset } from '@/lib/publicAsset';
 import './alchComponent.css';
 
 interface NodeProps {
@@ -96,7 +97,7 @@ const AlchNode: React.FC<NodeProps> = ({
 	function getImage():JSX.Element {
 		return (<>
 			<image
-				href={`/icons/elements/${element.toLowerCase()}.svg`}
+				href={publicAsset(`/icons/elements/${element.toLowerCase()}.svg`)}
 				x={-(ICON_SIZE / 2)}
 				y={-(ICON_SIZE / 2)}
 				width={ICON_SIZE}

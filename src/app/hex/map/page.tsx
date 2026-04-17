@@ -15,6 +15,7 @@ import { GatherIngredientsInBiome } from '@/app/hex/architecture/helpers/mapHelp
 import { IngredientBases } from '@/app/hex/architecture/data/ingredientBases';
 import MapFog from '@/app/hex/map/components/mapFog';
 import '@/app/hex/map/map.css';
+import { publicAsset } from '@/lib/publicAsset';
 import Link from 'next/link';
 
 export default function MapPage() {
@@ -122,7 +123,7 @@ export default function MapPage() {
 					width={TILE_SIZE}
 					height={TILE_SIZE}
 					className="map-content-icon" 
-					href={`/icons/${content.biome?.icon ?? content.icon ?? 'village'}.svg`} />
+					href={publicAsset(`/icons/${content.biome?.icon ?? content.icon ?? 'village'}.svg`)} />
 				);
 			}
 			return acc;

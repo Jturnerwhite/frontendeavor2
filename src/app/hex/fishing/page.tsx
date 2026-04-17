@@ -31,6 +31,7 @@ import {
 	type NormPos,
 } from '@/app/hex/fishing/fishingRafTick';
 import { clamp, randomPointInCircle, spawnWaterFish, type WaterFish } from '@/app/hex/fishing/fishingUtils';
+import { publicAsset } from '@/lib/publicAsset';
 import './fishing.css';
 
 type Stage = 0 | 1 | 2 | 3 | 4 | 5;
@@ -401,7 +402,7 @@ function FishingContent() {
 			{hookOrBundle && (
 				<img
 					className="fishing-hook"
-					src="/icons/itemTypes/hook.svg"
+					src={publicAsset('/icons/itemTypes/hook.svg')}
 					alt=""
 					draggable={false}
 					style={{
