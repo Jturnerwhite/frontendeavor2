@@ -11,6 +11,7 @@ interface CompProps {
 	displaySize: number;
 	usePlaceable?: boolean;
 	additionalClassString?: string;
+	onPickComponent?: (alchData: AlchComponent) => void;
 }
 
 /**
@@ -22,6 +23,7 @@ const AlchCompWithBacking: React.FC<CompProps> = ({
 	displaySize,
 	usePlaceable = false,
 	additionalClassString = "",
+	onPickComponent,
 }): JSX.Element => {
 	let areaSize = 140;
 	if(displaySize <= 20) {
@@ -58,6 +60,7 @@ const AlchCompWithBacking: React.FC<CompProps> = ({
 					position={{ x: areaSize / 2, y: areaSize / 2 }}
 					size={displaySize}
 					rotation={0}
+					onPickComponent={onPickComponent}
 				/>
 			)}
 			{!usePlaceable && (

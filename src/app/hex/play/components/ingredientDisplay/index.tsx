@@ -1,9 +1,6 @@
 'use client';
 
-import * as Helpers from '@/app/hex/architecture/helpers/alchHelpers';
-import { AlchHexGrid } from '@/app/hex/sharedComponents/hex/hexGrid';
-import { AlchComponent, Ingredient } from '@/app/hex/architecture/typings';
-import { AlchComponentDisplay, PlaceableAlchComponent } from '@/app/hex/sharedComponents/alchComponent';
+import type { AlchComponent, Ingredient } from '@/app/hex/architecture/typings';
 import AlchCompWithBacking from '@/app/hex/sharedComponents/alchComponent/alchCompWithBacking';
 import { IngredientBases } from '@/app/hex/architecture/data/ingredientBases';
 import './ingredient-display.css';
@@ -13,6 +10,7 @@ interface IngredientDisplayProps {
 	displaySize?: number;
 	usePlaceable?: boolean;
 	compPlaced?: boolean[];
+	onPickComponent?: (alchData: AlchComponent) => void;
 }
 
 const IngredientDisplay: React.FC<IngredientDisplayProps> = ({
@@ -20,6 +18,7 @@ const IngredientDisplay: React.FC<IngredientDisplayProps> = ({
 	displaySize = 30,
 	usePlaceable = true,
 	compPlaced = [],
+	onPickComponent,
 }): JSX.Element => {
 	function getComps(): Array<JSX.Element> {
 		return ingredient.comps.map((comp, compIndex) => {
@@ -30,7 +29,8 @@ const IngredientDisplay: React.FC<IngredientDisplayProps> = ({
 				additionalClassString={placed ? 'placed' : ''}
 				alchData={comp} 
 				displaySize={displaySize} 
-				usePlaceable={usePlaceable} />);
+				usePlaceable={usePlaceable}
+				onPickComponent={onPickComponent} />);
 		}, [] as Array<JSX.Element>);
 	}
 

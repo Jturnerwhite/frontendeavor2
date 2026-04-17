@@ -1,6 +1,6 @@
 'use client'
 
-import type { Item } from '@/app/hex/architecture/typings'
+import type { AlchComponent, Item } from '@/app/hex/architecture/typings'
 import AlchCompWithBacking from '@/app/hex/sharedComponents/alchComponent/alchCompWithBacking'
 import './ingredient-display.css'
 
@@ -9,6 +9,7 @@ interface CraftedItemLabDisplayProps {
 	displaySize?: number
 	usePlaceable?: boolean
 	compPlaced?: boolean[]
+	onPickComponent?: (alchData: AlchComponent) => void
 }
 
 const CraftedItemLabDisplay: React.FC<CraftedItemLabDisplayProps> = ({
@@ -16,6 +17,7 @@ const CraftedItemLabDisplay: React.FC<CraftedItemLabDisplayProps> = ({
 	displaySize = 30,
 	usePlaceable = true,
 	compPlaced = [],
+	onPickComponent,
 }): JSX.Element => {
 	const title = item.baseRecipeId ? `${item.name} (${item.baseRecipeId})` : item.name
 
@@ -39,6 +41,7 @@ const CraftedItemLabDisplay: React.FC<CraftedItemLabDisplayProps> = ({
 							alchData={comp}
 							displaySize={displaySize}
 							usePlaceable={usePlaceable}
+							onPickComponent={onPickComponent}
 						/>
 					)
 				})}

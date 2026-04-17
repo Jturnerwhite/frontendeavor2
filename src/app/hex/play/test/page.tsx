@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { RootState } from "@/store/store";
 import AlchemyStoreSlice from '@/store/features/alchemySlice';
 import { AlchComponent } from '@/app/hex/architecture/typings';	
-import AlchHexGrid from '@/app/hex/sharedComponents/hex/hexGrid';
+import { AlchHexGrid } from '@/app/hex/sharedComponents/hex/hexGrid';
 import { HexTile, Position } from '@/app/hex/architecture/interfaces';
 import { ALCH_ELEMENT, SHAPE_NAME, ITEM_TAG } from '@/app/hex/architecture/enums';
 import * as Helpers from '@/app/hex/architecture/helpers/alchHelpers';
@@ -148,6 +148,7 @@ export default function Page() {
 						displayIndex={true} 
 						preventHexHover={false} 
 						preventHexPlacementHover={true}
+						placementCursor={cursorState}
 					/>
 					{/* <AlchComponentDisplay alchData={alchData} position={{x: 0, y:0}} size={alchCompSize} rotation={rotation} /> */}
 					{renderPlacedComponents()}
@@ -157,7 +158,15 @@ export default function Page() {
 		<svg width={windowSize.width} height="600" style={{  }}>
 			<g transform={`translate(0 -300)`}>
 				<AlchHexGrid hexMap={Helpers.CreateHexGrid(gridCenter, size, 2)} radius={size}  displayIndex={true} preventHexHover={true} preventHexPlacementHover={true}	/>
-				<PlaceableAlchComponent alchData={staticAlcDataTest} position={gridCenter} size={alchCompSize} rotation={0} />
+				<PlaceableAlchComponent
+					alchData={staticAlcDataTest}
+					position={gridCenter}
+					size={alchCompSize}
+					rotation={0}
+					onPickComponent={(comp) =>
+						dispatch(AlchemyStoreSlice.actions.setCursorComponent(comp))
+					}
+				/>
 			</g>
 		</svg>
 		<ComponentCursorGhost displaySize={30} />

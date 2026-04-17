@@ -3,8 +3,6 @@ import type { AlchComponent } from '@/app/hex/architecture/typings';
 import type { Position } from '@/app/hex/architecture/interfaces';
 import { ALCH_ELEMENT, COMPONENT_SHAPE_VALUES } from '@/app/hex/architecture/enums';
 import * as SVGHelpers from '@/app/hex/architecture/helpers/svgHelpers';
-import { useDispatch } from 'react-redux';
-import AlchemyStoreSlice from '@/store/features/alchemySlice';
 import './alchComponent.css';
 
 interface NodeProps {
@@ -188,17 +186,22 @@ const AlchComponentDisplay: React.FC<CompProps> = ({
 	);
 };
 
-const PlaceableAlchComponent: React.FC<CompProps> = ({
+interface PlaceableAlchComponentProps extends CompProps {
+	/** Called when the user picks this component for placement (parent usually dispatches to Redux). */
+	onPickComponent?: (alchData: AlchComponent) => void;
+}
+
+const PlaceableAlchComponent: React.FC<PlaceableAlchComponentProps> = ({
 	alchData,
 	position,
 	size,
 	rotation,
 	placed = false,
+	onPickComponent,
 }): JSX.Element => {
-	const dispatch = useDispatch();
 	const handleClick = () => {
 		if (placed) return;
-		dispatch(AlchemyStoreSlice.actions.setCursorComponent(alchData));
+		onPickComponent?.(alchData);
 	};
 	return (
 		<g>

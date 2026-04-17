@@ -1,14 +1,19 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/store/store';
+import { useState, useEffect, useCallback } from 'react';
 import Hex from './hex';
 import './hex.css';
-import { Position, HexTile, HexMap } from '@/app/hex/architecture/interfaces';
+import type { HexTile, HexMap } from '@/app/hex/architecture/interfaces';
+import type { AlchComponent } from '@/app/hex/architecture/typings';
 import * as AlchHelpers from '@/app/hex/architecture/helpers/alchHelpers';
 import { COMPONENT_SHAPE_VALUES } from '@/app/hex/architecture/enums';
-import { AlchComponentDisplay } from '@/app/hex/sharedComponents/alchComponent';
+
+/** Cursor state for placement hover validation (provided by the route/container; avoids Redux in this grid). */
+export type AlchPlacementCursor = {
+	isPlacing: boolean;
+	selectedComponent: AlchComponent | null;
+	rotation: number;
+};
 
 interface HexGridProps {
 	hexMap: HexMap;
@@ -19,6 +24,11 @@ interface HexGridProps {
 	displayIndex?: boolean;
 	preventHexHover?: boolean;
 	preventHexPlacementHover?: boolean;
+}
+
+interface AlchHexGridProps extends HexGridProps {
+	/** When set, placement hover/click gating uses this instead of Redux. Omit for static preview grids. */
+	placementCursor?: AlchPlacementCursor;
 }
 
 const HexGrid: React.FC<HexGridProps> = ({
@@ -66,7 +76,7 @@ const HexGrid: React.FC<HexGridProps> = ({
 	);
 };
 
-const AlchHexGrid: React.FC<HexGridProps> = ({
+const AlchHexGrid: React.FC<AlchHexGridProps> = ({
 	hexMap,
 	radius,
 	onHexEnter,
@@ -74,20 +84,27 @@ const AlchHexGrid: React.FC<HexGridProps> = ({
 	onHexClick,
 	displayIndex = false,
 	preventHexHover = false,
+	placementCursor,
 }): JSX.Element => {
-	const cursorState = useSelector((state: RootState) => state.Alchemy.cursor);
 	const [hexHovered, setHexHovered] = useState<HexTile | null>(null);
 	const [validTileHover, setValidTileHover] = useState<boolean | undefined>();
 
-	function calcIsValidHover(hex: HexTile | null) {
-		if (!hex) return;
-		if (cursorState.isPlacing && cursorState.selectedComponent) {
+	const calcIsValidHover = useCallback(
+		(hex: HexTile | null) => {
+			if (!hex) return;
+			if (
+				!placementCursor?.isPlacing ||
+				!placementCursor.selectedComponent
+			) {
+				setValidTileHover(undefined);
+				return;
+			}
 
-			const shapeMask = COMPONENT_SHAPE_VALUES[cursorState.selectedComponent.shape];
+			const shapeMask = COMPONENT_SHAPE_VALUES[placementCursor.selectedComponent.shape];
 			const hexIds = AlchHelpers.GetPlacementHexIds(
 				hex,
 				shapeMask,
-				cursorState.rotation,
+				placementCursor.rotation,
 				hexMap
 			);
 
@@ -96,8 +113,9 @@ const AlchHexGrid: React.FC<HexGridProps> = ({
 			} else {
 				setValidTileHover(true);
 			}
-		}
-	}
+		},
+		[hexMap, placementCursor],
+	);
 
 	function hexEnter(hex: HexTile) {
 		setHexHovered(hex);
@@ -107,18 +125,23 @@ const AlchHexGrid: React.FC<HexGridProps> = ({
 		if (onHexLeave) onHexLeave(hexHovered);
 	}
 	function hexClick(clickedHex: HexTile) {
-		if (!cursorState.isPlacing || !cursorState.selectedComponent) return;
+		if (
+			!placementCursor?.isPlacing ||
+			!placementCursor.selectedComponent
+		) {
+			return;
+		}
 		if (onHexClick) onHexClick(clickedHex, validTileHover);
 	}
 
 	useEffect(() => {
 		calcIsValidHover(hexHovered);
-	}, [cursorState.rotation, hexHovered]);
+	}, [hexHovered, calcIsValidHover]);
 
 	let gridClassString = "alch-hex-grid";
-	if(!preventHexHover) {
-		if(cursorState.isPlacing && cursorState.selectedComponent) {
-			if(!validTileHover) {
+	if (!preventHexHover) {
+		if (placementCursor?.isPlacing && placementCursor.selectedComponent) {
+			if (!validTileHover) {
 				gridClassString += " alch-hex-grid--hover-invalid";
 			} else {
 				gridClassString += " alch-hex-grid--hover-valid";

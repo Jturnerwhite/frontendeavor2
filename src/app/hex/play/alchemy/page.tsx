@@ -218,6 +218,9 @@ export default function Page() {
 								displaySize={20}
 								usePlaceable={true}
 								compPlaced={getCompPlacedForSource(row.ingredient.id, row.ingredient.comps)}
+								onPickComponent={(comp) =>
+									dispatch(AlchemyStoreSlice.actions.setCursorComponent(comp))
+								}
 							/>
 						) : (
 							<CraftedItemLabDisplay
@@ -226,6 +229,9 @@ export default function Page() {
 								displaySize={20}
 								usePlaceable={true}
 								compPlaced={getCompPlacedForSource(row.labSlotId, row.item.comps)}
+								onPickComponent={(comp) =>
+									dispatch(AlchemyStoreSlice.actions.setCursorComponent(comp))
+								}
 							/>
 						),
 					)}
@@ -264,6 +270,7 @@ export default function Page() {
 								onHexClick={hexClick}
 								displayIndex={true}
 								preventHexHover={false}
+								placementCursor={cursorState}
 							/>
 							<g>
 								{renderComponentLinks()}
