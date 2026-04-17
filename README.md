@@ -4,6 +4,9 @@ TLDR: Next.js app with complex client state (Redux), persisted game progress, an
 An exploration into Next.js and the /hex/ folder contains a React application puzzle game with redux for state management.
 Currently no Next.js backend added, currently WIP.
 
+See it live at:
+https://jturnerwhite.github.io/frontendeavor2/
+
 ### Alcahexy
 A currently in progress puzzle project done in Typescript, React, and Redux.
 

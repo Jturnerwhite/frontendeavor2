@@ -1,34 +1,54 @@
-## Getting Started
-
-First, run the development server:
+## Getting started (local dev)
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000). This app uses a static export for GitHub Pages; `basePath` is omitted locally, so URLs and assets are rooted at `/`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## GitHub Pages (production)
 
-## Learn More
+### Live site URL
 
-To learn more about Next.js, take a look at the following resources:
+- **Project site** (typical): `https://<github-username>.github.io/<repository-name>/`  
+  Example: `https://jturnerwhite.github.io/frontendeavor2/`
+- **User site** (special repo): if the repository is named `<username>.github.io`, GitHub serves it at `https://<username>.github.io/` with **no** path prefix. The deploy workflow clears `NEXT_PUBLIC_BASE_PATH` in that case.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Replace the placeholders with your account and repo after the first successful deploy. The **Actions** tab shows the exact **Pages** URL on the workflow run summary when deployment finishes.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Why `basePath` / `NEXT_PUBLIC_BASE_PATH` matter
 
-## Deploy on Vercel
+GitHub **project** pages are not at the domain root; they live under `/<repo-name>/`. Next.js is configured with `basePath` when `NEXT_PUBLIC_BASE_PATH` is set at **build time** (e.g. `/frontendeavor2`). That makes routing and `/_next` assets resolve correctly.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Files in `public/` (icons, art) are **not** rewritten automatically. The app uses `publicAsset()` from `src/lib/publicAsset.ts` so image/icon URLs include the same prefix. Production builds must set `NEXT_PUBLIC_BASE_PATH` to match the repo segment of the Pages URL.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Deploy
+
+1. In the repo on GitHub: **Settings → Pages → Build and deployment**, set **Source** to **GitHub Actions** (not “Deploy from a branch”).
+2. Push to **`main`** or **`master`** (or run the workflow manually via **Actions → Deploy to GitHub Pages → Run workflow**). The workflow installs dependencies, sets `NEXT_PUBLIC_BASE_PATH` from the repository name (with the `*.github.io` exception above), runs `npx next build --no-lint`, and publishes the **`out/`** directory.
+
+### Test the production bundle locally
+
+After a static build, serve the `out/` folder (not `next start`):
+
+```bash
+npx next build --no-lint
+npx serve out
+```
+
+To mimic a **project** site, set the prefix before building, then open the site under that path (e.g. `http://localhost:3000/frontendeavor2/` if you use `serve` and that port):
+
+```bash
+# Windows PowerShell
+$env:NEXT_PUBLIC_BASE_PATH="/<repository-name>"; npx next build --no-lint; npx serve out
+```
+
+---
+
+## Learn more
+
+- [Next.js documentation](https://nextjs.org/docs)
+- [Next.js static exports](https://nextjs.org/docs/app/building-your-application/deploying/static-exports)
+- [GitHub Pages](https://docs.github.com/en/pages)
