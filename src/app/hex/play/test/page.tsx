@@ -72,8 +72,6 @@ export default function Page() {
 
 	useEffect(() => {
 		const handleResize = (event:any) => {
-			console.log("Resizing", event);
-			console.log("Resizing", window.innerWidth, window.innerHeight);
 			setWindowSize({
 				width: window.innerWidth,
 				height: window.innerHeight

@@ -47,7 +47,6 @@ export const PoiMarkers = (props: { pois: Poi[] }) => {
 	const handleClick = useCallback((poi:Poi, ev:google.maps.MapMouseEvent) => {
 		if (!map) return;
 		if (!ev.latLng) return;
-		console.log('marker clicked:', poi, ev);
 		map.panTo(ev.latLng);
 	}, [props.pois]);
 

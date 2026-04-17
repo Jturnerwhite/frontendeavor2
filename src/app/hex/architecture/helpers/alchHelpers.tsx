@@ -287,10 +287,7 @@ function CalculateQuality(recipe: Recipe, elementScores: Record<ALCH_ELEMENT, {n
 	const nodeScaling = 2;
 	const linkScaling = 4;
 	const excessElementsScaling = -1;
-	console.log(recipe.elementScores)
 	Object.keys(elementScores).forEach((element: string) => {
-		console.log(element)
-		console.log(elementScores[element as ALCH_ELEMENT])
 		const isValidElement = recipe.elementScores.some((e: RecipeElementScore) => e.element === element as ALCH_ELEMENT);
 		if(isValidElement)
 			output += elementScores[element as ALCH_ELEMENT].nodes * nodeScaling + elementScores[element as ALCH_ELEMENT].links * linkScaling;

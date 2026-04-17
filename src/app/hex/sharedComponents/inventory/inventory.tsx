@@ -122,8 +122,6 @@ const InventoryDisplay: React.FC<InventoryProps> = ({
 	}
 
 	useEffect(() => {
-		console.log('inventoryItems', inventoryItems.length);
-		console.log('ingredients', ingredients.length);
 		if(ingredients.length > 0 && inventoryItems.length === 0) {
 			setOnlyIngredients(true);
 			setOnlyCrafted(false);
