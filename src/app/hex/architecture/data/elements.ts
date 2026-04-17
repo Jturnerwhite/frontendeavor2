@@ -7,6 +7,11 @@ export type AlchEleData = {
 	iconClass: string;
 }
 
+/** SVG `<pattern>` id mounted in `AlchSvgDefs` — use as `fill: url(#${getAlchElementPatternId(type)})`. */
+export function getAlchElementPatternId(type: ALCH_ELEMENT): string {
+	return `alch-element-pattern-${type.toLowerCase()}`;
+}
+
 /**
  * A collection of alchemical elements with their properties.
  * 
@@ -41,7 +46,7 @@ export const AlchemicalElements:Record<ALCH_ELEMENT, AlchEleData> = {
 	[ALCH_ELEMENT.FIRE]: {
 		id: 2,
 		type: ALCH_ELEMENT.FIRE,
-		colorHex: "#ff5e00",
+		colorHex: "#FF5E00",
 		iconClass: `typeicon-${ALCH_ELEMENT.FIRE}`
 	},
 	[ALCH_ELEMENT.WATER]: {
@@ -53,13 +58,13 @@ export const AlchemicalElements:Record<ALCH_ELEMENT, AlchEleData> = {
 	[ALCH_ELEMENT.AETHER]: {
 		id: 4,
 		type: ALCH_ELEMENT.AETHER,
-		colorHex: "#02b8cd",
+		colorHex: "#F2ECA7",
 		iconClass: `typeicon-${ALCH_ELEMENT.AETHER}`
 	},
 	[ALCH_ELEMENT.CHAOS]: {
 		id: 5,
 		type: ALCH_ELEMENT.CHAOS,
-		colorHex: "#961892",
+		colorHex: "#9A64CA",
 		iconClass: `typeicon-${ALCH_ELEMENT.CHAOS}`
 	} 
 }

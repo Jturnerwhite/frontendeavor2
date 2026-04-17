@@ -76,7 +76,7 @@ export default function Page() {
 				position={component.position}
 				size={alchCompSize} 
 				rotation={component.rotation}
-				hexGridCircumradius={size} />
+				/>
 		});
 	}
 

@@ -25,20 +25,70 @@ export function getHexNeighborStep(direction: number, hexCircumradius: number): 
 	}
 }
 
+export function GetHexPoints(position: Position, radius: number): string {
+	const adjustedRadius:number = parseFloat(radius.toFixed(2));
+	
+	return [
+		`${position.x + adjustedRadius},${position.y}`,
+		`${position.x + adjustedRadius * Math.cos(Math.PI / 3)},${position.y + adjustedRadius * Math.sin(Math.PI / 3)}`,
+		`${position.x + adjustedRadius * Math.cos((2 * Math.PI) / 3)},${position.y + adjustedRadius * Math.sin((2 * Math.PI) / 3)}`,
+		`${position.x - adjustedRadius},${position.y}`,
+		`${position.x + adjustedRadius * Math.cos((4 * Math.PI) / 3)},${position.y + adjustedRadius * Math.sin((4 * Math.PI) / 3)}`,
+		`${position.x + adjustedRadius * Math.cos((5 * Math.PI) / 3)},${position.y + adjustedRadius * Math.sin((5 * Math.PI) / 3)}`,
+	].join(' ');
+}
+
+export function GetHexStarPoints(position: Position, radius: number): string {
+	const adjustedRadius = parseFloat(radius.toFixed(2));
+	const cx = position.x;
+	const cy = position.y;
+
+	const corners = [
+		{ x: cx + adjustedRadius, y: cy },
+		{
+			x: cx + adjustedRadius * Math.cos(Math.PI / 3),
+			y: cy + adjustedRadius * Math.sin(Math.PI / 3),
+		},
+		{
+			x: cx + adjustedRadius * Math.cos((2 * Math.PI) / 3),
+			y: cy + adjustedRadius * Math.sin((2 * Math.PI) / 3),
+		},
+		{ x: cx - adjustedRadius, y: cy },
+		{
+			x: cx + adjustedRadius * Math.cos((4 * Math.PI) / 3),
+			y: cy + adjustedRadius * Math.sin((4 * Math.PI) / 3),
+		},
+		{
+			x: cx + adjustedRadius * Math.cos((5 * Math.PI) / 3),
+			y: cy + adjustedRadius * Math.sin((5 * Math.PI) / 3),
+		},
+	];
+
+	const fmt = (v: number) => parseFloat(v.toFixed(2));
+	const inwardTowardCenter = 0.2;
+	const parts: string[] = [];
+	for (let i = 0; i < 6; i++) {
+		const a = corners[i]!;
+		const b = corners[(i + 1) % 6]!;
+		parts.push(`${fmt(a.x)},${fmt(a.y)}`);
+		const midX = (a.x + b.x) / 2;
+		const midY = (a.y + b.y) / 2;
+		const pulledX = midX + inwardTowardCenter * (cx - midX);
+		const pulledY = midY + inwardTowardCenter * (cy - midY);
+		parts.push(`${fmt(pulledX)},${fmt(pulledY)}`);
+	}
+	return parts.join(' ');
+}
+
 /** Corner / node positions for hex-based component SVG layout. */
 export function GetHexPointPos(
 	point: number,
 	x: number,
 	y: number,
 	r: number,
-	hexGridCircumradius?: number,
 ): Position {
 	if (point === 0) {
 		return { x, y };
-	}
-	if (hexGridCircumradius !== undefined && point >= 1 && point <= 6) {
-		const step = getHexNeighborStep(point, hexGridCircumradius);
-		return { x: x + step.x, y: y + step.y };
 	}
 	const angle = (Math.PI / 3) * (point - 1);
 

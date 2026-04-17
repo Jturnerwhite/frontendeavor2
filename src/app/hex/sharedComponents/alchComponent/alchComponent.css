@@ -95,3 +95,7 @@
 .alch-comp-with-backing .border-fill {
 	fill: var(--misc-container);
 }
+
+.node.water.embed-icon {
+	fill: url(#alch-element-water-pattern);
+}

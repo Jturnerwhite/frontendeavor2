@@ -10,6 +10,7 @@ import './alchComponent.css';
 interface NodeProps {
 	index: number;
 	position: Position;
+	rotation: number;
 	size: number;
 	canLink: boolean;
 	element: ALCH_ELEMENT;
@@ -19,11 +20,13 @@ interface NodeProps {
 const AlchNode: React.FC<NodeProps> = ({
 	index,
 	position,
+	rotation,
 	size,
 	canLink,
 	element,
 	placed = false,
 }): JSX.Element => {
+	const ICON_SIZE = size / 2.0;
 	let strokeWidth = 2;
 	if(size <= 20) {
 		strokeWidth = 0;
@@ -35,29 +38,26 @@ const AlchNode: React.FC<NodeProps> = ({
 		strokeWidth = 3;
 	}
 
-	function getHexPoints(radius: number): string {
-		return [
-			`${position.x + radius},${position.y}`,
-			`${position.x + radius * Math.cos(Math.PI / 3)},${position.y + radius * Math.sin(Math.PI / 3)}`,
-			`${position.x + radius * Math.cos((2 * Math.PI) / 3)},${position.y + radius * Math.sin((2 * Math.PI) / 3)}`,
-			`${position.x - radius},${position.y}`,
-			`${position.x + radius * Math.cos((4 * Math.PI) / 3)},${position.y + radius * Math.sin((4 * Math.PI) / 3)}`,
-			`${position.x + radius * Math.cos((5 * Math.PI) / 3)},${position.y + radius * Math.sin((5 * Math.PI) / 3)}`,
-		].join(' ');
+	let hexSize = size;
+	if(size > 40) {
+		hexSize = size / 2.5;
+	} else {
+		hexSize = size / 2;
 	}
 
-	const elemClass = element.replace(/\s+/g, '-').toLowerCase();
-	const starPoints = SVGHelpers.GetStarPoints(position.x, position.y, size / 2.7);
-	const hexPoints:string = getHexPoints(size / 2);
-	const borderFillPoints:string = getHexPoints(size / 1.8);
+	let elemClass = element.replace(/\s+/g, '-').toLowerCase();
+	const starPoints = SVGHelpers.GetHexStarPoints({x:0, y:0}, hexSize);
+	const hexPoints:string = SVGHelpers.GetHexPoints({x:0, y:0}, hexSize);
+	const borderFillPoints:string = SVGHelpers.GetHexPoints({x:0, y:0}, hexSize);
 
-	const useHex = size < 40;
+	const useHex = true;// size < 40;
+	const showImage = size > 25;
 
 	const r = size / 3;
 
-	if (canLink) {
-		return (
-			<g className={placed ? 'placed' : undefined}>
+	function getNodeShape():JSX.Element {
+		if(canLink) {
+			return (<g>
 				{size < 25 && (
 					<polygon
 						className={'border-fill'}
@@ -70,34 +70,49 @@ const AlchNode: React.FC<NodeProps> = ({
 					points={starPoints}
 					strokeWidth={strokeWidth}
 				/>
-				<polygon className="node-sheen" points={starPoints} strokeWidth={0} />
-			</g>
-		);
-	}
-
-	return (
-		<g className={placed ? 'placed' : undefined}>
-			{!useHex && (
-				<>
+				<polygon className="node-sheen" points={starPoints} strokeWidth={strokeWidth} />
+			</g>);
+		} else if(useHex) {
+			return (<>
+				<polygon
+					className={'node ' + elemClass}
+					points={hexPoints}
+					strokeWidth={strokeWidth}
+				/>
+				<polygon className="node-sheen" points={hexPoints} strokeWidth={strokeWidth} />
+			</>);
+		} else {
+			return (<>
 				<circle
 					className={'node ' + elemClass}
-					cx={position.x}
-					cy={position.y}
+					cx={0}
+					cy={0}
 					r={r}
 					strokeWidth={strokeWidth}
 				/>
-				<circle className="node-sheen" cx={position.x} cy={position.y} r={r} strokeWidth={strokeWidth} />
-			</>)}
-			{useHex && (
-				<>
-					<polygon
-						className={'node ' + elemClass}
-						points={hexPoints}
-						strokeWidth={strokeWidth}
-					/>
-					<polygon className="node-sheen" points={hexPoints} strokeWidth={strokeWidth} />
-				</>
-			)}
+				<circle className="node-sheen" cx={0} cy={0} r={r} strokeWidth={strokeWidth} />
+			</>);
+		}
+	}
+
+	function getImage():JSX.Element {
+		return (<>
+			<image
+				href={`/icons/elements/${element.toLowerCase()}.svg`}
+				x={-(ICON_SIZE / 2)}
+				y={-(ICON_SIZE / 2)}
+				width={ICON_SIZE}
+				height={ICON_SIZE}
+				style={{ filter: `brightness(0) invert(1)`}}
+			/>
+		</>);
+
+	}
+
+	return (
+		<g className={placed ? 'placed' : undefined} transform={`translate(${position.x}, ${position.y}) rotate(${-(rotation * 60)} ${0} ${0})`}>
+			{getNodeShape()}
+			{showImage && getImage()}
 		</g>
 	);
 };
@@ -108,12 +123,6 @@ interface CompProps {
 	size: number;
 	rotation: number;
 	placed?: boolean;
-	/**
-	 * Hex tile circumradius R used by `CreateHexGrid` for this view. When set, peripheral
-	 * node positions (1–6) use the same floored neighbor offsets as the grid, not a polar ring.
-	 * Omit for standalone displays (e.g. cursor ghost) where `size` defines the ring radius.
-	 */
-	hexGridCircumradius?: number;
 }
 
 const AlchComponentDisplay: React.FC<CompProps> = ({
@@ -122,21 +131,25 @@ const AlchComponentDisplay: React.FC<CompProps> = ({
 	size,
 	rotation,
 	placed = false,
-	hexGridCircumradius,
 }): JSX.Element => {
-	const ringR = size;
+	let ringR = size;
 	const nodeComps = [];
 	const lines = [];
 	const shapeValue = COMPONENT_SHAPE_VALUES[alchData.shape];
 
+	if(size > 40) {
+		ringR = size - 0.5;
+	}
+
 	for (let i = 0; i < shapeValue.length; i++) {
 		if (shapeValue[i]) {
-			const nodePos: Position = SVGHelpers.GetHexPointPos(i, position.x, position.y, ringR, hexGridCircumradius);
+			const nodePos: Position = SVGHelpers.GetHexPointPos(i, position.x, position.y, ringR);
 			nodeComps.push(
 				<AlchNode
 					key={`${position.x}-${position.y}-node-${i}`}
 					index={i}
 					position={nodePos}
+					rotation={rotation}
 					size={size}
 					canLink={alchData.linkSpots?.[i] === 1}
 					element={alchData.element}
@@ -149,19 +162,19 @@ const AlchComponentDisplay: React.FC<CompProps> = ({
 	if (size > 5) {
 		for (let i = 1; i < shapeValue.length; i++) {
 			if (i === 6 && shapeValue[i] && shapeValue[1]) {
-				const nodePos: Position = SVGHelpers.GetHexPointPos(i, position.x, position.y, ringR, hexGridCircumradius);
-				const nextPos: Position = SVGHelpers.GetHexPointPos(1, position.x, position.y, ringR, hexGridCircumradius);
+				const nodePos: Position = SVGHelpers.GetHexPointPos(i, position.x, position.y, ringR);
+				const nextPos: Position = SVGHelpers.GetHexPointPos(1, position.x, position.y, ringR);
 				lines.push(SVGHelpers.GetSVGLine(`${position.x}-${position.y}-line-${lines.length}`, alchData.element, nodePos, nextPos, "white", size));
 			}
 			if (shapeValue[i]) {
 				if (shapeValue[0]) {
-					const nodePos: Position = SVGHelpers.GetHexPointPos(i, position.x, position.y, ringR, hexGridCircumradius);
-					const nextPos: Position = SVGHelpers.GetHexPointPos(0, position.x, position.y, ringR, hexGridCircumradius);
+					const nodePos: Position = SVGHelpers.GetHexPointPos(i, position.x, position.y, ringR);
+					const nextPos: Position = SVGHelpers.GetHexPointPos(0, position.x, position.y, ringR);
 					lines.push(SVGHelpers.GetSVGLine(`${position.x}-${position.y}-line-${lines.length}`, alchData.element, nodePos, nextPos, "white", size));
 				}
 				if (shapeValue[i + 1]) {
-					const nodePos: Position = SVGHelpers.GetHexPointPos(i, position.x, position.y, ringR, hexGridCircumradius);
-					const nextPos: Position = SVGHelpers.GetHexPointPos(i + 1, position.x, position.y, ringR, hexGridCircumradius);
+					const nodePos: Position = SVGHelpers.GetHexPointPos(i, position.x, position.y, ringR);
+					const nextPos: Position = SVGHelpers.GetHexPointPos(i + 1, position.x, position.y, ringR,);
 					lines.push(SVGHelpers.GetSVGLine(`${position.x}-${position.y}-line-${lines.length}`, alchData.element, nodePos, nextPos, "white", size));
 				}
 			}
@@ -181,7 +194,6 @@ const PlaceableAlchComponent: React.FC<CompProps> = ({
 	size,
 	rotation,
 	placed = false,
-	hexGridCircumradius,
 }): JSX.Element => {
 	const dispatch = useDispatch();
 	const handleClick = () => {
@@ -196,7 +208,6 @@ const PlaceableAlchComponent: React.FC<CompProps> = ({
 				size={size}
 				rotation={rotation}
 				placed={placed}
-				hexGridCircumradius={hexGridCircumradius}
 			/>
 			<rect
 				className="hitArea"

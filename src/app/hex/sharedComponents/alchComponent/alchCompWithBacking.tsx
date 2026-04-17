@@ -58,7 +58,6 @@ const AlchCompWithBacking: React.FC<CompProps> = ({
 					position={{ x: areaSize / 2, y: areaSize / 2 }}
 					size={displaySize}
 					rotation={0}
-					hexGridCircumradius={hexSize}
 				/>
 			)}
 			{!usePlaceable && (
@@ -67,7 +66,6 @@ const AlchCompWithBacking: React.FC<CompProps> = ({
 					position={{ x: areaSize / 2, y: areaSize / 2 }}
 					size={displaySize}
 					rotation={0}
-					hexGridCircumradius={hexSize}
 				/>
 			)}
 		</svg>

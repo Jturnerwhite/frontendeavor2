@@ -7,6 +7,7 @@ import './recipe-display.css';
 import PossibleComps from '@/app/hex/sharedComponents/alchComponent/possibleComps';
 import ItemTypeDisplay from '@/app/hex/sharedComponents/itemType/itemTypeDisplay';
 import { playerMeetsRequirement } from '@/app/hex/architecture/helpers/recipeRequirements';
+import ElementIcon from '@/app/hex/sharedComponents/elementIcon/elementIcon';
 
 interface RecipeDisplayProps {
 	recipe: Recipe;
@@ -76,7 +77,7 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({recipe, quality, currentEl
 			let matchinElementComp = resultingComponents.find((component: AlchComponent) => component.element === elementScore.element);
 			return <div className="element-score" key={elementScore.element}>
 				<div className="element-score-line">
-					<label className="element-score-label">{elementScore.element}: </label>
+					<label className="element-score-label"><ElementIcon element={elementScore.element} /></label>
 					{getCurrentElementScore(elementScore.element)}
 				</div>
 				<div className="element-comp-display">
