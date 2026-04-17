@@ -34,6 +34,7 @@ const toastifySlice = createSlice({
 		acknowledgeToast: (state, action: PayloadAction<{ id: string }>) => {
 			state.queue = state.queue.filter((t) => t.id !== action.payload.id)
 		},
+		resetToInitial: () => ({ ...initialToastifyState }),
 	},
 })
 

@@ -31,11 +31,15 @@ export type IngredientBase = {
 	possibleComps: Array<IngredientCompSpec|AlchComponent>
 }
 
+/**
+ * An instantiated ingredient base that can be used to craft a recipe.
+ */
 export type Ingredient = {
 	id: string,
 	baseIngId: string,
 	quality: number,
 	comps: AlchComponent[],
+	sizeRating: number, // 1 to 5, small to large, used to determine comp creation / link generation
 }
 
 export type Item = {

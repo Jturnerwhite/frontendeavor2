@@ -187,18 +187,18 @@ const ComplexInventoryItem: React.FC<ComplexInventoryItemProps> = ({ items, disp
 			onToggle={(e) => setDetailsOpen(e.currentTarget.open)}
 		>
 			<summary className="item-display-complex-row">
-				<div className="item-display-complex-icon" aria-hidden>
+				<span className="item-display-complex-icon" aria-hidden>
 					{ image && (<img src={image} alt="" style={{ height: "100%" }}/>) }
-				</div>
-				<div className="item-display-complex-main">
-					<div className="item-display-complex-text">
+				</span>
+				<span className="item-display-complex-main">
+					<span className="item-display-complex-text">
 						<span className="item-display-complex-name">{name}</span>
 						<span>{types.join(', ')}</span>
-					</div>
-					<div className="item-display-complex-types">
+					</span>
+					<span className="item-display-complex-types">
 						{items.length > 1 && (<span className="item-display-complex-count">Qty: {items.length}</span>)}
-					</div>
-				</div>
+					</span>
+				</span>
 				<span className="item-display-complex-end" aria-hidden>
 					V
 				</span>

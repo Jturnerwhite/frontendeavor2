@@ -16,6 +16,7 @@ import { IngredientBases } from '@/app/hex/architecture/data/ingredientBases';
 import MapFog from '@/app/hex/map/components/mapFog';
 import '@/app/hex/map/map.css';
 import { publicAsset } from '@/lib/publicAsset';
+import { hardResetPersistedGameState } from '@/store/store';
 import Link from 'next/link';
 
 export default function MapPage() {
@@ -167,6 +168,24 @@ export default function MapPage() {
 				hideSubSorting={true}/>
 		</aside>
 		<main className="map-main-panel" onContextMenu={(e: React.MouseEvent) => {}}>
+			{process.env.NODE_ENV === 'development' && (
+				<button
+					type="button"
+					className="map-dev-hard-reset"
+					title="Reset game state and localStorage (dev only)"
+					onClick={() => {
+						if (
+							typeof window !== 'undefined' &&
+							!window.confirm('Hard reset: clear inventory, alchemy, history, and persisted storage?')
+						) {
+							return;
+						}
+						hardResetPersistedGameState();
+					}}
+				>
+					Dev: reset save
+				</button>
+			)}
 			{hexMap && (
 				<>
 				<svg

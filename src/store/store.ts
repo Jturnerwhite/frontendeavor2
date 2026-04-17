@@ -128,6 +128,34 @@ export const store = configureStore({
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
 
+/**
+ * Dev / debug: reset Alchemy, Player, History, and Toastify to initial state and overwrite the three persisted localStorage keys.
+ */
+export function hardResetPersistedGameState() {
+	if (typeof window === 'undefined') return
+
+	const alchemyPayload: PersistedAlchemyState = {
+		currentRecipe: initialAlchemyState.currentRecipe,
+		playGrid: initialAlchemyState.playGrid,
+		ingredients: initialAlchemyState.ingredients,
+		placedComponents: initialAlchemyState.placedComponents,
+		placementUndoPast: initialAlchemyState.placementUndoPast,
+		placementUndoFuture: initialAlchemyState.placementUndoFuture,
+	}
+	try {
+		localStorage.setItem(ALCHEMY_STORAGE_KEY, JSON.stringify(alchemyPayload))
+		localStorage.setItem(PLAYER_STORAGE_KEY, JSON.stringify(initialPlayerState))
+		localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(initialHistoryState))
+	} catch {
+		// quota / private mode
+	}
+
+	store.dispatch(Alchemy.actions.hydrateFromStorage(alchemyPayload))
+	store.dispatch(Player.actions.hydrateFromStorage(initialPlayerState))
+	store.dispatch(History.actions.hydrateFromStorage(initialHistoryState))
+	store.dispatch(Toastify.actions.resetToInitial())
+}
+
 /** Batched localStorage writes: avoids serializing large slices on every dispatch (e.g. cursor/scroll churn). */
 const PERSIST_DEBOUNCE_MS = 400
 
