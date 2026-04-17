@@ -15,13 +15,6 @@ export const ALCHEMY_STORAGE_KEY = 'frontendeavor-alchemy-v1'
 export const PLAYER_STORAGE_KEY = 'frontendeavor-player-v1'
 export const HISTORY_STORAGE_KEY = 'frontendeavor-history-v1'
 
-let persistenceEnabled = false
-
-/** Enables localStorage writes for Alchemy, Player, and History after synchronous preload (call once on mount). */
-export function enableAlchemyPersistence() {
-	persistenceEnabled = true
-}
-
 function readPersistedAlchemy(): PersistedAlchemyState | null {
 	if (typeof window === 'undefined') return null
 	try {
@@ -132,38 +125,93 @@ export const store = configureStore({
 	preloadedState,
 })
 
+export type RootState = ReturnType<typeof store.getState>
+export type AppDispatch = typeof store.dispatch
+
+/** Batched localStorage writes: avoids serializing large slices on every dispatch (e.g. cursor/scroll churn). */
+const PERSIST_DEBOUNCE_MS = 400
+
+let persistenceEnabled = false
+let persistFlushTimer: ReturnType<typeof setTimeout> | null = null
+let pageLifecycleHandlersRegistered = false
+
+function writePersistedSlices(state: RootState) {
+	const alchemyPersisted: PersistedAlchemyState = {
+		currentRecipe: state.Alchemy.currentRecipe,
+		playGrid: state.Alchemy.playGrid,
+		ingredients: state.Alchemy.ingredients,
+		placedComponents: state.Alchemy.placedComponents,
+		placementUndoPast: state.Alchemy.placementUndoPast,
+		placementUndoFuture: state.Alchemy.placementUndoFuture,
+	}
+	const playerPersisted: PersistedPlayerState = {
+		inventory: state.Player.inventory,
+		availableQuestIds: state.Player.availableQuestIds,
+		xp: state.Player.xp,
+		gold: state.Player.gold,
+	}
+	const historyPersisted: PersistedHistoryState = {
+		completedCrafts: state.History.completedCrafts,
+		lastCompletedCraft: state.History.lastCompletedCraft,
+		completedQuestIds: state.History.completedQuestIds,
+	}
+	try {
+		localStorage.setItem(ALCHEMY_STORAGE_KEY, JSON.stringify(alchemyPersisted))
+		localStorage.setItem(PLAYER_STORAGE_KEY, JSON.stringify(playerPersisted))
+		localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(historyPersisted))
+	} catch {
+		// quota / private mode
+	}
+}
+
+function flushPersistToLocalStorage() {
+	if (!persistenceEnabled || typeof window === 'undefined') return
+	if (persistFlushTimer !== null) {
+		clearTimeout(persistFlushTimer)
+		persistFlushTimer = null
+	}
+	writePersistedSlices(store.getState())
+}
+
+function schedulePersistFlush() {
+	if (!persistenceEnabled || typeof window === 'undefined') return
+	if (persistFlushTimer !== null) {
+		clearTimeout(persistFlushTimer)
+	}
+	persistFlushTimer = setTimeout(() => {
+		persistFlushTimer = null
+		writePersistedSlices(store.getState())
+	}, PERSIST_DEBOUNCE_MS)
+}
+
+function registerPersistPageLifecycleFlush() {
+	if (pageLifecycleHandlersRegistered || typeof window === 'undefined') return
+	pageLifecycleHandlersRegistered = true
+	const syncFlush = () => {
+		if (!persistenceEnabled) return
+		if (persistFlushTimer !== null) {
+			clearTimeout(persistFlushTimer)
+			persistFlushTimer = null
+		}
+		writePersistedSlices(store.getState())
+	}
+	window.addEventListener('beforeunload', syncFlush)
+	window.addEventListener('pagehide', syncFlush)
+}
+
+/**
+ * Enables debounced localStorage writes for Alchemy, Player, and History after synchronous preload (call once on mount).
+ * Writes are batched (~400ms) to avoid work on every dispatch; tab close triggers an immediate flush.
+ */
+export function enableAlchemyPersistence() {
+	persistenceEnabled = true
+	registerPersistPageLifecycleFlush()
+	flushPersistToLocalStorage()
+}
+
 if (typeof window !== 'undefined') {
 	store.subscribe(() => {
 		if (!persistenceEnabled) return
-		const state = store.getState()
-		const alchemyPersisted: PersistedAlchemyState = {
-			currentRecipe: state.Alchemy.currentRecipe,
-			playGrid: state.Alchemy.playGrid,
-			ingredients: state.Alchemy.ingredients,
-			placedComponents: state.Alchemy.placedComponents,
-			placementUndoPast: state.Alchemy.placementUndoPast,
-			placementUndoFuture: state.Alchemy.placementUndoFuture,
-		}
-		const playerPersisted: PersistedPlayerState = {
-			inventory: state.Player.inventory,
-			availableQuestIds: state.Player.availableQuestIds,
-			xp: state.Player.xp,
-			gold: state.Player.gold,
-		}
-		const historyPersisted: PersistedHistoryState = {
-			completedCrafts: state.History.completedCrafts,
-			lastCompletedCraft: state.History.lastCompletedCraft,
-			completedQuestIds: state.History.completedQuestIds,
-		}
-		try {
-			localStorage.setItem(ALCHEMY_STORAGE_KEY, JSON.stringify(alchemyPersisted))
-			localStorage.setItem(PLAYER_STORAGE_KEY, JSON.stringify(playerPersisted))
-			localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(historyPersisted))
-		} catch {
-			// quota / private mode
-		}
+		schedulePersistFlush()
 	})
 }
-
-export type RootState = ReturnType<typeof store.getState>
-export type AppDispatch = typeof store.dispatch
