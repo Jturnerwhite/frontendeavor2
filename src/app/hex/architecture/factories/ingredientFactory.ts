@@ -44,6 +44,10 @@ function GenerateQuality(): number {
 	return randomBell0to100(20, 14);
 }
 
+/**
+ * Currently deprecated but kept for reference
+ * @deprecated
+ */
 function GenerateShape(ingBase: IngredientBase, compSpec: IngredientCompSpec, quality: number): SHAPE_NAME|undefined {
 	const tierModifier = ING_TIER_QUALITY_MODIFIERS[ingBase.ingTier];
 	// order SHAPE_NAME by number of nodes
@@ -101,6 +105,44 @@ function GenerateLinkSpots(shapeName: SHAPE_NAME, quality: number): number[]|und
 	return Object.values(COMPONENT_SHAPE_VALUES[shapeName]).map((a, i) => a & linkSpots[i]);
 }
 
+/**
+ * Generates a size rating for the ingredient based on the quality.
+ * Sizes range between 0 and 4, where 0 is the smallest and 4 is the largest.
+ * 0 = "Extra tiny"
+ * 1 = "Small"
+ * 2 = "Medium"
+ * 3 = "Large"
+ * 4 = "Extra large"
+ * 1 to 3 is most common. 0 and 4 should be considered very rare.
+ * Other factors will affect size later, but for now just quality is used.
+ * @param ingBase - The ingredient base.
+ * @param quality - The quality of the ingredient.
+ * @returns The size rating.
+ */
+export function GenerateSizeRating(ingBase: IngredientBase, quality: number): number {
+	const tierModifier = ING_TIER_QUALITY_MODIFIERS[ingBase.ingTier];
+	// Roll a new number for size
+	const sizeNumber = randomBell0to100(20, 14);
+	console.log('sizeNumber', sizeNumber);
+	if(quality <= 1) {
+		return 0;
+	} else if(quality == 100) {
+		return 4;
+	} else {
+		// split the range of quality between min and max into 3 equal parts
+		// use the quality tier modifiers for these for now
+		const thresholdForMid = tierModifier.minQualityEffect + ((tierModifier.maxQualityEffect - tierModifier.minQualityEffect) / 3);
+		const thresholdForHigh = tierModifier.minQualityEffect + ((tierModifier.maxQualityEffect - tierModifier.minQualityEffect) / 3) * 2;
+		if(sizeNumber < thresholdForMid) {
+			return 0;
+		} else if(sizeNumber < thresholdForHigh) {
+			return 1;
+		} else {
+			return 2;
+		}
+	}
+}
+
 export function CreateIngredient(ingBase: IngredientBase): Ingredient {
 	const newIng = {
 		id: GenerateTempId(),
@@ -112,12 +154,16 @@ export function CreateIngredient(ingBase: IngredientBase): Ingredient {
 	ingBase.possibleComps.forEach((compSpec, index) => {
 		let newComp = null as AlchComponent | null;
 		newIng.quality = GenerateQuality();
+		newIng.sizeRating = GenerateSizeRating(ingBase, newIng.quality);
+		console.log('newIng.sizeRating', newIng.sizeRating);
+		console.log('shapeName', compSpec);
+
 		if ('possibleShapes' in compSpec) {
 			if (
 				compSpec.chance == undefined ||
 				(compSpec.chance > 0 && Math.random() <= compSpec.chance)
 			) {
-				const shapeName = GenerateShape(ingBase, compSpec, newIng.quality) ?? compSpec.possibleShapes[0];
+				const shapeName = compSpec.possibleShapes[newIng.sizeRating];
 				newComp = {
 					id: GenerateTempId(),
 					element: compSpec.element,

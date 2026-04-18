@@ -15,17 +15,17 @@ export const IngredientBases:Record<string, IngredientBase> = {
 		possibleComps: [
 			{
 				element: ALCH_ELEMENT.FIRE,
-				possibleShapes: GrowthPaths.SPIRAL.slice(0, 4),
+				possibleShapes: GrowthPaths.SPIRAL.slice(0, 5),
 				linkSpots: [1, 0, 1, 0, 0, 0, 0]
 			},
 			{
 				element: ALCH_ELEMENT.FIRE,
-				possibleShapes: GrowthPaths.SPIRAL.slice(0, 4),
+				possibleShapes: GrowthPaths.ZIGZAG.slice(0, 4),
 				linkSpots: [0, 1, 0, 1, 0, 0, 0]
 			},
 			{
 				element: ALCH_ELEMENT.EARTH,
-				possibleShapes: GrowthPaths.SPIRAL.slice(0, 4),
+				possibleShapes: GrowthPaths.WAVY.slice(0, 2),
 				chance: 0.5
 			}
 		]
@@ -39,15 +39,15 @@ export const IngredientBases:Record<string, IngredientBase> = {
 		possibleComps: [
 			{
 				element: ALCH_ELEMENT.WATER,
-				possibleShapes: GrowthPaths.SPIRAL.slice(0, 4),
+				possibleShapes: GrowthPaths.ZIGZAG.slice(0, 5),
 			},
 			{
 				element: ALCH_ELEMENT.WATER,
-				possibleShapes: GrowthPaths.SPIRAL.slice(0, 4),
+				possibleShapes: GrowthPaths.ZIGZAG.slice(0, 4),
 			},
 			{
 				element: ALCH_ELEMENT.CHAOS,
-				possibleShapes: GrowthPaths.SPIRAL.slice(0, 4),
+				possibleShapes: GrowthPaths.SPIRAL.slice(0, 2),
 				chance: 0.25
 			}
 		]
@@ -66,11 +66,11 @@ export const IngredientBases:Record<string, IngredientBase> = {
 			} as AlchComponent,
 			{
 				element: ALCH_ELEMENT.WIND,
-				possibleShapes: GrowthPaths.SPIRAL.slice(0, 4),
+				possibleShapes: GrowthPaths.WAVY.slice(0, 4),
 			},
 			{
 				element: ALCH_ELEMENT.AETHER,
-				possibleShapes: GrowthPaths.SPIRAL.slice(0, 4),
+				possibleShapes: GrowthPaths.WAVY.slice(0, 2),
 				chance: 0.25
 			}
 		]
@@ -84,15 +84,15 @@ export const IngredientBases:Record<string, IngredientBase> = {
 		possibleComps: [
 			{
 				element: ALCH_ELEMENT.EARTH,
-				possibleShapes: GrowthPaths.SPIRAL.slice(0, 4),
+				possibleShapes: GrowthPaths.WAVY.slice(0, 5),
 			},
 			{
 				element: ALCH_ELEMENT.WIND,
-				possibleShapes: GrowthPaths.SPIRAL.slice(0, 4),
+				possibleShapes: GrowthPaths.WAVY.slice(0, 4),
 			},
 			{
 				element: ALCH_ELEMENT.FIRE,
-				possibleShapes: GrowthPaths.SPIRAL.slice(0, 4),
+				possibleShapes: GrowthPaths.WAVY.slice(0, 2),
 				chance: 0.25,
 			},
 		],
@@ -106,15 +106,15 @@ export const IngredientBases:Record<string, IngredientBase> = {
 		possibleComps: [
 			{
 				element: ALCH_ELEMENT.EARTH,
-				possibleShapes: GrowthPaths.SPIRAL.slice(0, 4),
+				possibleShapes: GrowthPaths.ZIGZAG.slice(0, 5),
 			},
 			{
 				element: ALCH_ELEMENT.WATER,
-				possibleShapes: GrowthPaths.SPIRAL.slice(0, 4),
+				possibleShapes: GrowthPaths.SPIN.slice(0, 4),
 			},
 			{
 				element: ALCH_ELEMENT.WIND,
-				possibleShapes: GrowthPaths.SPIRAL.slice(0, 4),
+				possibleShapes: GrowthPaths.SPIN.slice(0, 2),
 				chance: 0.25,
 			},
 		],
@@ -128,15 +128,15 @@ export const IngredientBases:Record<string, IngredientBase> = {
 		possibleComps: [
 			{
 				element: ALCH_ELEMENT.FIRE,
-				possibleShapes: GrowthPaths.SPIRAL.slice(0, 4),
+				possibleShapes: GrowthPaths.SPIN.slice(0, 5),
 			},
 			{
 				element: ALCH_ELEMENT.WIND,
-				possibleShapes: GrowthPaths.SPIRAL.slice(0, 4),
+				possibleShapes: GrowthPaths.SPIN.slice(0, 5),
 			},
 			{
 				element: ALCH_ELEMENT.AETHER,
-				possibleShapes: GrowthPaths.SPIRAL.slice(0, 4),
+				possibleShapes: GrowthPaths.SPIRAL.slice(0, 2),
 				chance: 0.25,
 			},
 		],
@@ -150,16 +150,16 @@ export const IngredientBases:Record<string, IngredientBase> = {
 		possibleComps: [
 			{
 				element: ALCH_ELEMENT.EARTH,
-				possibleShapes: GrowthPaths.SPIRAL.slice(0, 4),
+				possibleShapes: GrowthPaths.WAVY.slice(0, 5),
 				linkSpots: [0, 0, 0, 0, 0, 1, 0]
 			},
 			{
 				element: ALCH_ELEMENT.WATER,
-				possibleShapes: GrowthPaths.SPIRAL.slice(0, 4),
+				possibleShapes: GrowthPaths.WAVY.slice(0, 4),
 			},
 			{
 				element: ALCH_ELEMENT.WATER,
-				possibleShapes: GrowthPaths.SPIRAL.slice(0, 4),
+				possibleShapes: GrowthPaths.WAVY.slice(0, 4),
 				chance: 0.1
 			},
 		],
@@ -212,7 +212,7 @@ export const IngredientBases:Record<string, IngredientBase> = {
 		possibleComps: [
 			{
 				element: ALCH_ELEMENT.WATER,
-				possibleShapes: GrowthPaths.SPIRAL.slice(1, 5),
+				possibleShapes: GrowthPaths.SPIN.slice(0, 5),
 			},
 			{
 				element: ALCH_ELEMENT.WATER,

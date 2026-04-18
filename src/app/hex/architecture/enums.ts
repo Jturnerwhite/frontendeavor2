@@ -49,7 +49,7 @@ export const COMPONENT_SHAPE_VALUES = {
 	[SHAPE_NAME.FINGER]:	[0,1,1,1,1,0,0], // a 4-piece curve ⌒
 	[SHAPE_NAME.AXE]:		[1,1,0,0,1,0,1], // a 4-piece 4 shape
 	[SHAPE_NAME.FIDGET]:	[1,1,0,1,0,1,0], // a 4-piece λ shape
-	[SHAPE_NAME.CLAW]:		[0,1,1,1,1,0,0], // a 5-piece near-circle curve C
+	[SHAPE_NAME.CLAW]:		[0,1,1,1,1,1,0], // a 5-piece near-circle curve C
 	[SHAPE_NAME.UMBRELLA]:	[1,1,1,1,0,1,0], // a 5-piece umbrella shape C-
 	[SHAPE_NAME.HOURGLASS]:	[1,0,1,1,0,1,1], // a 5-piece hourglass ⧗
 	[SHAPE_NAME.BRIDGE]:	[1,1,1,1,1,0,0], // a 5-piece ◐
