@@ -295,6 +295,16 @@ export default function Page() {
 				>
 					Complete
 				</button>
+				<button
+					type="button"
+					className="alchemy-abandon-button"
+					onClick={() => {
+						dispatch(AlchemyStoreSlice.actions.resetSliceToInitial());
+						router.replace('/hex/play/alchemy/selectRecipe');
+					}}
+				>
+					Choose another recipe
+				</button>
 			</aside>
 		</div>
 	);

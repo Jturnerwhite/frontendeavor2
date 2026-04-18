@@ -21,6 +21,13 @@ const CraftedItemLabDisplay: React.FC<CraftedItemLabDisplayProps> = ({
 }): JSX.Element => {
 	const title = item.baseRecipeId ? `${item.name} (${item.baseRecipeId})` : item.name
 
+	function handlePickComponent(comp: AlchComponent, placed: boolean) {
+		console.log('handlePickComponent', comp, placed)
+		if(!placed) {
+			onPickComponent && onPickComponent(comp)
+		}
+	}
+
 	return (
 		<div className="ingredient-display crafted-item-lab-display">
 			<label>{title}</label>
@@ -41,7 +48,7 @@ const CraftedItemLabDisplay: React.FC<CraftedItemLabDisplayProps> = ({
 							alchData={comp}
 							displaySize={displaySize}
 							usePlaceable={usePlaceable}
-							onPickComponent={onPickComponent}
+							onPickComponent={() => handlePickComponent(comp, placed)}
 						/>
 					)
 				})}

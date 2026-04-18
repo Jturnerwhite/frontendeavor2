@@ -169,6 +169,8 @@ const alchemySlice = createSlice({
 		clearRecipe: (state) => {
 			state.currentRecipe = undefined;
 		},
+		/** Full reset to `initialAlchemyState` (abandon session / pick another recipe). */
+		resetSliceToInitial: (): AlchemyState => structuredClone(initialAlchemyState),
 	}
 });
 

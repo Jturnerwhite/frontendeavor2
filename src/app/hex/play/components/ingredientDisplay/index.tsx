@@ -20,6 +20,12 @@ const IngredientDisplay: React.FC<IngredientDisplayProps> = ({
 	compPlaced = [],
 	onPickComponent,
 }): JSX.Element => {
+	function handlePickComponent(comp: AlchComponent, placed: boolean) {
+		if(!placed) {
+			onPickComponent && onPickComponent(comp)
+		}
+	}
+
 	function getComps(): Array<JSX.Element> {
 		return ingredient.comps.map((comp, compIndex) => {
 			const placed = compPlaced.length > 0 ? compPlaced[compIndex] : false;
@@ -30,7 +36,7 @@ const IngredientDisplay: React.FC<IngredientDisplayProps> = ({
 				alchData={comp} 
 				displaySize={displaySize} 
 				usePlaceable={usePlaceable}
-				onPickComponent={onPickComponent} />);
+				onPickComponent={() => handlePickComponent(comp, placed)} />);
 		}, [] as Array<JSX.Element>);
 	}
 
