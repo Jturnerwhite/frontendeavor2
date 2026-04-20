@@ -14,15 +14,11 @@ export default function HomeLayout({ children }: { children: React.ReactNode }) 
 					<li>
 						<Link href="/hex/play/alchemy/selectRecipe">Craft</Link>
 					</li>
-					<li>
-						<Link href="/hex/map/home/inventory">Inventory</Link>
-					</li>
+					{/*<li><Link href="/hex/map/home/inventory">Inventory</Link></li>*/}
 					<li>
 						<Link href="/hex/encyclopedia">Encyclopedia</Link>
 					</li>
-					<li>
-						<Link href="/hex/history">History</Link>
-					</li>
+					{/*<li><Link href="/hex/history">History</Link></li>*/}
 					<li>
 						<Link href="/hex/explanation">Explanation</Link>
 					</li>

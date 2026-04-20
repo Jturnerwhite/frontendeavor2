@@ -17,7 +17,6 @@ import StagedItemSelector, {
 	type StagedSelectionSnapshot,
 } from '@/app/hex/sharedComponents/stagedItemSelector/stagedItemSelector'
 import RequiredItem from '@/app/hex/sharedComponents/requiredItem/requiredItem'
-import { IngredientBases } from '@/app/hex/architecture/data/ingredientBases'
 import { ITEM_TAG } from '@/app/hex/architecture/enums'
 import '@/app/hex/sharedComponents/requiredItem/requiredItem.css';
 import '@/app/hex/map/town/questBoard/questBoard.css';

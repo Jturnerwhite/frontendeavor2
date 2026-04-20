@@ -4,7 +4,7 @@
 }
 
 .inventory-display-items {
-	max-height: calc(60vh);
+	max-height: calc(80vh);
 	overflow-y: auto;
 	padding-right: 18px;
 	margin-right: -18px;
