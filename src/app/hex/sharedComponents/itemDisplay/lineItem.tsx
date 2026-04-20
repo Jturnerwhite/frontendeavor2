@@ -1,10 +1,10 @@
 'use client';
 import { useEffect, useState } from "react";
+import { Recipes } from "@/app/hex/architecture/data/recipes";
 import { AlchComponent, Ingredient, IngredientBase, IngredientCompSpec, Item, Recipe } from "@/app/hex/architecture/typings";
 import { IngredientBases } from '@/app/hex/architecture/data/ingredientBases';
 import AlchCompWithBacking from "@/app/hex/sharedComponents/alchComponent/alchCompWithBacking";
 import './itemDisplay.css';
-import { Recipes } from "../../architecture/data/recipes";
 
 interface InventoryLineItemProps {
 	item?: Item;

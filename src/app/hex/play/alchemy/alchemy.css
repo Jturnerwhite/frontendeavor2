@@ -229,7 +229,7 @@
 	min-height: 100vh;
 	box-sizing: border-box;
 	padding: 24px 28px 40px;
-	max-width: 720px;
+	max-width: 75%;
 	margin: 0 auto;
 	font-family: Georgia, 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
 	color: var(--alchemy-ink);
