@@ -74,14 +74,14 @@
 .alch-comp-with-backing {
 	background-color: var(--misc-container);
 	box-shadow: rgba(44, 31, 20, 0.46) 3px 3px 6px;
-	border-radius: 8px;
+	border-radius: 6px;
 
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-content: center;
     align-items: center;
-    width: 114px;
+    width: 116px;
     height: 70px;
 
     clip-path: polygon(
@@ -93,6 +93,32 @@
 		20px 100%, 
 		0% 100%, 
 		0% 0%);
+
+	/*
+	fat
+
+	sharp
+    clip-path: polygon(
+		0% 0%, 
+		calc(100% - 20px) 0%, 
+		100% 35px, 
+		100% calc(100% - 35px), 
+		calc(100% - 20px) 100%, 
+		20px 100%, 
+		0% 100%, 
+		0% 0%);
+
+	fat
+    clip-path: polygon(
+		0% 0%, 
+		calc(100% - 10px) 0%, 
+		100% 10px, 
+		100% calc(100% - 10px), 
+		calc(100% - 10px) 100%, 
+		10px 100%, 
+		0% 100%, 
+		0% 0%);
+	*/
 }
 
 .alch-comp-with-backing > .element-icon {

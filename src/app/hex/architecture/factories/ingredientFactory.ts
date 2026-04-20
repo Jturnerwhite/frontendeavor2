@@ -90,6 +90,7 @@ function GenerateShape(ingBase: IngredientBase, compSpec: IngredientCompSpec, qu
 
 function GenerateLinkSpots(shapeName: SHAPE_NAME, quality: number): number[]|undefined {
 	let linkSpots:number[] = [];
+	console.log('shapeName', shapeName);
 	const nodes = Object.values(COMPONENT_SHAPE_VALUES[shapeName]).reduce((acc, curr) => acc + curr, 0);
 	// return a [] of 1 or 0 where 1 represents a link, but only if the shape has a link spot
 	const shape = Object.values(COMPONENT_SHAPE_VALUES[shapeName]);

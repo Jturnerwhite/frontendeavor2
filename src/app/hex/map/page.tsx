@@ -17,19 +17,20 @@ import MapFog from '@/app/hex/map/components/mapFog';
 import '@/app/hex/map/map.css';
 import { publicAsset } from '@/lib/publicAsset';
 import { hardResetPersistedGameState } from '@/store/store';
+import MapStoreSlice from '@/store/features/mapSlice';
+import HexTimerOverlay from './components/hexTimerOverlay';
 
 export default function MapPage() {
 	const router = useRouter();
 	const dispatch = useAppDispatch();
 	const inventoryItems = useAppSelector((state) => state.Player.inventory.crafted);
 	const ingredients = useAppSelector((state) => state.Player.inventory.raw);
+	const hexesOnCooldown = useAppSelector((state) => state.Map.hexesOnCooldown);
 
 	const TILE_SIZE = 40;
 	const MAP_LAYER_SIZE = 3;
-	const [hexMap, setHexMap] = useState<HexMap | undefined>(undefined);
-	const [centerHexGridX, setCenterHexGridX] = useState<number>(0);
-	const [centerHexGridY, setCenterHexGridY] = useState<number>(0);
-	const mapContents: Array<{
+	const HEX_TIMER_DURATION = 5000;
+	const MAP_CONTENTS: Array<{
 		tileIndexes: number[];
 		biome: (typeof Biomes)[keyof typeof Biomes] | null;
 		icon?: string;
@@ -54,6 +55,10 @@ export default function MapPage() {
 		}
 	];
 
+	const [hexMap, setHexMap] = useState<HexMap | undefined>(undefined);
+	const [centerHexGridX, setCenterHexGridX] = useState<number>(0);
+	const [centerHexGridY, setCenterHexGridY] = useState<number>(0);
+
 	const FISHING_TERRAINS = new Set<MAP_TERRAIN>([
 		MAP_TERRAIN.LAKE,
 		MAP_TERRAIN.FRESHWATER,
@@ -68,7 +73,7 @@ export default function MapPage() {
 	}
 
 	function hexClick(hex: HexTile) {
-		const content = mapContents.find((content) => content.tileIndexes.includes(hex.index));
+		const content = MAP_CONTENTS.find((content) => content.tileIndexes.includes(hex.index));
 		if (content !== undefined && content.biome === null) {
 			if (hex.index === 0) {
 				router.push('/hex/map/home');
@@ -89,6 +94,8 @@ export default function MapPage() {
 				return;
 			}
 
+			if (hexesOnCooldown[hex.id]) return;
+
 			const ingredients = GatherIngredientsInBiome(content.biome, 1);
 
 			dispatch(PlayerStoreSlice.actions.addGatheredIngredients({ ingredients }));
@@ -101,11 +108,27 @@ export default function MapPage() {
 					}),
 				);
 			});
+
+			startHexCooldown(hex.id);
 		}
 	}
 
 	function onHexEnter(hex: HexTile) {
 		// Display tooltip for the hex
+	}
+
+	function startHexCooldown(hexMapId: string) {
+		dispatch(
+			MapStoreSlice.actions.startHexCooldown({
+				hexId: hexMapId,
+				startedAt: Date.now(),
+				duration: HEX_TIMER_DURATION,
+			}),
+		);
+	}
+
+	function endHexCooldown(hexMapId: string) {
+		dispatch(MapStoreSlice.actions.endHexCooldown({ hexId: hexMapId }));
 	}
 
 	function renderMapContents() {
@@ -114,7 +137,7 @@ export default function MapPage() {
 		}
 
 		return Object.values(hexMap).reduce((acc: JSX.Element[], tile: HexTile): JSX.Element[] => {
-			const content = mapContents.find((content) => content.tileIndexes.includes(tile.index));
+			const content = MAP_CONTENTS.find((content) => content.tileIndexes.includes(tile.index));
 			if(content !== undefined) {
 				acc.push(<image 
 					key={tile.index}
@@ -132,11 +155,32 @@ export default function MapPage() {
 
 	function assignAdditionalClassStrings(hexMap: HexMap) {
 		Object.values(hexMap).forEach((hex: HexTile) => {
-			const content = mapContents.find((content) => content.tileIndexes.includes(hex.index));
+			const content = MAP_CONTENTS.find((content) => content.tileIndexes.includes(hex.index));
 			if(content !== undefined) {
 				hex.additionalClassString = content.biome?.id ?? '';
 			}
 		});
+	}
+
+	function renderHexTimerOverlays() {
+		if (hexMap === undefined) return null;
+		const out: JSX.Element[] = [];
+		for (const [hexMapId, entry] of Object.entries(hexesOnCooldown)) {
+			const tile = hexMap[hexMapId];
+			if (!tile) continue;
+			out.push(
+				<HexTimerOverlay
+					key={hexMapId}
+					hexIndex={hexMapId}
+					position={tile.position}
+					size={TILE_SIZE}
+					duration={entry.duration}
+					startedAt={entry.startedAt}
+					onComplete={endHexCooldown}
+				/>,
+			);
+		}
+		return out;
 	}
 
 	useEffect(() => {
@@ -187,8 +231,7 @@ export default function MapPage() {
 					Dev: reset save
 				</button>
 			)}
-			{hexMap && (
-				<>
+			{hexMap && (<>
 				<svg
 					className="map-hex-svg"
 					width="100%"
@@ -211,10 +254,10 @@ export default function MapPage() {
 							currentLayers={MAP_LAYER_SIZE} 
 							mapFogLayers={MAP_LAYER_SIZE - 1} 
 						/>
+						<g>{renderHexTimerOverlays()}</g>
 					</g>
 				</svg>
-				</>
-			)}
+			</>)}
 		</main>
 	</div>
 }

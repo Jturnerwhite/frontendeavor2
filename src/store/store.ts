@@ -13,11 +13,15 @@ import { initialToastifyState } from '@/store/features/toastifySlice'
 import Settings from '@/store/features/settingsSlice'
 import type { PersistedSettingsState } from '@/store/features/settingsSlice'
 import { initialSettingsState } from '@/store/features/settingsSlice'
+import Map from '@/store/features/mapSlice'
+import type { PersistedMapState } from '@/store/features/mapSlice'
+import { initialMapState } from '@/store/features/mapSlice'
 
 export const ALCHEMY_STORAGE_KEY = 'frontendeavor-alchemy-v1'
 export const PLAYER_STORAGE_KEY = 'frontendeavor-player-v1'
 export const HISTORY_STORAGE_KEY = 'frontendeavor-history-v1'
 export const SETTINGS_STORAGE_KEY = 'frontendeavor-settings-v1'
+export const MAP_STORAGE_KEY = 'frontendeavor-map-v1'
 
 function readPersistedAlchemy(): PersistedAlchemyState | null {
 	if (typeof window === 'undefined') return null
@@ -78,10 +82,35 @@ function readPersistedSettings(): PersistedSettingsState | null {
 	}
 }
 
+function readPersistedMap(): PersistedMapState | null {
+	if (typeof window === 'undefined') return null
+	try {
+		const raw = localStorage.getItem(MAP_STORAGE_KEY)
+		if (!raw) return null
+		return JSON.parse(raw) as PersistedMapState
+	} catch {
+		return null
+	}
+}
+
+/** Drop cooldown entries whose timers already elapsed at load time (stale from a prior session). */
+function pruneExpiredMapState(persisted: PersistedMapState | null): PersistedMapState | null {
+	if (persisted === null) return null
+	const now = Date.now()
+	const kept: PersistedMapState['hexesOnCooldown'] = {}
+	for (const [hexId, entry] of Object.entries(persisted.hexesOnCooldown ?? {})) {
+		if (!entry || typeof entry.startedAt !== 'number' || typeof entry.duration !== 'number') continue
+		if (entry.startedAt + entry.duration <= now) continue
+		kept[hexId] = entry
+	}
+	return { hexesOnCooldown: kept }
+}
+
 const persistedAlchemy = readPersistedAlchemy()
 const persistedPlayerBundle = readPersistedPlayer()
 const persistedHistory = readPersistedHistory()
 const persistedSettings = readPersistedSettings()
+const persistedMap = pruneExpiredMapState(readPersistedMap())
 
 function buildHistoryState(): typeof initialHistoryState {
 	let base =
@@ -137,6 +166,13 @@ const preloadedState = {
 					isFirstVisit: persistedSettings.isFirstVisit ?? initialSettingsState.isFirstVisit,
 				}
 			: initialSettingsState,
+	Map:
+		persistedMap !== null
+			? {
+					...initialMapState,
+					hexesOnCooldown: persistedMap.hexesOnCooldown ?? {},
+				}
+			: initialMapState,
 }
 
 export const store = configureStore({
@@ -146,6 +182,7 @@ export const store = configureStore({
 		History: History.reducer,
 		Toastify: Toastify.reducer,
 		Settings: Settings.reducer,
+		Map: Map.reducer,
 	},
 	preloadedState,
 })
@@ -154,7 +191,7 @@ export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
 
 /**
- * Dev / debug: reset Alchemy, Player, History, Settings, and Toastify to initial state and overwrite persisted localStorage keys.
+ * Dev / debug: reset Alchemy, Player, History, Settings, Map, and Toastify to initial state and overwrite persisted localStorage keys.
  */
 export function hardResetPersistedGameState() {
 	if (typeof window === 'undefined') return
@@ -172,6 +209,7 @@ export function hardResetPersistedGameState() {
 		localStorage.setItem(PLAYER_STORAGE_KEY, JSON.stringify(initialPlayerState))
 		localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(initialHistoryState))
 		localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(initialSettingsState))
+		localStorage.setItem(MAP_STORAGE_KEY, JSON.stringify(initialMapState))
 	} catch {
 		// quota / private mode
 	}
@@ -180,6 +218,7 @@ export function hardResetPersistedGameState() {
 	store.dispatch(Player.actions.hydrateFromStorage(initialPlayerState))
 	store.dispatch(History.actions.hydrateFromStorage(initialHistoryState))
 	store.dispatch(Settings.actions.hydrateFromStorage(initialSettingsState))
+	store.dispatch(Map.actions.hydrateFromStorage(initialMapState))
 	store.dispatch(Toastify.actions.resetToInitial())
 }
 
@@ -213,11 +252,15 @@ function writePersistedSlices(state: RootState) {
 	const settingsPersisted: PersistedSettingsState = {
 		isFirstVisit: state.Settings.isFirstVisit,
 	}
+	const mapPersisted: PersistedMapState = {
+		hexesOnCooldown: state.Map.hexesOnCooldown,
+	}
 	try {
 		localStorage.setItem(ALCHEMY_STORAGE_KEY, JSON.stringify(alchemyPersisted))
 		localStorage.setItem(PLAYER_STORAGE_KEY, JSON.stringify(playerPersisted))
 		localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(historyPersisted))
 		localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settingsPersisted))
+		localStorage.setItem(MAP_STORAGE_KEY, JSON.stringify(mapPersisted))
 	} catch {
 		// quota / private mode
 	}
@@ -259,7 +302,7 @@ function registerPersistPageLifecycleFlush() {
 }
 
 /**
- * Enables debounced localStorage writes for Alchemy, Player, History, and Settings after synchronous preload (call once on mount).
+ * Enables debounced localStorage writes for Alchemy, Player, History, Settings, and Map after synchronous preload (call once on mount).
  * Writes are batched (~400ms) to avoid work on every dispatch; tab close triggers an immediate flush.
  */
 export function enableAlchemyPersistence() {
