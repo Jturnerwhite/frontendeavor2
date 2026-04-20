@@ -6,8 +6,17 @@ import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import AlchemyStoreSlice from '@/store/features/alchemySlice';
 import { Recipes } from '@/app/hex/architecture/data/recipes';
-import type { AlchemyLabSource, Ingredient, Item, Recipe } from '@/app/hex/architecture/typings';
+import type {
+	AlchemyLabSource,
+	Ingredient,
+	IngredientBase,
+	Item,
+	Recipe,
+	RecipeRequiredIngredient,
+} from '@/app/hex/architecture/typings';
+import { ITEM_TAG } from '@/app/hex/architecture/enums';
 import InventoryDisplay from '@/app/hex/sharedComponents/inventory/inventory';
+import RequiredItem from '@/app/hex/sharedComponents/requiredItem/requiredItem';
 import {
 	countSelectionUnits,
 	filterInventoryAfterConsumption,
@@ -19,7 +28,8 @@ import {
 	dedupeLabSources,
 	labSourcesFromInventorySelection,
 } from '@/app/hex/architecture/helpers/alchemyLabSources';
-import '../alchemy.css';
+import '@/app/hex/play/alchemy/alchemy.css';
+import '@/app/hex/sharedComponents/requiredItem/requiredItem.css';
 
 type StageInventory = {
 	ingredients: Ingredient[];
@@ -241,6 +251,48 @@ function SelectIngredientsPageContent() {
 	const primaryLabel =
 		isStaged && stageIndex + 1 < requiredList.length ? 'Next requirement' : 'Continue to lab';
 
+	function countSelectedUnitsForStage(index: number): number {
+		if (!isStaged) return 0;
+		if (index < stageIndex) {
+			const committed = consumptionLog[index];
+			if (!committed) return 0;
+			return committed.rawIds.length + committed.craftedItemIds.length;
+		}
+		if (index === stageIndex) {
+			return selectedKeys.size;
+		}
+		return 0;
+	}
+
+	function getRequirementDisplay(requirement: RecipeRequiredIngredient, index: number): JSX.Element {
+		const need = requirement.qty ?? 1;
+		const selected = countSelectedUnitsForStage(index);
+		const satisfied = selected >= need;
+
+		if (typeof requirement.type === 'string') {
+			const tag = requirement.type as ITEM_TAG;
+			return (
+				<RequiredItem
+					key={`req-item-${index}`}
+					name={tag.toString()}
+					imgSource={`/icons/itemTypes/${tag.toLowerCase().replace(' ', '_')}.svg`}
+					qty={need}
+					addClassName={satisfied ? 'satisfied' : ''}
+				/>
+			);
+		}
+		const base = requirement.type as IngredientBase;
+		return (
+			<RequiredItem
+				key={`req-item-${index}`}
+				name={base.name}
+				imgSource={base.image ?? ''}
+				qty={need}
+				addClassName={satisfied ? 'satisfied' : ''}
+			/>
+		);
+	}
+
 	if (!recipeId || !recipe) {
 		return (
 			<div className="alchemy-setup-flow">
@@ -258,18 +310,31 @@ function SelectIngredientsPageContent() {
 	return (
 		<div className="alchemy-setup-flow">
 			<header className="alchemy-setup-header">
-				<h1>Select ingredients</h1>
-				<p className="alchemy-setup-lead">
-					Recipe: <strong>{recipe.description}</strong> ({recipe.id})
-				</p>
+				<div className="alchemy-setup-actions">
+					<button type="button" className="alchemy-setup-primary" onClick={handleBack}>
+						Back
+					</button>
+					<div>
+						<h1>Select ingredients</h1>
+						<p className="alchemy-setup-lead">
+							Recipe: <strong>{recipe.description}</strong> ({recipe.id})
+						</p>
+					</div>
+					<button
+						type="button"
+						className="alchemy-setup-primary"
+						disabled={primaryDisabled || (isStaged && !hasAnythingInStage)}
+						onClick={handlePrimary}
+					>
+						{isStaged ? primaryLabel : 'Continue'}
+					</button>
+				</div>
+				{isStaged && (
+					<div className="required-items">
+						{requiredList.map((r, index) => getRequirementDisplay(r, index))}
+					</div>
+				)}
 			</header>
-			{isStaged && currentReq && (
-				<p className="alchemy-setup-hint">
-					Stage {stageIndex + 1} of {requiredList.length}:{' '}
-					<strong>{formatRequiredIngredientEntry(currentReq)}</strong>
-					{needForStage > 1 ? ` — pick ${needForStage} (stacked counts as separate selections).` : ''}
-				</p>
-			)}
 			{!isStaged && (
 				<p className="alchemy-setup-hint">
 					Choose raw materials or crafted items from your inventory. Crafted items add the ingredients they were
@@ -302,19 +367,6 @@ function SelectIngredientsPageContent() {
 					showTitle={false}
 				/>
 			)}
-			<div className="alchemy-setup-actions">
-				<button
-					type="button"
-					className="alchemy-setup-primary"
-					disabled={primaryDisabled || (isStaged && !hasAnythingInStage)}
-					onClick={handlePrimary}
-				>
-					{isStaged ? primaryLabel : 'Continue'}
-				</button>
-				<button type="button" className="alchemy-setup-secondary" onClick={handleBack}>
-					Back
-				</button>
-			</div>
 		</div>
 	);
 }

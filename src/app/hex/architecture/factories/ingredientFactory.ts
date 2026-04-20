@@ -164,7 +164,7 @@ export function CreateIngredient(ingBase: IngredientBase): Ingredient {
 				compSpec.chance == undefined ||
 				(compSpec.chance > 0 && Math.random() <= compSpec.chance)
 			) {
-				const shapeName = compSpec.possibleShapes[newIng.sizeRating];
+				const shapeName = compSpec.possibleShapes[newIng.sizeRating] ?? compSpec.possibleShapes[0];
 				newComp = {
 					id: GenerateTempId(),
 					element: compSpec.element,

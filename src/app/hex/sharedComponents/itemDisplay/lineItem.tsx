@@ -12,9 +12,13 @@ interface InventoryLineItemProps {
 	ingredientBase?: IngredientBase;
 	displaySize?: number;
 	displayHeading?: boolean;
+	/** When true, renders a checkbox inline with the row. `selected` + `onToggle` drive state. */
+	selectable?: boolean;
+	selected?: boolean;
+	onToggle?: () => void;
 }
 
-const InventoryLineItem: React.FC<InventoryLineItemProps> = ({ item, ingredient, ingredientBase, displaySize = 35, displayHeading = false }) => {
+const InventoryLineItem: React.FC<InventoryLineItemProps> = ({ item, ingredient, ingredientBase, displaySize = 35, displayHeading = false, selectable = false, selected = false, onToggle }) => {
 	const [counter, setCounter] = useState(0); //used for flipping between possible shapes
 	useEffect(() => {
 		const interval = setInterval(() => {
@@ -89,8 +93,8 @@ const InventoryLineItem: React.FC<InventoryLineItemProps> = ({ item, ingredient,
 		}
 	}
 
-	return (
-		<div className="item-display-line" key={name}>
+	const body = (
+		<>
 			<div className="item-display-line-header">
 				{displayHeading && (
 					<>
@@ -107,12 +111,36 @@ const InventoryLineItem: React.FC<InventoryLineItemProps> = ({ item, ingredient,
 			<div className="item-display-line-inst-data">
 				{quality > 0 && (
 					<div className="item-quality-bar">
-						<span className={`item-quality-bar-fill ${qualityClass}`} style={{ height: `${quality}%` }}></span>
-						{/*<label>Quality: {quality}</label>*/}
+						<span className={`item-quality-bar-fill ${qualityClass}`} style={{ width: `${quality}%` }}></span>
 					</div>
 				)}
 				<div className="item-display-line-comps">{getCompsToDisplay()}</div>
 			</div>
+		</>
+	);
+
+	if (selectable) {
+		return (
+			<label className="item-display-line item-display-line--selectable" key={name}>
+				<input
+					type="checkbox"
+					className="item-display-line-select"
+					checked={selected}
+					onChange={() => onToggle?.()}
+				/>
+				<span className="item-display-line-body">{body}</span>
+				<span className="item-display-line-select-icon">
+					{selected && (
+						<span className="item-display-line-select-icon-check"></span>
+					)}
+				</span>
+			</label>
+		);
+	}
+
+	return (
+		<div className="item-display-line" key={name}>
+			{body}
 		</div>
 	);
 };
@@ -124,9 +152,16 @@ interface ComplexInventoryItemProps {
 	hideFiltering?: boolean;
 	hideSorting?: boolean;
 	defaultOpen?: boolean;
+	/**
+	 * When true, each contained `InventoryLineItem` renders a checkbox. Selection state is
+	 * keyed by the underlying slot id (`Item.id` / `Ingredient.id` / `IngredientBase.id`).
+	 */
+	selectable?: boolean;
+	selectedKeys?: Set<string>;
+	onToggleKey?: (key: string) => void;
 }
 
-const ComplexInventoryItem: React.FC<ComplexInventoryItemProps> = ({ items, displaySize = 35, hideDescription = false, hideFiltering = false, hideSorting = false, defaultOpen = false }) => {
+const ComplexInventoryItem: React.FC<ComplexInventoryItemProps> = ({ items, displaySize = 35, hideDescription = false, hideFiltering = false, hideSorting = false, defaultOpen = false, selectable = false, selectedKeys, onToggleKey }) => {
 	const [detailsOpen, setDetailsOpen] = useState(defaultOpen);
 	let image = '';
 	let name = '';
@@ -164,15 +199,31 @@ const ComplexInventoryItem: React.FC<ComplexInventoryItemProps> = ({ items, disp
 		types = recipe.types ?? [];
 	}
 
+	function getRowKey(item: Item | Ingredient | IngredientBase | Recipe): string | undefined {
+		if (type === 1) return (item as Item).id;
+		if (type === 2) return (item as Ingredient).id;
+		if (type === 3) return (item as IngredientBase).id;
+		return undefined;
+	}
+
 	function GetLineItems() {
 		let output:Array<JSX.Element> = [];
 		items.forEach((item, index) => {
+			const rowKey = getRowKey(item);
+			const canSelectRow = selectable && rowKey !== undefined && onToggleKey !== undefined;
+			const commonSelectProps = canSelectRow
+				? {
+						selectable: true,
+						selected: selectedKeys?.has(rowKey!) ?? false,
+						onToggle: () => onToggleKey!(rowKey!),
+				  }
+				: {};
 			if(type === 1) {
-				output.push(<InventoryLineItem key={"t1-"+(item as Item).name+"-"+index} item={item as Item} displaySize={displaySize} />);
+				output.push(<InventoryLineItem key={"t1-"+(item as Item).name+"-"+index} item={item as Item} displaySize={displaySize} {...commonSelectProps} />);
 			} else if(type === 2) {
-				output.push(<InventoryLineItem key={"t2-"+(item as Ingredient).id+"-"+index} ingredient={item as Ingredient} displaySize={displaySize} />);
+				output.push(<InventoryLineItem key={"t2-"+(item as Ingredient).id+"-"+index} ingredient={item as Ingredient} displaySize={displaySize} {...commonSelectProps} />);
 			} else if(type === 3) {
-				output.push(<InventoryLineItem key={"t3-"+(item as IngredientBase).id+"-"+index} ingredientBase={item as IngredientBase} displaySize={displaySize} />);
+				output.push(<InventoryLineItem key={"t3-"+(item as IngredientBase).id+"-"+index} ingredientBase={item as IngredientBase} displaySize={displaySize} {...commonSelectProps} />);
 			} else if(type === 4) {
 				//output.push(<InventoryLineItem key={item.id} recipe={item as Recipe} displaySize={displaySize} />);
 			}

@@ -57,77 +57,25 @@ const InventoryDisplay: React.FC<InventoryProps> = ({
 	const DISPLAY_SIZE = 20;
 	const canSelect = selectable && selectedKeys !== undefined && onToggleKey !== undefined;
 
-	function wrapRow(rowKey: string, node: JSX.Element): JSX.Element {
-		if (!canSelect) {
-			return node;
-		}
-		return (
-			<label key={rowKey} className="inventory-select-row">
-				<input
-					type="checkbox"
-					checked={selectedKeys.has(rowKey)}
-					onChange={() => onToggleKey(rowKey)}
-				/>
-				<span className="inventory-select-row-body">{node}</span>
-			</label>
-		);
-	}
-
 	function renderInventoryItems(): JSX.Element[] {
-		const output: JSX.Element[] = [];
-
-		// Selection (e.g. alchemy / quest stages) needs one row per slot with stable ids — not grouped `ING:baseId` keys.
-		if (canSelect) {
-			if (activeTab === 'crafted') {
-				inventoryItems.forEach((item, index) => {
-					const rowKey = item.id;
-					const inner = (
-						<ComplexInventoryItem
-							key={item.name + '-' + index}
-							items={[item]}
-							displaySize={DISPLAY_SIZE}
-							hideFiltering={hideSubFiltering}
-							hideSorting={hideSubSorting}
-						/>
-					);
-					output.push(wrapRow(rowKey, inner));
-				});
-			} else {
-				ingredients.forEach((ingredient, index) => {
-					const inner = (
-						<ComplexInventoryItem
-							key={ingredient.id + '-' + index}
-							items={[ingredient]}
-							displaySize={DISPLAY_SIZE}
-							hideFiltering={hideSubFiltering}
-							hideSorting={hideSubSorting}
-						/>
-					);
-					output.push(wrapRow(ingredient.id, inner));
-				});
-			}
-			return output;
-		}
-
 		const allItems: Array<Item | Ingredient> =
 			activeTab === 'ingredients' ? [...ingredients] : [...inventoryItems];
 
 		const groupedItems = groupItemsForInventoryDisplay(allItems);
 
-		Object.keys(groupedItems).forEach((objKey) => {
-			const inner = (
-				<ComplexInventoryItem
-					key={objKey}
-					items={groupedItems[objKey] ?? []}
-					displaySize={DISPLAY_SIZE}
-					hideFiltering={hideSubFiltering}
-					hideSorting={hideSubSorting}
-				/>
-			);
-			output.push(wrapRow(objKey, inner));
-		});
-
-		return output;
+		return Object.keys(groupedItems).map((objKey) => (
+			<ComplexInventoryItem
+				key={objKey}
+				items={groupedItems[objKey] ?? []}
+				displaySize={DISPLAY_SIZE}
+				hideFiltering={hideSubFiltering}
+				hideSorting={hideSubSorting}
+				defaultOpen={canSelect}
+				selectable={canSelect}
+				selectedKeys={canSelect ? selectedKeys : undefined}
+				onToggleKey={canSelect ? onToggleKey : undefined}
+			/>
+		));
 	}
 
 	useEffect(() => {

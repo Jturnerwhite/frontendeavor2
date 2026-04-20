@@ -1,26 +1,21 @@
 /**
- * Item / inventory line — card style aligned with ingredient-display (warm parchment + dark card variant).
+ * Item / inventory line — warm parchment card style (matches the map-left-panel override in map.css).
  */
 
 /* --- Complex inventory row (single item card) --- */
 .item-display-complex {
 	box-sizing: border-box;
 	max-width: 100%;
-	background: linear-gradient(
-		165deg,
-		#35302c 0%,
-		#2b2421 45%,
-		#231e1c 100%
-	);
-	border: 1px solid rgba(212, 196, 168, 0.22);
-	border-radius: 10px;
-	padding: 14px 16px;
+	background: linear-gradient(165deg, #fff6e2 0%, #ffdab5 100%);
+	border: 1px solid var(--alchemy-parchment-dark);
+	border-radius: 8px;
+	padding: 12px 14px;
 	margin-bottom: 12px;
 	box-shadow:
-		0 2px 10px rgba(0, 0, 0, 0.35),
-		inset 0 1px 0 rgba(255, 255, 255, 0.06);
+		0 2px 8px rgba(44, 31, 20, 0.08),
+		inset 0 1px 0 rgba(255, 255, 255, 0.35);
 	font-family: Georgia, 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
-	color: #e8dcc8;
+	color: var(--alchemy-ink-muted);
 }
 
 .item-display-complex > summary.item-display-complex-row {
@@ -77,13 +72,13 @@
 	font-weight: 600;
 	font-size: 1.1rem;
 	letter-spacing: 0.02em;
-	color: #f5ecd8;
+	color: var(--alchemy-ink);
 	margin: 0;
 }
 
 .item-display-complex-desc {
 	font-size: 0.82rem;
-	color: rgba(232, 220, 200, 0.55);
+	color: rgba(92, 74, 58, 0.75);
 	font-weight: 400;
 	margin: 0;
 }
@@ -91,7 +86,7 @@
 .item-display-complex-types {
 	flex-shrink: 0;
 	font-size: 0.88rem;
-	color: #d4c4a8;
+	color: var(--alchemy-ink-muted);
 	text-align: right;
 	width: 30%;
     justify-items: flex-end;
@@ -103,7 +98,7 @@
     font-weight: 600;
     letter-spacing: .02em;
     text-align: center;
-    border: 1px solid #d4c4a8;
+    border: 1px solid var(--alchemy-parchment-dark);
     border-radius: 4px;
     padding: 2px .5em 0px .5em;
     width: 70px;
@@ -116,19 +111,19 @@
 	width: 40px;
 	height: 40px;
 	border-radius: 8px;
-	background: rgba(60, 90, 140, 0.45);
-	border: 1px solid rgba(160, 190, 230, 0.25);
+	background: rgba(139, 105, 20, 0.18);
+	border: 1px solid var(--alchemy-parchment-dark);
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	font-size: 0.85rem;
 	font-weight: 600;
-	color: #e8f0ff;
+	color: var(--alchemy-ink);
 	transition: transform 0.15s ease;
 }
 
 .item-display-complex-tools {
-	border-top: 1px solid rgba(212, 196, 168, 0.12);
+	border-top: 1px solid rgba(92, 64, 51, 0.2);
 }
 
 .item-display-complex-tools h3 {
@@ -137,7 +132,7 @@
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: 0.06em;
-	color: rgba(232, 220, 200, 0.45);
+	color: rgba(92, 74, 58, 0.7);
 }
 
 .item-display-complex-tools .item-display-line {
@@ -157,6 +152,44 @@
 	border-bottom: none;
 }
 
+.item-display-line--selectable {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+	gap: 10px;
+	cursor: pointer;
+}
+
+.item-display-line-select {
+	margin-top: 10px;
+	flex-shrink: 0;
+	display:none;
+}
+
+.item-display-line-select-icon {
+	flex-shrink: 0;
+	margin-top: 10px;
+	width: 20px;
+	height: 76px;
+	background: var(--misc-container);
+	border: 2px solid var(--misc-container-light);
+	border-radius: 4px;
+}
+
+.item-display-line-select-icon-check {
+    width: 100%;
+    height: 100%;
+    background: #4daa00;
+    display: block;
+	border-radius: 2px;
+}
+
+.item-display-line-body {
+	flex: 1;
+	min-width: 0;
+	display: block;
+}
+
 .item-display-line-header {
 	display: flex;
 	flex-direction: row;
@@ -171,33 +204,33 @@
 	display: block;
 	font-weight: 600;
 	font-size: 0.95rem;
-	color: #f5ecd8;
+	color: var(--alchemy-ink);
 }
 
 .item-display-line-header .item-display-line-desc {
 	font-size: 0.8rem;
 	font-weight: 400;
-	color: rgba(232, 220, 200, 0.5);
+	color: rgba(92, 74, 58, 0.7);
 }
 
 .item-display-line-inst-data {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: flex-start;
     align-items: stretch;
-	gap: 8px;
+	gap: 4px;
 }
 
 .item-quality-bar {
     display: flex;
-    width: 20px;
+    height: 10px;
     background: var(--misc-container);
     border-radius: 4px;
     padding: 2px 2px;
 }
 .item-quality-bar-fill {
     border-radius: 3px;
-    width: 100%;
+    height: 100%;
     align-self: flex-end;
 }
 

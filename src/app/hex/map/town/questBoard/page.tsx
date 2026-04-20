@@ -4,7 +4,7 @@ import { useCallback, useMemo, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import PlayerStoreSlice from '@/store/features/playerSlice'
 import HistoryStoreSlice from '@/store/features/historySlice'
-import type { Ingredient, IngredientBase, Item, Quest, QuestRequirement } from '@/app/hex/architecture/typings'
+import type { Ingredient, IngredientBase, Item, Quest, QuestRequirement, Recipe } from '@/app/hex/architecture/typings'
 import { BaseQuests } from '@/app/hex/architecture/data/quests'
 import {
 	buildQuestStageInventory,
@@ -14,7 +14,13 @@ import {
 import { CreateIngredient } from '@/app/hex/architecture/factories/ingredientFactory'
 import StagedItemSelector, {
 	type StagedSelectionBatch,
+	type StagedSelectionSnapshot,
 } from '@/app/hex/sharedComponents/stagedItemSelector/stagedItemSelector'
+import RequiredItem from '@/app/hex/sharedComponents/requiredItem/requiredItem'
+import { IngredientBases } from '@/app/hex/architecture/data/ingredientBases'
+import { ITEM_TAG } from '@/app/hex/architecture/enums'
+import '@/app/hex/sharedComponents/requiredItem/requiredItem.css';
+import '@/app/hex/map/town/questBoard/questBoard.css';
 
 function isIngredientBaseReward(r: Item | IngredientBase): r is IngredientBase {
 	return 'possibleComps' in r && Array.isArray((r as IngredientBase).possibleComps)
@@ -29,6 +35,11 @@ export default function QuestBoard() {
 
 	const [selectedQuest, setSelectedQuest] = useState<Quest | null>(null)
 	const [showComplete, setShowComplete] = useState(false)
+	const [selectionSnapshot, setSelectionSnapshot] = useState<StagedSelectionSnapshot>({
+		stageIndex: 0,
+		committedBatches: [],
+		currentSelectedKeys: [],
+	})
 
 	const completedAtLeastOnce = useMemo(
 		() => new Set(completedQuestIds),
@@ -74,22 +85,28 @@ export default function QuestBoard() {
 		[dispatch],
 	)
 
+	const resetSelectionSnapshot = useCallback(() => {
+		setSelectionSnapshot({ stageIndex: 0, committedBatches: [], currentSelectedKeys: [] })
+	}, [])
+
 	const openQuest = useCallback(
 		(quest: Quest) => {
 			setSelectedQuest(quest)
 			setShowComplete(false)
+			resetSelectionSnapshot()
 			if (quest.requirements.length === 0) {
 				grantRewards(quest)
 				setShowComplete(true)
 			}
 		},
-		[grantRewards],
+		[grantRewards, resetSelectionSnapshot],
 	)
 
 	const closeQuest = useCallback(() => {
 		setSelectedQuest(null)
 		setShowComplete(false)
-	}, [])
+		resetSelectionSnapshot()
+	}, [resetSelectionSnapshot])
 
 	const handleQuestComplete = useCallback(
 		(batches: StagedSelectionBatch[]) => {
@@ -201,11 +218,57 @@ export default function QuestBoard() {
 		)
 	}
 
+	function countSelectedUnitsForStage(stageIndex: number): number {
+		if (stageIndex < selectionSnapshot.stageIndex) {
+			return selectionSnapshot.committedBatches[stageIndex]?.selectedKeys.length ?? 0
+		}
+		if (stageIndex === selectionSnapshot.stageIndex) {
+			return selectionSnapshot.currentSelectedKeys.length
+		}
+		return 0
+	}
+
+	function getRequirementDisplay(requirement: QuestRequirement, index: number): JSX.Element {
+		const need = requirement.qty ?? 1;
+		const selected = countSelectedUnitsForStage(index);
+		const satisfied = selected >= need;
+
+		if (requirement.requirementKind === 'ingredient') {
+			return <RequiredItem 
+				key={`req-item-${index}`} 
+				name={(requirement.itemType as IngredientBase).name} 
+				imgSource={(requirement.itemType as IngredientBase).image ?? ''} 
+				qty={requirement.qty ?? 1} 
+				addClassName={satisfied ? 'satisfied' : ''} />
+		} else if (requirement.requirementKind === 'recipe') {
+			return <RequiredItem 
+				key={`req-item-${index}`} 
+				name={(requirement.itemType as Recipe).description} 
+				imgSource={(requirement.itemType as Recipe).image ?? ''} 
+				qty={requirement.qty ?? 1} 
+				addClassName={satisfied ? 'satisfied' : ''} />
+		} else if (requirement.requirementKind === 'tag') {
+			return <RequiredItem 
+				key={`req-item-${index}`} 
+				name={(requirement.itemType as ITEM_TAG).toString()} 
+				imgSource={`/icons/itemTypes/${((requirement.itemType as ITEM_TAG)).toLowerCase().replace(" ", "_")}.svg`} 
+				qty={requirement.qty ?? 1} 
+				addClassName={satisfied ? 'satisfied' : ''} />
+		} else {
+			return <></>
+		}
+	}
+
 	return (
 		<div className="quest-board">
 			<header className="quest-board-header">
 				<h1>{selectedQuest.name}</h1>
 				<p className="quest-board-lead">{selectedQuest.description}</p>
+				<div className="required-items">
+					{selectedQuest.requirements.map((r, index) => (
+						getRequirementDisplay(r, index)
+					))}
+				</div>
 			</header>
 			<StagedItemSelector<QuestRequirement>
 				stages={selectedQuest.requirements}
@@ -225,6 +288,7 @@ export default function QuestBoard() {
 				}
 				onComplete={handleQuestComplete}
 				onCancel={closeQuest}
+				onSelectionChange={setSelectionSnapshot}
 				finalPrimaryLabel="Turn In"
 			/>
 		</div>

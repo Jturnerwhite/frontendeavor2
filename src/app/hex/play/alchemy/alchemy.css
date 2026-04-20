@@ -500,8 +500,9 @@
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
+    justify-content: space-between;
 	gap: 16px;
-	margin-top: 28px;
+	margin-bottom: 12px;
 }
 
 .alchemy-setup-secondary {
@@ -574,4 +575,15 @@
 
 .alchemy-main-panel .alch-hex-grid--hover-valid .hex-tile:hover {
 	fill: #2e7d32;
+}
+
+.required-items {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    background: var(--alchemy-parchment);
+    border: 1px solid var(--alchemy-parchment-dark);
+    border-radius: 8px;
+    padding: 12px 0px;
+    margin-bottom: 12px;
 }

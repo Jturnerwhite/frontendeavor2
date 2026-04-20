@@ -22,6 +22,16 @@ export interface StagedSelectionBatch {
 	selectedKeys: string[]
 }
 
+/** Live snapshot of the selector's stage progress (fed to `onSelectionChange`). */
+export interface StagedSelectionSnapshot {
+	/** Index of the stage the user is currently selecting for. */
+	stageIndex: number
+	/** Batches already committed (one per stage before `stageIndex`). */
+	committedBatches: StagedSelectionBatch[]
+	/** Keys picked so far in the current (uncommitted) stage. */
+	currentSelectedKeys: string[]
+}
+
 export interface StagedItemSelectorProps<TStage> {
 	stages: readonly TStage[]
 	rawInventory: Ingredient[]
@@ -44,6 +54,8 @@ export interface StagedItemSelectorProps<TStage> {
 	onComplete: (batches: StagedSelectionBatch[]) => void
 	/** Called when the user backs out of the first stage. */
 	onCancel: () => void
+	/** Fires whenever the stage index, committed batches, or current selection changes. */
+	onSelectionChange?: (snapshot: StagedSelectionSnapshot) => void
 	primaryLabel?: string
 	finalPrimaryLabel?: string
 	backLabel?: string
@@ -64,6 +76,7 @@ export default function StagedItemSelector<TStage>({
 	emptyStageMessage,
 	onComplete,
 	onCancel,
+	onSelectionChange,
 	primaryLabel = 'Continue',
 	finalPrimaryLabel = 'Turn In',
 	backLabel = 'Back',
@@ -92,6 +105,14 @@ export default function StagedItemSelector<TStage>({
 	useEffect(() => {
 		setSelectedKeys(new Set())
 	}, [stageIndex])
+
+	useEffect(() => {
+		onSelectionChange?.({
+			stageIndex,
+			committedBatches: consumptionLog,
+			currentSelectedKeys: Array.from(selectedKeys),
+		})
+	}, [stageIndex, consumptionLog, selectedKeys, onSelectionChange])
 
 	const currentStage = stages[stageIndex]
 	const totalStages = stages.length

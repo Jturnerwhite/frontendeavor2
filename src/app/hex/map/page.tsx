@@ -202,14 +202,14 @@ export default function MapPage() {
 
 	return <div className="map-layout">
 		<aside className="map-left-panel">
-			{inventoryItems?.length > 0 || ingredients?.length > 0 && (
-			<InventoryDisplay 
-				inventoryItems={inventoryItems ?? []} 
-				ingredients={ingredients ?? []}
-				hideFiltering={true} 
-				hideSorting={true} 
-				hideSubFiltering={true} 
-				hideSubSorting={true}/>
+			{(inventoryItems?.length > 0 || ingredients?.length > 0) && (
+				<InventoryDisplay 
+					inventoryItems={inventoryItems} 
+					ingredients={ingredients}
+					hideFiltering={true} 
+					hideSorting={true} 
+					hideSubFiltering={true} 
+					hideSubSorting={true}/>
 			)}
 		</aside>
 		<main className="map-main-panel" onContextMenu={(e: React.MouseEvent) => {}}>
@@ -248,13 +248,13 @@ export default function MapPage() {
 							preventHexPlacementHover={true}
 						/>
 						<g>{renderMapContents()}</g>
+						<g>{renderHexTimerOverlays()}</g>
 						<MapFog 
 							hexMap={hexMap} 
 							radiusBase={TILE_SIZE} 
 							currentLayers={MAP_LAYER_SIZE} 
 							mapFogLayers={MAP_LAYER_SIZE - 1} 
 						/>
-						<g>{renderHexTimerOverlays()}</g>
 					</g>
 				</svg>
 			</>)}
