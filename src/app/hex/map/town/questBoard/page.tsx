@@ -1,7 +1,6 @@
 'use client'
 
-import Link from 'next/link'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import PlayerStoreSlice from '@/store/features/playerSlice'
 import HistoryStoreSlice from '@/store/features/historySlice'
@@ -12,12 +11,10 @@ import {
 	formatQuestRequirement,
 	playerCanCompleteQuestInOrder,
 } from '@/app/hex/architecture/helpers/questRequirements'
-import {
-	countSelectionUnits,
-	partitionInventorySelectionKeys,
-} from '@/app/hex/architecture/helpers/recipeRequirements'
 import { CreateIngredient } from '@/app/hex/architecture/factories/ingredientFactory'
-import InventoryDisplay from '@/app/hex/sharedComponents/inventory/inventory'
+import StagedItemSelector, {
+	type StagedSelectionBatch,
+} from '@/app/hex/sharedComponents/stagedItemSelector/stagedItemSelector'
 
 function isIngredientBaseReward(r: Item | IngredientBase): r is IngredientBase {
 	return 'possibleComps' in r && Array.isArray((r as IngredientBase).possibleComps)
@@ -32,15 +29,6 @@ export default function QuestBoard() {
 
 	const [selectedQuest, setSelectedQuest] = useState<Quest | null>(null)
 	const [showComplete, setShowComplete] = useState(false)
-	const [requirementIndex, setRequirementIndex] = useState(0)
-	const [consumedRawIds, setConsumedRawIds] = useState<Set<string>>(() => new Set())
-	const [consumedCraftedItemIds, setConsumedCraftedItemIds] = useState<Set<string>>(
-		() => new Set(),
-	)
-	const [consumptionLog, setConsumptionLog] = useState<
-		Array<{ rawIds: string[]; craftedItemIds: string[] }>
-	>([])
-	const [selectedKeys, setSelectedKeys] = useState<Set<string>>(() => new Set())
 
 	const completedAtLeastOnce = useMemo(
 		() => new Set(completedQuestIds),
@@ -59,145 +47,11 @@ export default function QuestBoard() {
 		return out
 	}, [availableQuestIds, completedAtLeastOnce])
 
-	const requirements = selectedQuest?.requirements ?? []
-	const currentReq: QuestRequirement | undefined = requirements[requirementIndex]
-
-	const stageInventory = useMemo(() => {
-		if (!currentReq) {
-			return {
-				ingredients: [] as Ingredient[],
-				craftedItems: [] as Item[],
-				craftedEntries: [],
-			}
-		}
-		return buildQuestStageInventory(
-			currentReq,
-			rawIngredients,
-			inventoryItems,
-			consumedRawIds,
-			consumedCraftedItemIds,
-		)
-	}, [
-		currentReq,
-		rawIngredients,
-		inventoryItems,
-		consumedRawIds,
-		consumedCraftedItemIds,
-	])
-
-	const needForStage = currentReq ? (currentReq.qty ?? 1) : 0
-
-	const selectionCount = useMemo(
-		() => countSelectionUnits(selectedKeys, inventoryItems, rawIngredients),
-		[selectedKeys, inventoryItems, rawIngredients],
-	)
-
-	useEffect(() => {
-		setSelectedKeys(new Set())
-	}, [requirementIndex])
-
-	const resetActiveQuestFlow = useCallback(() => {
-		setRequirementIndex(0)
-		setConsumedRawIds(new Set())
-		setConsumedCraftedItemIds(new Set())
-		setConsumptionLog([])
-		setSelectedKeys(new Set())
-		setShowComplete(false)
-	}, [])
-
-	const openQuest = useCallback(
+	const grantRewards = useCallback(
 		(quest: Quest) => {
-			setSelectedQuest(quest)
-			resetActiveQuestFlow()
-			if (quest.requirements.length === 0) {
-				const rewardItems: Item[] = []
-				const rewardIngredients: Ingredient[] = []
-				for (const r of quest.rewards) {
-					if (isIngredientBaseReward(r)) {
-						rewardIngredients.push(CreateIngredient(r))
-					} else {
-						rewardItems.push(r)
-					}
-				}
-				dispatch(
-					PlayerStoreSlice.actions.applyQuestRewards({
-						gold: quest.gold,
-						xp: quest.xp,
-						items: rewardItems.length ? rewardItems : undefined,
-						ingredients: rewardIngredients.length ? rewardIngredients : undefined,
-					}),
-				)
-				dispatch(HistoryStoreSlice.actions.recordCompletedQuest({ questId: quest.id }))
-				if (!quest.repeatable) {
-					dispatch(PlayerStoreSlice.actions.removeAvailableQuestId(quest.id))
-				}
-				setShowComplete(true)
-			}
-		},
-		[resetActiveQuestFlow, dispatch],
-	)
-
-	const closeQuest = useCallback(() => {
-		setSelectedQuest(null)
-		resetActiveQuestFlow()
-	}, [resetActiveQuestFlow])
-
-	const toggleKey = useCallback(
-		(key: string) => {
-			setSelectedKeys((prev) => {
-				const next = new Set(prev)
-				if (next.has(key)) {
-					next.delete(key)
-					return next
-				}
-				if (currentReq) {
-					const cap = currentReq.qty ?? 1
-					if (countSelectionUnits(prev, inventoryItems, rawIngredients) >= cap) {
-						return prev
-					}
-				}
-				next.add(key)
-				return next
-			})
-		},
-		[currentReq, inventoryItems, rawIngredients],
-	)
-
-	const canProceed =
-		currentReq != null &&
-		selectionCount >= needForStage &&
-		needForStage > 0 &&
-		(stageInventory.ingredients.length > 0 || stageInventory.craftedItems.length > 0)
-
-	const handleContinue = useCallback(() => {
-		if (!selectedQuest || !currentReq || !canProceed) return
-		const batch = partitionInventorySelectionKeys(
-			selectedKeys,
-			stageInventory.ingredients,
-			stageInventory.craftedItems,
-		)
-		const nextConsumedRaw = new Set(consumedRawIds)
-		batch.rawIds.forEach((id) => nextConsumedRaw.add(id))
-		const nextConsumedCrafted = new Set(consumedCraftedItemIds)
-		batch.craftedItemIds.forEach((id) => nextConsumedCrafted.add(id))
-		setConsumedRawIds(nextConsumedRaw)
-		setConsumedCraftedItemIds(nextConsumedCrafted)
-		setSelectedKeys(new Set())
-
-		const isLast = requirementIndex + 1 >= requirements.length
-		if (isLast) {
-			const log = [...consumptionLog, batch]
-			const allRawIds = log.flatMap((c) => c.rawIds)
-			const allCrafted = log.flatMap((c) => c.craftedItemIds)
-			dispatch(
-				PlayerStoreSlice.actions.removeInventorySlots({
-					rawIds: allRawIds,
-					craftedItemIds: allCrafted,
-				}),
-			)
 			const rewardItems: Item[] = []
 			const rewardIngredients: Ingredient[] = []
-			for (const r of selectedQuest.rewards) {
+			for (const r of quest.rewards) {
 				if (isIngredientBaseReward(r)) {
 					rewardIngredients.push(CreateIngredient(r))
 				} else {
@@ -206,65 +60,72 @@ export default function QuestBoard() {
 			}
 			dispatch(
 				PlayerStoreSlice.actions.applyQuestRewards({
-					gold: selectedQuest.gold,
-					xp: selectedQuest.xp,
+					gold: quest.gold,
+					xp: quest.xp,
 					items: rewardItems.length ? rewardItems : undefined,
 					ingredients: rewardIngredients.length ? rewardIngredients : undefined,
 				}),
 			)
-			dispatch(HistoryStoreSlice.actions.recordCompletedQuest({ questId: selectedQuest.id }))
-			if (!selectedQuest.repeatable) {
-				dispatch(PlayerStoreSlice.actions.removeAvailableQuestId(selectedQuest.id))
+			dispatch(HistoryStoreSlice.actions.recordCompletedQuest({ questId: quest.id }))
+			if (!quest.repeatable) {
+				dispatch(PlayerStoreSlice.actions.removeAvailableQuestId(quest.id))
 			}
-			setShowComplete(true)
-			setConsumptionLog([])
-		} else {
-			setConsumptionLog((prev) => [...prev, batch])
-			setRequirementIndex((i) => i + 1)
-		}
-	}, [
-		selectedQuest,
-		currentReq,
-		canProceed,
-		selectedKeys,
-		stageInventory.ingredients,
-		stageInventory.craftedItems,
-		consumedRawIds,
-		consumedCraftedItemIds,
-		requirementIndex,
-		requirements.length,
-		consumptionLog,
-		dispatch,
-	])
+		},
+		[dispatch],
+	)
 
-	const handleBackStage = useCallback(() => {
-		if (requirementIndex === 0) {
-			closeQuest()
-			return
-		}
-		const last = consumptionLog[consumptionLog.length - 1]
-		if (!last) {
-			closeQuest()
-			return
-		}
-		setConsumptionLog((prev) => prev.slice(0, -1))
-		setConsumedRawIds((prev) => {
-			const n = new Set(prev)
-			last.rawIds.forEach((id) => n.delete(id))
-			return n
-		})
-		setConsumedCraftedItemIds((prev) => {
-			const n = new Set(prev)
-			last.craftedItemIds.forEach((id) => n.delete(id))
-			return n
-		})
-		setRequirementIndex((i) => i - 1)
-		setSelectedKeys(new Set())
-	}, [requirementIndex, consumptionLog, closeQuest])
+	const openQuest = useCallback(
+		(quest: Quest) => {
+			setSelectedQuest(quest)
+			setShowComplete(false)
+			if (quest.requirements.length === 0) {
+				grantRewards(quest)
+				setShowComplete(true)
+			}
+		},
+		[grantRewards],
+	)
+
+	const closeQuest = useCallback(() => {
+		setSelectedQuest(null)
+		setShowComplete(false)
+	}, [])
+
+	const handleQuestComplete = useCallback(
+		(batches: StagedSelectionBatch[]) => {
+			if (!selectedQuest) return
+			const allRawIds = batches.flatMap((b) => b.rawIds)
+			const allCrafted = batches.flatMap((b) => b.craftedItemIds)
+			dispatch(
+				PlayerStoreSlice.actions.removeInventorySlots({
+					rawIds: allRawIds,
+					craftedItemIds: allCrafted,
+				}),
+			)
+			grantRewards(selectedQuest)
+			setShowComplete(true)
+		},
+		[selectedQuest, dispatch, grantRewards],
+	)
 
 	const questMeetsPrereqs = useCallback(
 		(q: Quest) => playerCanCompleteQuestInOrder(q.requirements, rawIngredients, inventoryItems),
 		[rawIngredients, inventoryItems],
+	)
+
+	const renderQuestStageHint = useCallback(
+		(stage: QuestRequirement, index: number, total: number) => {
+			if (total <= 1) return null
+			const need = stage.qty ?? 1
+			return (
+				<p className="quest-board-hint">
+					Step {index + 1} of {total}:{' '}
+					<strong>{formatQuestRequirement(stage)}</strong>
+					{need > 1 ? ` — select ${need} (each stack counts separately).` : ''}
+				</p>
+			)
+		},
+		[],
 	)
 
 	if (!selectedQuest) {
@@ -340,56 +201,32 @@ export default function QuestBoard() {
 		)
 	}
 
-	const hasStageItems =
-		stageInventory.ingredients.length > 0 || stageInventory.craftedItems.length > 0
-
 	return (
 		<div className="quest-board">
 			<header className="quest-board-header">
 				<h1>{selectedQuest.name}</h1>
 				<p className="quest-board-lead">{selectedQuest.description}</p>
 			</header>
-			{currentReq && (requirements.length > 1) && (
-				<p className="quest-board-hint">
-					Step {requirementIndex + 1} of {requirements.length}:{' '}
-					<strong>{formatQuestRequirement(currentReq)}</strong>
-					{needForStage > 1
-						? ` — select ${needForStage} (each stack counts separately).`
-						: ''}
-				</p>
-			)}
-			{!hasStageItems ? (
-				<p className="quest-board-lead">
-					Nothing in your inventory matches this step with what you have left to turn in. Use
-					Back to change an earlier choice or gather more.
-				</p>
-			) : (
-				<InventoryDisplay
-					inventoryItems={stageInventory.craftedItems}
-					ingredients={stageInventory.ingredients}
-					hideFiltering
-					hideSorting
-					hideSubFiltering
-					hideSubSorting
-					selectable
-					selectedKeys={selectedKeys}
-					onToggleKey={toggleKey}
-					showTitle={false}
-				/>
-			)}
-			<div className="quest-board-actions">
-				<button type="button" className="quest-board-secondary" onClick={handleBackStage}>
-					{requirementIndex === 0 ? 'Cancel' : 'Back'}
-				</button>
-				<button
-					type="button"
-					className="quest-board-primary"
-					disabled={!canProceed || !hasStageItems}
-					onClick={handleContinue}
-				>
-					{requirementIndex + 1 < requirements.length ? 'Continue' : 'Turn In'}
-				</button>
-			</div>
+			<StagedItemSelector<QuestRequirement>
+				stages={selectedQuest.requirements}
+				rawInventory={rawIngredients}
+				craftedInventory={inventoryItems}
+				buildStageInventory={(stage, raw, crafted, consumedRaw, consumedCrafted) => {
+					const built = buildQuestStageInventory(stage, raw, crafted, consumedRaw, consumedCrafted)
+					return { ingredients: built.ingredients, craftedItems: built.craftedItems }
+				}}
+				getStageCap={(stage) => stage.qty ?? 1}
+				renderStageHint={renderQuestStageHint}
+				emptyStageMessage={
+					<p className="quest-board-lead">
+						Nothing in your inventory matches this step with what you have left to turn in. Use
+						Back to change an earlier choice or gather more.
+					</p>
+				}
+				onComplete={handleQuestComplete}
+				onCancel={closeQuest}
+				finalPrimaryLabel="Turn In"
+			/>
 		</div>
 	)
 }

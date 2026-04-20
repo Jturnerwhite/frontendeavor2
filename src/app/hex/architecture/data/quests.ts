@@ -1,10 +1,11 @@
 import { Quest } from "@/app/hex/architecture/typings";
 import { Recipes } from "./recipes";
+import { IngredientBases } from "./ingredientBases";
 
 
 const BaseQuests: Array<Quest> = [
 	{
-		id: 'quest-hp-supplies',
+		id: 'hp-supplies',
 		name: 'Hospital Supplies',
 		description: 'The local hospital always needs more HP Potions.',
 		rewards: [],
@@ -19,7 +20,7 @@ const BaseQuests: Array<Quest> = [
 		gold: 4,
 	},
 	{
-		id: 'quest-mana-supplies',
+		id: 'mana-supplies',
 		name: 'Mana Pots Needed',
 		description: 'A local mage seems to have an addiction...',
 		rewards: [],
@@ -28,6 +29,21 @@ const BaseQuests: Array<Quest> = [
 				requirementKind: 'recipe',
 				itemType: Recipes.find((recipe) => recipe.id === 'MANA-1')!,
 				qty: 1,
+			},
+		],
+		repeatable: true,
+		gold: 4,
+	},
+	{
+		id: 'sunpetals-needed',
+		name: 'Sunpetals Needed',
+		description: 'A local mage seems to have an addiction...',
+		rewards: [],
+		requirements: [
+			{
+				requirementKind: 'ingredient',
+				itemType: IngredientBases['Sunpetal']!,
+				qty: 4,
 			},
 		],
 		repeatable: true,
