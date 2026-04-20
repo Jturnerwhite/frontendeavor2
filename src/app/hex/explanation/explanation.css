@@ -1,0 +1,118 @@
+/**
+ * Explanation / help page — parchment & wood palette via globals alchemy tokens.
+ */
+
+.explanation-root {
+	min-height: 100vh;
+	box-sizing: border-box;
+	font-family: Georgia, 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+	background: linear-gradient(
+		180deg,
+		var(--alchemy-wood-light) 0%,
+		var(--alchemy-wood) 45%,
+		var(--alchemy-wood-mid) 100%
+	);
+	box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.2);
+}
+
+.explanation-title {
+	margin: 0 0 10px;
+	font-size: clamp(1.75rem, 4vw, 2.125rem);
+	font-weight: 700;
+	letter-spacing: 0.02em;
+	line-height: 1.2;
+	color: var(--alchemy-parchment);
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+.explanation-subtitle {
+	margin: 0;
+	font-size: 1.05rem;
+	line-height: 1.6;
+	color: #d4c4a8;
+	max-width: 42rem;
+}
+
+.explanation-section-heading {
+	margin: 0 0 14px;
+	font-size: 1.35rem;
+	font-weight: 650;
+	line-height: 1.25;
+	color: var(--alchemy-parchment);
+	letter-spacing: 0.03em;
+	padding-bottom: 8px;
+	border-bottom: 1px solid var(--alchemy-frame);
+	text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+}
+
+.explanation-card {
+	background: var(--alchemy-parchment);
+	color: var(--alchemy-ink);
+	border: 1px solid var(--alchemy-frame);
+	border-radius: 10px;
+	box-shadow:
+		0 4px 14px rgba(0, 0, 0, 0.22),
+		inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+.explanation-card h3 {
+	margin: 0;
+	padding-bottom: 6px;
+	margin-bottom: 0.375rem;
+	font-size: 1.125rem;
+	font-weight: 600;
+	line-height: 1.35;
+	letter-spacing: 0.02em;
+	color: var(--alchemy-ink);
+	border-bottom: 1px solid rgba(92, 64, 51, 0.32);
+}
+
+.explanation-prose {
+	margin: 0;
+	font-size: 1rem;
+	line-height: 1.65;
+	color: var(--alchemy-ink);
+}
+
+.explanation-prose + .explanation-prose {
+	margin-top: 0.75rem;
+}
+
+.explanation-figure {
+	margin: 0;
+	border-radius: 10px;
+	overflow: hidden;
+	border: 1px solid var(--alchemy-frame);
+	background: var(--misc-container-dark);
+	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+.explanation-figure img {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+.explanation-back--top {
+	margin: 0;
+	padding: 0;
+	border: none;
+}
+
+.explanation-back a {
+	color: #e8dcc8;
+	font-weight: 600;
+	text-decoration: none;
+	transition: color 0.15s ease;
+}
+
+.explanation-back a:hover {
+	color: var(--alchemy-parchment);
+	text-decoration: underline;
+}
+
+.explanation-back a:focus-visible {
+	outline: 2px solid var(--alchemy-accent);
+	outline-offset: 3px;
+	border-radius: 2px;
+}

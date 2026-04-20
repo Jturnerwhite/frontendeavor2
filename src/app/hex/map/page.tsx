@@ -17,7 +17,6 @@ import MapFog from '@/app/hex/map/components/mapFog';
 import '@/app/hex/map/map.css';
 import { publicAsset } from '@/lib/publicAsset';
 import { hardResetPersistedGameState } from '@/store/store';
-import Link from 'next/link';
 
 export default function MapPage() {
 	const router = useRouter();
@@ -159,13 +158,15 @@ export default function MapPage() {
 
 	return <div className="map-layout">
 		<aside className="map-left-panel">
+			{inventoryItems?.length > 0 || ingredients?.length > 0 && (
 			<InventoryDisplay 
-				inventoryItems={inventoryItems} 
-				ingredients={ingredients}
+				inventoryItems={inventoryItems ?? []} 
+				ingredients={ingredients ?? []}
 				hideFiltering={true} 
 				hideSorting={true} 
 				hideSubFiltering={true} 
 				hideSubSorting={true}/>
+			)}
 		</aside>
 		<main className="map-main-panel" onContextMenu={(e: React.MouseEvent) => {}}>
 			{(

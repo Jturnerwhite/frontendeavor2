@@ -10,10 +10,14 @@ import type { CompletedCraftSnapshot, PersistedHistoryState } from '@/store/feat
 import { initialHistoryState } from '@/store/features/historySlice'
 import Toastify from '@/store/features/toastifySlice'
 import { initialToastifyState } from '@/store/features/toastifySlice'
+import Settings from '@/store/features/settingsSlice'
+import type { PersistedSettingsState } from '@/store/features/settingsSlice'
+import { initialSettingsState } from '@/store/features/settingsSlice'
 
 export const ALCHEMY_STORAGE_KEY = 'frontendeavor-alchemy-v1'
 export const PLAYER_STORAGE_KEY = 'frontendeavor-player-v1'
 export const HISTORY_STORAGE_KEY = 'frontendeavor-history-v1'
+export const SETTINGS_STORAGE_KEY = 'frontendeavor-settings-v1'
 
 function readPersistedAlchemy(): PersistedAlchemyState | null {
 	if (typeof window === 'undefined') return null
@@ -63,9 +67,21 @@ function readPersistedHistory(): PersistedHistoryState | null {
 	}
 }
 
+function readPersistedSettings(): PersistedSettingsState | null {
+	if (typeof window === 'undefined') return null
+	try {
+		const raw = localStorage.getItem(SETTINGS_STORAGE_KEY)
+		if (!raw) return null
+		return JSON.parse(raw) as PersistedSettingsState
+	} catch {
+		return null
+	}
+}
+
 const persistedAlchemy = readPersistedAlchemy()
 const persistedPlayerBundle = readPersistedPlayer()
 const persistedHistory = readPersistedHistory()
+const persistedSettings = readPersistedSettings()
 
 function buildHistoryState(): typeof initialHistoryState {
 	let base =
@@ -113,6 +129,14 @@ const preloadedState = {
 			: initialPlayerState,
 	History: buildHistoryState(),
 	Toastify: initialToastifyState,
+	Settings:
+		persistedSettings !== null
+			? {
+					...initialSettingsState,
+					...persistedSettings,
+					isFirstVisit: persistedSettings.isFirstVisit ?? initialSettingsState.isFirstVisit,
+				}
+			: initialSettingsState,
 }
 
 export const store = configureStore({
@@ -121,6 +145,7 @@ export const store = configureStore({
 		Player: Player.reducer,
 		History: History.reducer,
 		Toastify: Toastify.reducer,
+		Settings: Settings.reducer,
 	},
 	preloadedState,
 })
@@ -129,7 +154,7 @@ export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
 
 /**
- * Dev / debug: reset Alchemy, Player, History, and Toastify to initial state and overwrite the three persisted localStorage keys.
+ * Dev / debug: reset Alchemy, Player, History, Settings, and Toastify to initial state and overwrite persisted localStorage keys.
  */
 export function hardResetPersistedGameState() {
 	if (typeof window === 'undefined') return
@@ -146,6 +171,7 @@ export function hardResetPersistedGameState() {
 		localStorage.setItem(ALCHEMY_STORAGE_KEY, JSON.stringify(alchemyPayload))
 		localStorage.setItem(PLAYER_STORAGE_KEY, JSON.stringify(initialPlayerState))
 		localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(initialHistoryState))
+		localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(initialSettingsState))
 	} catch {
 		// quota / private mode
 	}
@@ -153,6 +179,7 @@ export function hardResetPersistedGameState() {
 	store.dispatch(Alchemy.actions.hydrateFromStorage(alchemyPayload))
 	store.dispatch(Player.actions.hydrateFromStorage(initialPlayerState))
 	store.dispatch(History.actions.hydrateFromStorage(initialHistoryState))
+	store.dispatch(Settings.actions.hydrateFromStorage(initialSettingsState))
 	store.dispatch(Toastify.actions.resetToInitial())
 }
 
@@ -183,10 +210,14 @@ function writePersistedSlices(state: RootState) {
 		lastCompletedCraft: state.History.lastCompletedCraft,
 		completedQuestIds: state.History.completedQuestIds,
 	}
+	const settingsPersisted: PersistedSettingsState = {
+		isFirstVisit: state.Settings.isFirstVisit,
+	}
 	try {
 		localStorage.setItem(ALCHEMY_STORAGE_KEY, JSON.stringify(alchemyPersisted))
 		localStorage.setItem(PLAYER_STORAGE_KEY, JSON.stringify(playerPersisted))
 		localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(historyPersisted))
+		localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settingsPersisted))
 	} catch {
 		// quota / private mode
 	}
@@ -228,7 +259,7 @@ function registerPersistPageLifecycleFlush() {
 }
 
 /**
- * Enables debounced localStorage writes for Alchemy, Player, and History after synchronous preload (call once on mount).
+ * Enables debounced localStorage writes for Alchemy, Player, History, and Settings after synchronous preload (call once on mount).
  * Writes are batched (~400ms) to avoid work on every dispatch; tab close triggers an immediate flush.
  */
 export function enableAlchemyPersistence() {
