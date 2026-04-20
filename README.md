@@ -1,6 +1,4 @@
 ## frontendeavor2
-TLDR: Next.js app with complex client state (Redux), persisted game progress, and tested domain logic—deployed at X.
-
 An exploration into Next.js and the /hex/ folder contains a React application puzzle game with redux for state management.
 Currently no Next.js backend added, currently WIP.
 
