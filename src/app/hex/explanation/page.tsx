@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useLayoutEffect } from 'react';
 import { useAppDispatch } from '@/store/hooks';
 import Settings from '@/store/features/settingsSlice';
+import { publicAsset } from '@/lib/publicAsset';
 import '@/app/hex/explanation/explanation.css';
 
 export default function Page() {
@@ -50,7 +51,7 @@ export default function Page() {
 						</h2>
 						<div className="explanation-card space-y-3 p-5 sm:p-6 md:p-7">
 							<figure className="explanation-figure mb-5">
-								<img src="/helpImages/map.PNG" alt="The world map: hex biomes, home, and town." />
+								<img src={publicAsset('/helpImages/map.PNG')} alt="The world map: hex biomes, home, and town." />
 							</figure>
 							<p className="explanation-prose">
 								The map is a grid of hex tiles. Each tile has a biome and a chance to hold an ingredient.
@@ -70,7 +71,7 @@ export default function Page() {
 						</h2>
 						<div className="explanation-card space-y-3 p-5 sm:p-6 md:p-7">
 							<figure className="explanation-figure mb-5">
-								<img src="/helpImages/ingredient.PNG" alt="An example ingredient." />
+								<img src={publicAsset('/helpImages/ingredient.PNG')} alt="An example ingredient." />
 							</figure>
 							<p className="explanation-prose">
 								In this game, items are crafted from ingredients which are commonly gathered from the map page.<br/>
@@ -105,7 +106,10 @@ export default function Page() {
 						<div className="explanation-card space-y-3 p-5 sm:p-6 md:p-7">
 							<h3>Selecting a recipe</h3>
 							<figure className="explanation-figure mb-5">
-								<img src="/helpImages/selectRecipe.PNG" alt="The recipe selection interface: a list of recipes and their descriptions." />
+								<img
+									src={publicAsset('/helpImages/selectRecipe.PNG')}
+									alt="The recipe selection interface: a list of recipes and their descriptions."
+								/>
 							</figure>
 							<p className="explanation-prose">
 								When selecting a recipe, you will see an assortment of bars and some "components" after them.<br/>
@@ -115,7 +119,10 @@ export default function Page() {
 							</p>
 							<h3>How to craft</h3>
 							<figure className="explanation-figure mb-5">
-								<img src="/helpImages/crafting.PNG" alt="The crafting interface: ingredients, recipes, and quality." />
+								<img
+									src={publicAsset('/helpImages/crafting.PNG')}
+									alt="The crafting interface: ingredients, recipes, and quality."
+								/>
 							</figure>
 							<p className="explanation-prose">
 								Items are crafted by combining ingredients in a hex grid.<br/>

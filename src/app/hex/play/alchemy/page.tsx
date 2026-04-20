@@ -24,6 +24,7 @@ import { Recipes } from '@/app/hex/architecture/data/recipes';
 import RecipeDisplay from '@/app/hex/play/components/recipeDisplay';
 import { ALCH_ELEMENT, COMPONENT_SHAPE_VALUES } from '@/app/hex/architecture/enums';
 import BoardHex from '@/app/hex/play/components/board';
+import { publicAsset } from '@/lib/publicAsset';
 import './alchemy.css';
 
 export default function Page() {
@@ -257,6 +258,54 @@ export default function Page() {
 						Redo
 					</button>
 				</div>
+				{!cursorState.isPlacing && (
+					<div className="alchemy-placement-hints" role="status" aria-live="polite">
+						<div className="alchemy-placement-hint-row">
+							<img
+								src={publicAsset('/icons/ui/mouseLeft.svg')}
+								alt=""
+								width={44}
+								height={44}
+								className="alchemy-placement-hint-icon"
+							/>
+							<span>Click Component From Left Panel</span>
+						</div>
+					</div>
+				)}
+				{cursorState.isPlacing && cursorState.selectedComponent && (
+					<div className="alchemy-placement-hints" role="status" aria-live="polite">
+						<div className="alchemy-placement-hint-row">
+							<img
+								src={publicAsset('/icons/ui/mouseLeft.svg')}
+								alt=""
+								width={44}
+								height={44}
+								className="alchemy-placement-hint-icon"
+							/>
+							<span>Place Component</span>
+						</div>
+						<div className="alchemy-placement-hint-row">
+							<img
+								src={publicAsset('/icons/ui/mouseWheel.svg')}
+								alt=""
+								width={44}
+								height={44}
+								className="alchemy-placement-hint-icon"
+							/>
+							<span>Rotate</span>
+						</div>
+						<div className="alchemy-placement-hint-row">
+							<img
+								src={publicAsset('/icons/ui/mouseRight.svg')}
+								alt=""
+								width={44}
+								height={44}
+								className="alchemy-placement-hint-icon"
+							/>
+							<span>Cancel</span>
+						</div>
+					</div>
+				)}
 				{playGrid && (
 					<svg
 						className="alchemy-hex-svg"
@@ -303,7 +352,7 @@ export default function Page() {
 						router.replace('/hex/play/alchemy/selectRecipe');
 					}}
 				>
-					Choose another recipe
+					Cancel Craft
 				</button>
 			</aside>
 		</div>
