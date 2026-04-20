@@ -3,7 +3,11 @@ import { publicAsset } from '@/lib/publicAsset';
 
 const ElementIcon: React.FC<{element: ALCH_ELEMENT}> = ({element}): JSX.Element => {
 	return (<>
-		<img src={publicAsset(`/icons/elements/${element.toLowerCase().replace(" ", "_")}.svg`)} alt={element} />
+		<img 
+			className={`element-icon ei-${element}`}
+			src={publicAsset(`/icons/elements/${element.toLowerCase().replace(" ", "_")}.svg`)} 
+			alt={element}
+		/>
 	</>);
 };
 

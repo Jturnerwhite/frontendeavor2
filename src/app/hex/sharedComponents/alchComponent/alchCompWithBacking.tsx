@@ -3,6 +3,7 @@ import { AlchComponent } from "@/app/hex/architecture/typings";
 import * as Helpers from "@/app/hex/architecture/helpers/alchHelpers";
 import { AlchComponentDisplay, PlaceableAlchComponent } from ".";
 import { AlchHexGrid } from "@/app/hex/sharedComponents/hex/hexGrid";
+import ElementIcon from "@/app/hex/sharedComponents/elementIcon/elementIcon";
 import "./alchComponent.css";
 
 interface CompProps {
@@ -38,41 +39,43 @@ const AlchCompWithBacking: React.FC<CompProps> = ({
 
 	const hexSize = displaySize / 1.7;
 
-	return (
-		<svg 
-		key={keyString} 
-		className={"alch-comp-with-backing " + additionalClassString}
-		width={areaSize} 
-		height={areaSize} 
-		style={{ position: "relative", display:"inline-block" }}>
-			<g transform={`translate(${areaSize / 2} ${areaSize / 2})`}>
-				<AlchHexGrid
-					hexMap={Helpers.CreateHexGrid({ x: 0, y: 0 }, hexSize, 2)}
-					radius={hexSize}
-					displayIndex={false}
-					preventHexHover={true}
-					preventHexPlacementHover={true}
-				/>
-			</g>
-			{usePlaceable && (
-				<PlaceableAlchComponent
-					alchData={alchData}
-					position={{ x: areaSize / 2, y: areaSize / 2 }}
-					size={displaySize}
-					rotation={0}
-					onPickComponent={onPickComponent}
-				/>
-			)}
-			{!usePlaceable && (
-				<AlchComponentDisplay
-					alchData={alchData}
-					position={{ x: areaSize / 2, y: areaSize / 2 }}
-					size={displaySize}
-					rotation={0}
-				/>
-			)}
-		</svg>
-	);
+	return (<>
+		<div className={"alch-comp-with-backing " + additionalClassString}>
+			<ElementIcon element={alchData.element} />
+			<svg 
+			key={keyString} 
+			width={areaSize} 
+			height={areaSize} 
+			style={{ position: "relative", display:"inline-block" }}>
+				<g transform={`translate(${areaSize / 2} ${areaSize / 2})`}>
+					<AlchHexGrid
+						hexMap={Helpers.CreateHexGrid({ x: 0, y: 0 }, hexSize, 2)}
+						radius={hexSize}
+						displayIndex={false}
+						preventHexHover={true}
+						preventHexPlacementHover={true}
+					/>
+				</g>
+				{usePlaceable && (
+					<PlaceableAlchComponent
+						alchData={alchData}
+						position={{ x: areaSize / 2, y: areaSize / 2 }}
+						size={displaySize}
+						rotation={0}
+						onPickComponent={onPickComponent}
+					/>
+				)}
+				{!usePlaceable && (
+					<AlchComponentDisplay
+						alchData={alchData}
+						position={{ x: areaSize / 2, y: areaSize / 2 }}
+						size={displaySize}
+						rotation={0}
+					/>
+				)}
+			</svg>
+		</div>
+	</>);
 };
 
 export default AlchCompWithBacking;

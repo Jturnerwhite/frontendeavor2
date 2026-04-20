@@ -73,8 +73,32 @@
 
 .alch-comp-with-backing {
 	background-color: var(--misc-container);
-	box-shadow: 3px 3px 6px #2c1f1475, inset 2px 2px 4px #ffffff7d;
+	box-shadow: rgba(44, 31, 20, 0.46) 3px 3px 6px;
 	border-radius: 8px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    width: 114px;
+    height: 70px;
+
+    clip-path: polygon(
+		0% 0%, 
+		calc(100% - 20px) 0%, 
+		100% 20px, 
+		100% calc(100% - 20px), 
+		calc(100% - 20px) 100%, 
+		20px 100%, 
+		0% 100%, 
+		0% 0%);
+}
+
+.alch-comp-with-backing > .element-icon {
+	width: 35px;
+    filter: contrast(0.75);
+    margin: 0px 0px 0px 8px;
 }
 
 .alch-comp-with-backing .hex-grid {
