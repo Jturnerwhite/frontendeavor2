@@ -60,6 +60,10 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({recipe, quality, currentEl
 			}
 		});
 
+		if(setToUse.length === 0) {
+			return <></>;
+		}
+
 		return (
 			<PossibleComps 
 				keyString={recipe.id + '-possible-comps-' + element} 

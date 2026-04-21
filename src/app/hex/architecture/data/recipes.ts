@@ -2,6 +2,7 @@ import { ALCH_ELEMENT, ITEM_TAG, SHAPE_NAME } from '@/app/hex/architecture/enums
 import { publicAsset } from '@/lib/publicAsset'
 import { Recipe } from '@/app/hex/architecture/typings'
 import { IngredientBases } from './ingredientBases';
+import { EquipmentSkills } from './equipmentSkills';
 
 const IMAGE_PATH = publicAsset("/art/potions/");
 
@@ -166,6 +167,80 @@ export const Recipes:Array<Recipe> = [
 					scoreRequirement: 12,
 				},
 			]
+		],
+	},
+	{
+		id: 'FSH-R-1',
+		image: IMAGE_PATH + 'mana.png',
+		description: 'Fishing Rod',
+		types: [ITEM_TAG.FISHING_ROD],
+		elementScores: [
+			{ element: ALCH_ELEMENT.WATER, softCap: 4, cap: 10 },
+			{ element: ALCH_ELEMENT.WIND, softCap: 3, cap: 10 },
+			{ element: ALCH_ELEMENT.CHAOS, softCap: 3, cap: 10 },
+		],
+		requiredIngredients: [
+			{ type: IngredientBases['PineWood'], qty: 1 },
+			{ type: ITEM_TAG.LIQUID },
+			{ type: ITEM_TAG.PLANT },
+		],
+		resultingComponents: [
+			[
+				{ 
+					element: ALCH_ELEMENT.CHAOS, 
+					shape: SHAPE_NAME.OBTUSE,
+					linkSpots: [1, 0, 0, 0, 0, 0, 0],
+					scoreRequirement: 1,
+				},
+				{ 
+					element: ALCH_ELEMENT.CHAOS, 
+					shape: SHAPE_NAME.DIAMOND,
+					linkSpots: [1, 0, 0, 0, 0, 0, 0],
+					scoreRequirement: 4,
+				},
+				{ 
+					element: ALCH_ELEMENT.CHAOS, 
+					shape: SHAPE_NAME.WAKA,
+					linkSpots: [0, 0, 1, 0, 0, 0, 0],
+					scoreRequirement: 12,
+				},
+			]
+		],
+		resultingEquipmentStats: [
+			{
+				element: ALCH_ELEMENT.WATER,
+				goals: [
+					{
+						goal: 0,
+						skill: EquipmentSkills['castingAccuracy1'],
+					},
+					{
+						goal: 5,
+						skill: EquipmentSkills['castingAccuracy2'],
+					},
+					{
+						goal: 10,
+						skill: EquipmentSkills['castingAccuracy3'],
+					},
+				],
+			},
+			{
+				element: ALCH_ELEMENT.WIND,
+				goals: [
+					{
+						goal: 0,
+						skill: EquipmentSkills['reelSpeed1'],
+					},
+					{
+						goal: 5,
+						skill: EquipmentSkills['reelSpeed2'],
+					},
+					{
+						goal: 10,
+						skill: EquipmentSkills['reelSpeed3'],
+					},
+				],
+			},
 		],
 	}
 ];

@@ -10,8 +10,9 @@ const Biomes = {
 		terrain: MAP_TERRAIN.FOREST,
 		icon: "pine-tree",
 		nativeIngredients: [
-			{ ingredient: IngredientBases["FruguBerry"], weighting: 1 },
-			{ ingredient: IngredientBases["Pinecap"], weighting: 1 },
+			{ ingredient: IngredientBases["FruguBerry"], weighting: 15 },
+			{ ingredient: IngredientBases["Pinecap"], weighting: 12 },
+			{ ingredient: IngredientBases["PineWood"], weighting: 15 },
 		],
 	},
 	ValleyRidge: {

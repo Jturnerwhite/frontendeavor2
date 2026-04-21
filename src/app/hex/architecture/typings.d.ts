@@ -47,10 +47,23 @@ export type Item = {
 	id: string,
 	baseRecipeId?: string,
 	description: string,
+	quality: number,
 	comps: AlchComponent[],
 	types: ITEM_TAG[],
-	quality: number,
 	ingredients: Ingredient[],
+}
+
+export type Equipment = Item & {
+	equipmentType: EQUIPMENT_TYPE,
+	stats: Array<string, EquipmentSkill>,
+}
+
+export type EquipmentSkill = {
+	id: string,
+	name:string,
+	description:string,
+	type: 'stat' | 'functional' | 'flag'
+	value: number|string|boolean|null
 }
 
 /** One row in the alchemy lab sidebar: raw ingredient or a crafted item used as a source (not expanded into its nested ingredients). */
@@ -101,6 +114,11 @@ export type RecipeResultingComponent = {
 	linkSpots?: number[],
 }
 
+export type RecipeResultingEquipmentStats = {
+	element: ALCH_ELEMENT,
+	goals: Array<{goal: number, skill: EquipmentSkill}>,
+}
+
 export type Recipe = {
 	id: string,
 	image?: string,
@@ -108,9 +126,12 @@ export type Recipe = {
 	types: ITEM_TAG[],
 	elementScores: RecipeElementScore[],
 	resultingComponents: Array<Array<RecipeResultingComponent>>,
+	resultingEquipmentStats?: Array<RecipeResultingEquipmentStats>,
+
 	requiredIngredients?: RecipeRequiredIngredient[],
 	requirements?: RecipeRequirement[],
 	forbidden?: RecipeRequirement[],
+
 }
 
 export type MapBiome = {

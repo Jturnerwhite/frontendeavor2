@@ -141,6 +141,29 @@ export const IngredientBases:Record<string, IngredientBase> = {
 			},
 		],
 	},
+	PineWood: {
+		id: "PineWood",
+		name: "Pine Wood",
+		ingTier: 0,
+		image: IMAGE_PATH + "pinewood.png",
+		types: [ITEM_TAG.PLANT],
+		possibleComps: [
+			{
+				element: ALCH_ELEMENT.EARTH,
+				possibleShapes: GrowthPaths.WAVY.slice(0, 5),
+			},
+			{
+				element: ALCH_ELEMENT.WIND,
+				possibleShapes: GrowthPaths.WAVY.slice(0, 4),
+			},
+			{
+				element: ALCH_ELEMENT.FIRE,
+				possibleShapes: GrowthPaths.WAVY.slice(0, 2),
+				chance: 0.25,
+			},
+		],
+	},
+	// Fish
 	Frillish: {
 		id: "Frillish",
 		name: "Frillish",

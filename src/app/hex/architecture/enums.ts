@@ -58,6 +58,13 @@ export const COMPONENT_SHAPE_VALUES = {
 	[SHAPE_NAME.FULL]:		[1,1,1,1,1,1,1], // a 7 piece full hex ●
 }
 
+export enum EQUIPMENT_TYPE {
+	GATHER_TOOL = "Gather Tool",
+	FISHING_ROD = "Fishing Rod",
+	FISHING_LURE = "Fishing Lure",
+	FISHING_LINE = "Fishing Line",
+}
+
 export enum ITEM_TAG {
 	ANIMAL_MAT = "Animal Mat",
 	CRYSTAL = "Crystal",
@@ -68,6 +75,11 @@ export enum ITEM_TAG {
 	STONE = "Stone",
 	METAL = "Metal",
 	FUNGUS = "Fungus",
+
+	GATHER_TOOL = "Gather Tool",
+	FISHING_ROD = "Fishing Rod",
+	FISHING_LURE = "Fishing Lure",
+	FISHING_LINE = "Fishing Line",
 }
 
 export enum MAP_TERRAIN {

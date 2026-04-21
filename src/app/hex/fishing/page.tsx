@@ -37,7 +37,7 @@ import './fishing.css';
 type Stage = 0 | 1 | 2 | 3 | 4 | 5;
 
 const GEAR = {
-	accuracy: 35,
+	accuracy: 1,
 	attraction: 120,
 		/** Placeholder; multiplied with REEL_BASE_PX_PER_SEC for px/s toward goal */
 	reelSpeed: 1,
