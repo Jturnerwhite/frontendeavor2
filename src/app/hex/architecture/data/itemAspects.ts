@@ -1,6 +1,21 @@
-import { EquipmentSkill } from "@/app/hex/architecture/typings";
+import { ItemAspect, ItemAspectComp } from "@/app/hex/architecture/typings";
+import { ALCH_ELEMENT, SHAPE_NAME } from "@/app/hex/architecture/enums";
 
-export const EquipmentSkills:Record<string, EquipmentSkill> = {
+const SharedComponentAspects:Record<string, ItemAspect> = {
+	sharedWater1: {
+		id: 'sharedWater1',
+		name: 'Water Infusion 1',
+		type: 'component',
+		description: `An item's additional water component.`,
+		value: {
+			element: ALCH_ELEMENT.WATER,
+			shape: SHAPE_NAME.DOT,
+			linkSpots: [1, 0, 0, 0, 0, 0, 0],
+		} as ItemAspectComp,
+	},
+};
+
+const EquipmentAspects:Record<string, ItemAspect> = {
 	castingAccuracy1: {
 		id: 'castingAccuracy1',
 		name: 'Cast ACC: 1',
@@ -43,4 +58,11 @@ export const EquipmentSkills:Record<string, EquipmentSkill> = {
 		description: 'Basic Reel Speed',
 		value: 5,
 	},
+};
+
+const ItemAspects:Record<string, ItemAspect> = {
+	...SharedComponentAspects,
+	...EquipmentAspects,
 }
+
+export { SharedComponentAspects, EquipmentAspects, ItemAspects };

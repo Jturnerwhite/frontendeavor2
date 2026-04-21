@@ -1,5 +1,11 @@
 'use client';
-import { AlchComponent, Ingredient, Recipe, RecipeElementScore, RecipeResultingComponent } from '@/app/hex/architecture/typings';
+import {
+	AlchComponent,
+	Ingredient,
+	ItemAspectComp,
+	Recipe,
+	RecipeElementScore,
+} from '@/app/hex/architecture/typings';
 import { ALCH_ELEMENT, ITEM_TAG } from '@/app/hex/architecture/enums';
 import AlchCompWithBacking from '@/app/hex/sharedComponents/alchComponent/alchCompWithBacking';
 import * as Helpers from '@/app/hex/architecture/helpers/alchHelpers';
@@ -51,23 +57,35 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({recipe, quality, currentEl
 		return <AlchCompWithBacking keyString={recipe.id + '-resulting-comp-' + index} alchData={resultingComp} displaySize={displaySize} />;
 	}
 
+	function aspectValueToAlchComponent(value: unknown): AlchComponent | null {
+		if (
+			typeof value === 'object' &&
+			value !== null &&
+			'shape' in value &&
+			'element' in value
+		) {
+			const v = value as ItemAspectComp;
+			return { element: v.element, shape: v.shape, linkSpots: v.linkSpots };
+		}
+		return null;
+	}
+
 	function getPossibleCompsDisplay(element: ALCH_ELEMENT): JSX.Element {
-		let setToUse: Array<RecipeResultingComponent> = [];
+		const rows = recipe.goalsAndRewards[element];
+		const tiers = (rows ?? [])
+			.filter((g) => g.reward.type === 'component' && g.reward.value != null)
+			.sort((a, b) => a.goal - b.goal)
+			.map((g) => aspectValueToAlchComponent(g.reward.value))
+			.filter((c): c is AlchComponent => c !== null);
 
-		recipe.resultingComponents.forEach((eleSet: Array<RecipeResultingComponent>) => {
-			if(eleSet[0].element === element) {
-				setToUse = eleSet;
-			}
-		});
-
-		if(setToUse.length === 0) {
+		if (tiers.length === 0) {
 			return <></>;
 		}
 
 		return (
 			<PossibleComps 
 				keyString={recipe.id + '-possible-comps-' + element} 
-				possibleComps={setToUse} 
+				possibleComps={tiers} 
 				displaySize={displaySize} />
 		);
 	}
@@ -88,7 +106,9 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({recipe, quality, currentEl
 					{currentElementScores && matchinElementComp !== undefined && <>
 						{getResultingCompDisplay(matchinElementComp, index)}
 					</>}
-					{!currentElementScores && recipe.resultingComponents.length > 0 && <>
+					{!currentElementScores && Object.values(recipe.goalsAndRewards).some((rows) =>
+						rows?.some((g) => g.reward.type === 'component'),
+					) && <>
 						{getPossibleCompsDisplay(elementScore.element)}
 					</>}
 				</div>

@@ -55,15 +55,21 @@ export type Item = {
 
 export type Equipment = Item & {
 	equipmentType: EQUIPMENT_TYPE,
-	stats: Array<string, EquipmentSkill>,
+	stats: Array<string, ItemAspect>,
 }
 
-export type EquipmentSkill = {
+export type ItemAspect = {
 	id: string,
 	name:string,
 	description:string,
-	type: 'stat' | 'functional' | 'flag'
-	value: number|string|boolean|null
+	type: 'stat' | 'functional' | 'flag' | 'component'
+	value: number|string|boolean|ItemAspectComp|null
+}
+
+export type ItemAspectComp = {
+	element: ALCH_ELEMENT,
+	shape: SHAPE_NAME,
+	linkSpots?: number[],
 }
 
 /** One row in the alchemy lab sidebar: raw ingredient or a crafted item used as a source (not expanded into its nested ingredients). */
@@ -103,21 +109,13 @@ export type RecipeRequiredIngredient = {
 	quality?: number,
 }
 
-/**
- * These act like "goals" that are conditionally met depending on how
- * the recipe is completed.
- */
-export type RecipeResultingComponent = {
-	element: ALCH_ELEMENT,
-	shape: SHAPE_NAME,
-	scoreRequirement: number,
-	linkSpots?: number[],
+export type RecipeGoalAndReward = {
+	goal: number,
+	reward: ItemAspect,
 }
 
-export type RecipeResultingEquipmentStats = {
-	element: ALCH_ELEMENT,
-	goals: Array<{goal: number, skill: EquipmentSkill}>,
-}
+/** Per-element tier lists. Only include keys for elements that have goals. */
+export type RecipeGoalsAndRewardsByElement = Partial<Record<ALCH_ELEMENT, RecipeGoalAndReward[]>>
 
 export type Recipe = {
 	id: string,
@@ -125,8 +123,7 @@ export type Recipe = {
 	description: string,
 	types: ITEM_TAG[],
 	elementScores: RecipeElementScore[],
-	resultingComponents: Array<Array<RecipeResultingComponent>>,
-	resultingEquipmentStats?: Array<RecipeResultingEquipmentStats>,
+	goalsAndRewards: RecipeGoalsAndRewardsByElement,
 
 	requiredIngredients?: RecipeRequiredIngredient[],
 	requirements?: RecipeRequirement[],

@@ -1,8 +1,8 @@
 import { ALCH_ELEMENT, ITEM_TAG, SHAPE_NAME } from '@/app/hex/architecture/enums'
 import { publicAsset } from '@/lib/publicAsset'
-import { Recipe } from '@/app/hex/architecture/typings'
+import { ItemAspectComp, Recipe } from '@/app/hex/architecture/typings'
 import { IngredientBases } from './ingredientBases';
-import { EquipmentSkills } from './equipmentSkills';
+import { SharedComponentAspects, ItemAspects } from '@/app/hex/architecture/data/itemAspects';
 
 const IMAGE_PATH = publicAsset("/art/potions/");
 
@@ -22,65 +22,125 @@ export const Recipes:Array<Recipe> = [
 			{ type: IngredientBases['FruguBerry'] },
 			{ type: IngredientBases['CragLichen'] },
 		],
-		resultingComponents: [
-			[
-				{ 
-					element: ALCH_ELEMENT.WATER, 
-					shape: SHAPE_NAME.DOT,
-					scoreRequirement: 1,
+		goalsAndRewards: {
+			[ALCH_ELEMENT.WATER]: [
+				{ goal: 1, reward: SharedComponentAspects['sharedWater1'] },
+				{
+					goal: 4,
+					reward: {
+						id: 'HP-1-CUST-WATER-2',
+						name: 'Water Infusion 2',
+						description: `An item's additional water component.`,
+						type: 'component',
+						value: {
+							element: ALCH_ELEMENT.WATER,
+							shape: SHAPE_NAME.HALFLINE,
+							linkSpots: [1, 0, 0, 0, 0, 0, 0],
+						} as ItemAspectComp,
+					},
 				},
-				{ 
-					element: ALCH_ELEMENT.WATER, 
-					shape: SHAPE_NAME.HALFLINE,
-					linkSpots: [1, 0, 0, 0, 0, 0, 0],
-					scoreRequirement: 4,
-				},
-				{ 
-					element: ALCH_ELEMENT.WATER, 
-					shape: SHAPE_NAME.LINE,
-					linkSpots: [1, 0, 0, 0, 0, 0, 0],
-					scoreRequirement: 8,
-				},
-			],
-			[
-				{ 
-					element: ALCH_ELEMENT.EARTH, 
-					shape: SHAPE_NAME.DOT,
-					scoreRequirement: 1,
-				},
-				{ 
-					element: ALCH_ELEMENT.EARTH, 
-					shape: SHAPE_NAME.HALFLINE,
-					scoreRequirement: 4,
-				},
-				{ 
-					element: ALCH_ELEMENT.EARTH, 
-					shape: SHAPE_NAME.TRIANGLE,
-					linkSpots: [1, 0, 0, 0, 0, 0, 0],
-					scoreRequirement: 8,
+				{
+					goal: 8,
+					reward: {
+						id: 'HP-1-CUST-WATER-3',
+						name: 'Water Infusion 3',
+						description: `An item's additional water component.`,
+						type: 'component',
+						value: {
+							element: ALCH_ELEMENT.WATER,
+							shape: SHAPE_NAME.LINE,
+							linkSpots: [1, 0, 0, 0, 0, 0, 0],
+						} as ItemAspectComp,
+					},
 				},
 			],
-			[
-				{ 
-					element: ALCH_ELEMENT.WIND, 
-					shape: SHAPE_NAME.DOT,
-					linkSpots: [1, 0, 0, 0, 0, 0, 0],
-					scoreRequirement: 1,
+			[ALCH_ELEMENT.EARTH]: [
+				{
+					goal: 1,
+					reward: {
+						id: 'HP-1-EARTH-1',
+						name: 'Earth Infusion 1',
+						description: `An item's additional earth component.`,
+						type: 'component',
+						value: {
+							element: ALCH_ELEMENT.EARTH,
+							shape: SHAPE_NAME.DOT,
+						} as ItemAspectComp,
+					},
 				},
-				{ 
-					element: ALCH_ELEMENT.WIND, 
-					shape: SHAPE_NAME.HALFLINE,
-					linkSpots: [1, 0, 0, 0, 0, 0, 0],
-					scoreRequirement: 4,
+				{
+					goal: 4,
+					reward: {
+						id: 'HP-1-EARTH-2',
+						name: 'Earth Infusion 2',
+						description: `An item's additional earth component.`,
+						type: 'component',
+						value: {
+							element: ALCH_ELEMENT.EARTH,
+							shape: SHAPE_NAME.HALFLINE,
+						} as ItemAspectComp,
+					},
 				},
-				{ 
-					element: ALCH_ELEMENT.WIND, 
-					shape: SHAPE_NAME.OBTUSE,
-					linkSpots: [0, 0, 1, 0, 0, 0, 0],
-					scoreRequirement: 8,
+				{
+					goal: 8,
+					reward: {
+						id: 'HP-1-EARTH-3',
+						name: 'Earth Infusion 3',
+						description: `An item's additional earth component.`,
+						type: 'component',
+						value: {
+							element: ALCH_ELEMENT.EARTH,
+							shape: SHAPE_NAME.TRIANGLE,
+							linkSpots: [1, 0, 0, 0, 0, 0, 0],
+						} as ItemAspectComp,
+					},
 				},
-			]
-		],
+			],
+			[ALCH_ELEMENT.WIND]: [
+				{
+					goal: 1,
+					reward: {
+						id: 'HP-1-WIND-1',
+						name: 'Wind Infusion 1',
+						description: `An item's additional wind component.`,
+						type: 'component',
+						value: {
+							element: ALCH_ELEMENT.WIND,
+							shape: SHAPE_NAME.DOT,
+							linkSpots: [1, 0, 0, 0, 0, 0, 0],
+						} as ItemAspectComp,
+					},
+				},
+				{
+					goal: 4,
+					reward: {
+						id: 'HP-1-WIND-2',
+						name: 'Wind Infusion 2',
+						description: `An item's additional wind component.`,
+						type: 'component',
+						value: {
+							element: ALCH_ELEMENT.WIND,
+							shape: SHAPE_NAME.HALFLINE,
+							linkSpots: [1, 0, 0, 0, 0, 0, 0],
+						} as ItemAspectComp,
+					},
+				},
+				{
+					goal: 8,
+					reward: {
+						id: 'HP-1-WIND-3',
+						name: 'Wind Infusion 3',
+						description: `An item's additional wind component.`,
+						type: 'component',
+						value: {
+							element: ALCH_ELEMENT.WIND,
+							shape: SHAPE_NAME.OBTUSE,
+							linkSpots: [0, 0, 1, 0, 0, 0, 0],
+						} as ItemAspectComp,
+					},
+				},
+			],
+		},
 		/*
 		requirements: [ {
 			displayText: 'Must contain Water element', 
@@ -107,72 +167,141 @@ export const Recipes:Array<Recipe> = [
 			{ type: IngredientBases['AeridGrass'], qty: 2 },
 			{ type: ITEM_TAG.MAGICAL },
 		],
-		resultingComponents: [
-			[
-				{ 
-					element: ALCH_ELEMENT.WATER, 
-					shape: SHAPE_NAME.HALFLINE,
-					scoreRequirement: 1,
+		goalsAndRewards: {
+			[ALCH_ELEMENT.WATER]: [
+				{
+					goal: 1,
+					reward: {
+						id: 'MANA-W-1',
+						name: 'Mana water tier 1',
+						description: '',
+						type: 'component',
+						value: { element: ALCH_ELEMENT.WATER, shape: SHAPE_NAME.HALFLINE } as ItemAspectComp,
+					},
 				},
-				{ 
-					element: ALCH_ELEMENT.WATER, 
-					shape: SHAPE_NAME.TRIANGLE,
-					linkSpots: [1, 0, 0, 0, 0, 0, 0],
-					scoreRequirement: 5,
+				{
+					goal: 5,
+					reward: {
+						id: 'MANA-W-2',
+						name: 'Mana water tier 2',
+						description: '',
+						type: 'component',
+						value: {
+							element: ALCH_ELEMENT.WATER,
+							shape: SHAPE_NAME.TRIANGLE,
+							linkSpots: [1, 0, 0, 0, 0, 0, 0],
+						} as ItemAspectComp,
+					},
 				},
-				{ 
-					element: ALCH_ELEMENT.WATER, 
-					shape: SHAPE_NAME.DIAMOND,
-					linkSpots: [1, 1, 0, 0, 0, 0, 0],
-					scoreRequirement: 10,
+				{
+					goal: 10,
+					reward: {
+						id: 'MANA-W-3',
+						name: 'Mana water tier 3',
+						description: '',
+						type: 'component',
+						value: {
+							element: ALCH_ELEMENT.WATER,
+							shape: SHAPE_NAME.DIAMOND,
+							linkSpots: [1, 1, 0, 0, 0, 0, 0],
+						} as ItemAspectComp,
+					},
 				},
 			],
-			[
-				{ 
-					element: ALCH_ELEMENT.WIND, 
-					shape: SHAPE_NAME.HALFLINE,
-					linkSpots: [1, 0, 0, 0, 0, 0, 0],
-					scoreRequirement: 1,
+			[ALCH_ELEMENT.WIND]: [
+				{
+					goal: 1,
+					reward: {
+						id: 'MANA-WI-1',
+						name: 'Mana wind tier 1',
+						description: '',
+						type: 'component',
+						value: {
+							element: ALCH_ELEMENT.WIND,
+							shape: SHAPE_NAME.HALFLINE,
+							linkSpots: [1, 0, 0, 0, 0, 0, 0],
+						} as ItemAspectComp,
+					},
 				},
-				{ 
-					element: ALCH_ELEMENT.WIND, 
-					shape: SHAPE_NAME.LINE,
-					linkSpots: [1, 0, 0, 0, 0, 0, 0],
-					scoreRequirement: 4,
+				{
+					goal: 4,
+					reward: {
+						id: 'MANA-WI-2',
+						name: 'Mana wind tier 2',
+						description: '',
+						type: 'component',
+						value: {
+							element: ALCH_ELEMENT.WIND,
+							shape: SHAPE_NAME.LINE,
+							linkSpots: [1, 0, 0, 0, 0, 0, 0],
+						} as ItemAspectComp,
+					},
 				},
-				{ 
-					element: ALCH_ELEMENT.WIND, 
-					shape: SHAPE_NAME.CLAW,
-					linkSpots: [0, 0, 1, 0, 0, 0, 0],
-					scoreRequirement: 8,
+				{
+					goal: 8,
+					reward: {
+						id: 'MANA-WI-3',
+						name: 'Mana wind tier 3',
+						description: '',
+						type: 'component',
+						value: {
+							element: ALCH_ELEMENT.WIND,
+							shape: SHAPE_NAME.CLAW,
+							linkSpots: [0, 0, 1, 0, 0, 0, 0],
+						} as ItemAspectComp,
+					},
 				},
 			],
-			[
-				{ 
-					element: ALCH_ELEMENT.AETHER, 
-					shape: SHAPE_NAME.OBTUSE,
-					linkSpots: [1, 0, 0, 0, 0, 0, 0],
-					scoreRequirement: 1,
+			[ALCH_ELEMENT.AETHER]: [
+				{
+					goal: 1,
+					reward: {
+						id: 'MANA-A-1',
+						name: 'Mana aether tier 1',
+						description: '',
+						type: 'component',
+						value: {
+							element: ALCH_ELEMENT.AETHER,
+							shape: SHAPE_NAME.OBTUSE,
+							linkSpots: [1, 0, 0, 0, 0, 0, 0],
+						} as ItemAspectComp,
+					},
 				},
-				{ 
-					element: ALCH_ELEMENT.AETHER, 
-					shape: SHAPE_NAME.DIAMOND,
-					linkSpots: [1, 0, 0, 0, 0, 0, 0],
-					scoreRequirement: 4,
+				{
+					goal: 4,
+					reward: {
+						id: 'MANA-A-2',
+						name: 'Mana aether tier 2',
+						description: '',
+						type: 'component',
+						value: {
+							element: ALCH_ELEMENT.AETHER,
+							shape: SHAPE_NAME.DIAMOND,
+							linkSpots: [1, 0, 0, 0, 0, 0, 0],
+						} as ItemAspectComp,
+					},
 				},
-				{ 
-					element: ALCH_ELEMENT.AETHER, 
-					shape: SHAPE_NAME.WAKA,
-					linkSpots: [0, 0, 1, 0, 0, 0, 0],
-					scoreRequirement: 12,
+				{
+					goal: 12,
+					reward: {
+						id: 'MANA-A-3',
+						name: 'Mana aether tier 3',
+						description: '',
+						type: 'component',
+						value: {
+							element: ALCH_ELEMENT.AETHER,
+							shape: SHAPE_NAME.WAKA,
+							linkSpots: [0, 0, 1, 0, 0, 0, 0],
+						} as ItemAspectComp,
+					},
 				},
-			]
-		],
+			],
+		},
 	},
 	{
 		id: 'FSH-R-1',
 		image: IMAGE_PATH + 'mana.png',
-		description: 'Fishing Rod',
+		description: 'Janky Fishing Rod',
 		types: [ITEM_TAG.FISHING_ROD],
 		elementScores: [
 			{ element: ALCH_ELEMENT.WATER, softCap: 4, cap: 10 },
@@ -184,63 +313,61 @@ export const Recipes:Array<Recipe> = [
 			{ type: ITEM_TAG.LIQUID },
 			{ type: ITEM_TAG.PLANT },
 		],
-		resultingComponents: [
-			[
-				{ 
-					element: ALCH_ELEMENT.CHAOS, 
-					shape: SHAPE_NAME.OBTUSE,
-					linkSpots: [1, 0, 0, 0, 0, 0, 0],
-					scoreRequirement: 1,
+		goalsAndRewards: {
+			[ALCH_ELEMENT.CHAOS]: [
+				{
+					goal: 1,
+					reward: {
+						id: 'FSH-CH-1',
+						name: 'Chaos component 1',
+						description: '',
+						type: 'component',
+						value: {
+							element: ALCH_ELEMENT.CHAOS,
+							shape: SHAPE_NAME.OBTUSE,
+							linkSpots: [1, 0, 0, 0, 0, 0, 0],
+						} as ItemAspectComp,
+					},
 				},
-				{ 
-					element: ALCH_ELEMENT.CHAOS, 
-					shape: SHAPE_NAME.DIAMOND,
-					linkSpots: [1, 0, 0, 0, 0, 0, 0],
-					scoreRequirement: 4,
+				{
+					goal: 4,
+					reward: {
+						id: 'FSH-CH-2',
+						name: 'Chaos component 2',
+						description: '',
+						type: 'component',
+						value: {
+							element: ALCH_ELEMENT.CHAOS,
+							shape: SHAPE_NAME.DIAMOND,
+							linkSpots: [1, 0, 0, 0, 0, 0, 0],
+						} as ItemAspectComp,
+					},
 				},
-				{ 
-					element: ALCH_ELEMENT.CHAOS, 
-					shape: SHAPE_NAME.WAKA,
-					linkSpots: [0, 0, 1, 0, 0, 0, 0],
-					scoreRequirement: 12,
+				{
+					goal: 12,
+					reward: {
+						id: 'FSH-CH-3',
+						name: 'Chaos component 3',
+						description: '',
+						type: 'component',
+						value: {
+							element: ALCH_ELEMENT.CHAOS,
+							shape: SHAPE_NAME.WAKA,
+							linkSpots: [0, 0, 1, 0, 0, 0, 0],
+						} as ItemAspectComp,
+					},
 				},
-			]
-		],
-		resultingEquipmentStats: [
-			{
-				element: ALCH_ELEMENT.WATER,
-				goals: [
-					{
-						goal: 0,
-						skill: EquipmentSkills['castingAccuracy1'],
-					},
-					{
-						goal: 5,
-						skill: EquipmentSkills['castingAccuracy2'],
-					},
-					{
-						goal: 10,
-						skill: EquipmentSkills['castingAccuracy3'],
-					},
-				],
-			},
-			{
-				element: ALCH_ELEMENT.WIND,
-				goals: [
-					{
-						goal: 0,
-						skill: EquipmentSkills['reelSpeed1'],
-					},
-					{
-						goal: 5,
-						skill: EquipmentSkills['reelSpeed2'],
-					},
-					{
-						goal: 10,
-						skill: EquipmentSkills['reelSpeed3'],
-					},
-				],
-			},
-		],
+			],
+			[ALCH_ELEMENT.WATER]: [
+				{ goal: 0, reward: ItemAspects['castingAccuracy1'] },
+				{ goal: 5, reward: ItemAspects['castingAccuracy2'] },
+				{ goal: 10, reward: ItemAspects['castingAccuracy3'] },
+			],
+			[ALCH_ELEMENT.WIND]: [
+				{ goal: 0, reward: ItemAspects['reelSpeed1'] },
+				{ goal: 5, reward: ItemAspects['reelSpeed2'] },
+				{ goal: 10, reward: ItemAspects['reelSpeed3'] },
+			],
+		},
 	}
 ];

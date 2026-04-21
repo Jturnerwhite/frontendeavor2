@@ -1,6 +1,14 @@
 import { HexMap, HexTile, LinkedComponents, PlacedComponent, Position } from "@/app/hex/architecture/interfaces";
 import { getHexNeighborStep } from "./svgHelpers";
-import { IngredientCompSpec, AlchComponent, Recipe, RecipeElementScore, RecipeResultingComponent } from "../typings";
+import {
+	AlchComponent,
+	IngredientCompSpec,
+	ItemAspect,
+	ItemAspectComp,
+	Recipe,
+	RecipeElementScore,
+	RecipeGoalAndReward,
+} from "../typings";
 import { ALCH_ELEMENT, COMPONENT_SHAPE_VALUES } from "../enums";
 
 let tempIdSeq = 0;
@@ -297,28 +305,89 @@ function CalculateQuality(recipe: Recipe, elementScores: Record<ALCH_ELEMENT, {n
 	return output;
 }
 
+function isItemAspectComp(value: ItemAspect['value']): value is ItemAspectComp {
+	return (
+		typeof value === 'object' &&
+		value !== null &&
+		'shape' in value &&
+		'element' in value
+	);
+}
+
+function getSortedGoalRowsForElement(
+	recipe: Recipe,
+	element: ALCH_ELEMENT,
+	rewardType: 'component' | 'stat',
+): RecipeGoalAndReward[] {
+	const rows = recipe.goalsAndRewards[element];
+	if (!rows?.length) return [];
+	return [...rows]
+		.filter((g) => g.reward.type === rewardType)
+		.sort((a, b) => a.goal - b.goal);
+}
+
 function GetResultingComponents(recipe: Recipe, elementScores: Record<ALCH_ELEMENT, {nodes: number, links: number}>): Array<AlchComponent> {
 	const output: Array<AlchComponent> = [];
-	recipe.resultingComponents.forEach((resultComps: Array<RecipeResultingComponent>) => {
-		let finalComponent: AlchComponent|null = null;
-		resultComps.forEach((resultCompGoal: RecipeResultingComponent) => {
-			let matchingElementScoreRequirements = recipe.elementScores.find((elementScore: RecipeElementScore) => elementScore.element === resultCompGoal.element);
+	for (const { element } of recipe.elementScores) {
+		const resultComps = getSortedGoalRowsForElement(recipe, element, 'component');
+		let finalComponent: AlchComponent | null = null;
+		for (const row of resultComps) {
+			const compValue = row.reward.value;
+			if (!isItemAspectComp(compValue)) continue;
+
+			const matchingElementScoreRequirements = recipe.elementScores.find(
+				(elementScore: RecipeElementScore) => elementScore.element === element,
+			);
 			let maxScorePossible = matchingElementScoreRequirements?.cap ?? 0;
-			if(matchingElementScoreRequirements && elementScores[resultCompGoal.element]) {
-				// only allow the score to be as high as the soft cap + the number of links
-				maxScorePossible = Math.min(maxScorePossible, (matchingElementScoreRequirements.softCap + elementScores[resultCompGoal.element].links));
-				if(Math.min(elementScores[resultCompGoal.element].nodes, maxScorePossible) >= resultCompGoal.scoreRequirement) {
+			if (matchingElementScoreRequirements && elementScores[element]) {
+				maxScorePossible = Math.min(
+					maxScorePossible,
+					matchingElementScoreRequirements.softCap + elementScores[element].links,
+				);
+				if (
+					Math.min(elementScores[element].nodes, maxScorePossible) >= row.goal
+				) {
 					finalComponent = {
-						element: resultCompGoal.element,
-						shape: resultCompGoal.shape,
-						linkSpots: resultCompGoal.linkSpots,
+						element: compValue.element,
+						shape: compValue.shape,
+						linkSpots: compValue.linkSpots,
 					};
 				}
 			}
-		});
-		if(finalComponent)
-			output.push(finalComponent);
-	});
+		}
+		if (finalComponent) output.push(finalComponent);
+	}
+	return output;
+}
+
+/** Winning stat / non-component aspects per element (same tier resolution as component goals). */
+function GetResultingStatAspects(
+	recipe: Recipe,
+	elementScores: Record<ALCH_ELEMENT, { nodes: number; links: number }>,
+): ItemAspect[] {
+	const output: ItemAspect[] = [];
+	for (const { element } of recipe.elementScores) {
+		const rows = getSortedGoalRowsForElement(recipe, element, 'stat');
+		let finalAspect: ItemAspect | null = null;
+		for (const row of rows) {
+			const matchingElementScoreRequirements = recipe.elementScores.find(
+				(es: RecipeElementScore) => es.element === element,
+			);
+			let maxScorePossible = matchingElementScoreRequirements?.cap ?? 0;
+			if (matchingElementScoreRequirements && elementScores[element]) {
+				maxScorePossible = Math.min(
+					maxScorePossible,
+					matchingElementScoreRequirements.softCap + elementScores[element].links,
+				);
+				if (
+					Math.min(elementScores[element].nodes, maxScorePossible) >= row.goal
+				) {
+					finalAspect = row.reward;
+				}
+			}
+		}
+		if (finalAspect) output.push(finalAspect);
+	}
 	return output;
 }
 
@@ -334,5 +403,6 @@ export {
 	GetOppositeDirection,
 	GetPlacementHexIds,
 	GetResultingComponents,
+	GetResultingStatAspects,
 	OccupyHexes,
 };
