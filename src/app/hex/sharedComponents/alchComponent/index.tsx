@@ -4,7 +4,8 @@ import type { Position } from '@/app/hex/architecture/interfaces';
 import { ALCH_ELEMENT, COMPONENT_SHAPE_VALUES } from '@/app/hex/architecture/enums';
 import * as SVGHelpers from '@/app/hex/architecture/helpers/svgHelpers';
 import { publicAsset } from '@/lib/publicAsset';
-import './alchComponent.css';
+import { styleHelper } from '@/app/hex/architecture/helpers/styleHelper';
+import styles from './alchComponent.module.css';
 
 interface NodeProps {
 	index: number;
@@ -59,37 +60,37 @@ const AlchNode: React.FC<NodeProps> = ({
 			return (<g>
 				{size < 25 && (
 					<polygon
-						className={'border-fill'}
+						className={styles.borderFill}
 						points={borderFillPoints}
 						strokeWidth={strokeWidth}
 					/>
 				)}
 				<polygon
-					className={'node ' + elemClass}
+					className={styleHelper(styles.node, elemClass)}
 					points={starPoints}
 					strokeWidth={strokeWidth}
 				/>
-				<polygon className="node-sheen" points={starPoints} strokeWidth={strokeWidth} />
+				<polygon className={styles.nodeSheen} points={starPoints} strokeWidth={strokeWidth} />
 			</g>);
 		} else if(useHex) {
 			return (<>
 				<polygon
-					className={'node ' + elemClass}
+					className={styleHelper(styles.node, elemClass)}
 					points={hexPoints}
 					strokeWidth={strokeWidth}
 				/>
-				<polygon className="node-sheen" points={hexPoints} strokeWidth={strokeWidth} />
+				<polygon className={styles.nodeSheen} points={hexPoints} strokeWidth={strokeWidth} />
 			</>);
 		} else {
 			return (<>
 				<circle
-					className={'node ' + elemClass}
+					className={styleHelper(styles.node, elemClass)}
 					cx={0}
 					cy={0}
 					r={r}
 					strokeWidth={strokeWidth}
 				/>
-				<circle className="node-sheen" cx={0} cy={0} r={r} strokeWidth={strokeWidth} />
+				<circle className={styles.nodeSheen} cx={0} cy={0} r={r} strokeWidth={strokeWidth} />
 			</>);
 		}
 	}
@@ -180,7 +181,7 @@ const AlchComponentDisplay: React.FC<CompProps> = ({
 		}
 	}
 	return (
-		<g transform={`rotate(${rotation * 60} ${position.x} ${position.y})`}>
+		<g className={styles.compRoot} transform={`rotate(${rotation * 60} ${position.x} ${position.y})`}>
 			{lines}
 			{nodeComps}
 		</g>
@@ -214,7 +215,7 @@ const PlaceableAlchComponent: React.FC<PlaceableAlchComponentProps> = ({
 				placed={placed}
 			/>
 			<rect
-				className="hitArea"
+				className={styles.hitArea}
 				x={position.x - (size * 3.25) / 2}
 				y={position.y - (size * 3.25) / 2}
 				width={size * 3.25}

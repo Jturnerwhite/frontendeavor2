@@ -29,7 +29,6 @@ import {
 	labSourcesFromInventorySelection,
 } from '@/app/hex/architecture/helpers/alchemyLabSources';
 import '@/app/hex/play/alchemy/alchemy.css';
-import '@/app/hex/sharedComponents/requiredItem/requiredItem.css';
 
 type StageInventory = {
 	ingredients: Ingredient[];

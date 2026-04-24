@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { HexTile } from '@/app/hex/architecture/interfaces';
-import './hex.css';
+import { styleHelper } from '@/app/hex/architecture/helpers/styleHelper';
+import styles from './hex.module.css';
 
 interface HexProps {
 	radius: number;
@@ -48,7 +49,7 @@ const Hex: React.FC<HexProps> = ({
 	return (
 		<>
 			<polygon
-				className={`hex-tile ${hexData.additionalClassString ?? ''}`}
+				className={styleHelper(styles.tile, 'hex-tile', hexData.additionalClassString)}
 				points={points}
 				pointerEvents="fill"
 				onMouseEnter={hexEnter}

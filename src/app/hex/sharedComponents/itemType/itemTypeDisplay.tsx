@@ -1,12 +1,13 @@
 import { ITEM_TAG } from "@/app/hex/architecture/enums";
 import { publicAsset } from '@/lib/publicAsset';
-import './itemTypeDisplay.css';
+import { styleHelper } from '@/app/hex/architecture/helpers/styleHelper';
+import styles from './itemTypeDisplay.module.css';
 
 const ItemTypeDisplay: React.FC<{itemType: ITEM_TAG, hideImage?: boolean}> = ({itemType, hideImage = false}): JSX.Element => {
 	return (
-		<div className="item-type-display">
+		<div className={styleHelper('item-type-display', styles.root)}>
 			{!hideImage && (
-				<div className="item-type-display-image">
+				<div className={styleHelper('item-type-display-image', styles.imageWrap)}>
 					<img src={publicAsset(`/icons/itemTypes/${itemType.toLowerCase().replace(" ", "_")}.svg`)} alt={itemType} />
 				</div>
 			)}

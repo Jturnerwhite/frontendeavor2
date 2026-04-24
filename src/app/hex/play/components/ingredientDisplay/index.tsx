@@ -3,7 +3,8 @@
 import type { AlchComponent, Ingredient } from '@/app/hex/architecture/typings';
 import AlchCompWithBacking from '@/app/hex/sharedComponents/alchComponent/alchCompWithBacking';
 import { IngredientBases } from '@/app/hex/architecture/data/ingredientBases';
-import './ingredient-display.css';
+import { styleHelper } from '@/app/hex/architecture/helpers/styleHelper';
+import styles from './ingredientDisplay.module.css';
 
 interface IngredientDisplayProps {
 	ingredient: Ingredient;
@@ -41,11 +42,11 @@ const IngredientDisplay: React.FC<IngredientDisplayProps> = ({
 	}
 
 	return (
-		<div className="ingredient-display">
+		<div className={styleHelper('ingredient-display', styles.root)}>
 			<label>{ingredient.baseIngId}</label>
-			<hr className="ingredient-display-separator" />
+			<hr className={styles.separator} />
 			<div>{IngredientBases[ingredient.baseIngId].types.map((type) => <small key={ingredient.baseIngId + '-' + type}>{type} </small>)}</div>
-			<div className="ingredient-display-comps">
+			<div className={styleHelper('ingredient-display-comps', styles.comps)}>
 				{getComps()}
 			</div>
 		</div>

@@ -1,16 +1,16 @@
-.inventory-display {
+.display {
 	font-family: Georgia, 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
 	color: #e8dcc8;
 }
 
-.inventory-display-items {
+.displayItems {
 	max-height: calc(80vh);
 	overflow-y: auto;
 	padding-right: 18px;
 	margin-right: -18px;
 }
 
-.inventory-display h1 {
+.display h1 {
 	font-size: 1.35rem;
 	font-weight: 600;
 	color: #f5ecd8;
@@ -18,14 +18,14 @@
 	letter-spacing: 0.02em;
 }
 
-.inventory-tabs {
+.tabs {
 	display: flex;
 	gap: 0;
 	margin: 0 0 12px;
 	border-bottom: 1px solid rgba(0, 0, 0, 0.35);
 }
 
-.inventory-tab {
+.tab {
 	flex: 1;
 	padding: 8px 12px;
 	font: inherit;
@@ -38,19 +38,19 @@
 	margin-bottom: -1px;
 }
 
-.inventory-tab:hover {
+.tab:hover {
 	color: #f5ecd8;
 	background: rgba(0, 0, 0, 0.08);
 }
 
-.inventory-tab--active {
+.tabActive {
 	color: #f5ecd8;
 	font-weight: 600;
 	border-bottom-color: #c9a227;
 	background: rgba(0, 0, 0, 0.06);
 }
 
-.inventory-display h2 {
+.display h2 {
 	font-size: 0.85rem;
 	font-weight: 600;
 	text-transform: uppercase;
@@ -62,7 +62,7 @@
 	text-align: center;
 }
 
-.inventory-display > div:last-child {
+.display > div:last-child {
 	display: flex;
 	flex-direction: column;
 	gap: 0;

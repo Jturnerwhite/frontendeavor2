@@ -1,4 +1,4 @@
-.ingredient-display {
+.root {
 	box-sizing: border-box;
 	background: linear-gradient(
 		165deg,
@@ -8,12 +8,10 @@
 	border: 1px solid #d4c4a8;
 	border-radius: 8px;
 	padding: 12px 14px;
-	box-shadow:
-		0 2px 8px rgba(44, 31, 20, 0.08),
-		inset 0 1px 0 rgba(255, 255, 255, 0.35);
+	box-shadow: 0 2px 8px rgba(44, 31, 20, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
-.ingredient-display label {
+.root label {
 	display: block;
 	font-weight: 600;
 	font-size: 1rem;
@@ -22,20 +20,20 @@
 	margin-bottom: 4px;
 }
 
-.ingredient-display small {
+.root small {
 	color: #5c4a3a;
 	font-size: 0.75rem;
 	letter-spacing: 0.04em;
 	text-transform: capitalize;
 }
 
-.ingredient-display-separator {
+.separator {
 	border: none;
 	border-top: 1px solid #d4c4a8;
 	margin-bottom: 0;
 }
 
-.ingredient-display-comps {
+.comps {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 8px;

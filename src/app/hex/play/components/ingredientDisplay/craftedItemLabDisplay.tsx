@@ -2,7 +2,8 @@
 
 import type { AlchComponent, Item } from '@/app/hex/architecture/typings'
 import AlchCompWithBacking from '@/app/hex/sharedComponents/alchComponent/alchCompWithBacking'
-import './ingredient-display.css'
+import { styleHelper } from '@/app/hex/architecture/helpers/styleHelper'
+import styles from './ingredientDisplay.module.css'
 
 interface CraftedItemLabDisplayProps {
 	item: Item
@@ -29,15 +30,15 @@ const CraftedItemLabDisplay: React.FC<CraftedItemLabDisplayProps> = ({
 	}
 
 	return (
-		<div className="ingredient-display crafted-item-lab-display">
+		<div className={styleHelper('ingredient-display', 'crafted-item-lab-display', styles.root)}>
 			<label>{title}</label>
-			<hr className="ingredient-display-separator" />
+			<hr className={styles.separator} />
 			<div>
 				{item.types.map((type) => (
 					<small key={type}>{type} </small>
 				))}
 			</div>
-			<div className="ingredient-display-comps">
+			<div className={styleHelper('ingredient-display-comps', styles.comps)}>
 				{item.comps.map((comp, compIndex) => {
 					const placed = compPlaced.length > 0 ? compPlaced[compIndex] : false
 					return (

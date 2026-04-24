@@ -3,7 +3,6 @@ import { AlchComponent } from "@/app/hex/architecture/typings";
 import * as Helpers from "@/app/hex/architecture/helpers/alchHelpers";
 import { AlchComponentDisplay, PlaceableAlchComponent } from ".";
 import { AlchHexGrid } from "@/app/hex/sharedComponents/hex/hexGrid";
-import "./alchComponent.css";
 import AlchCompWithBacking from "./alchCompWithBacking";
 import { useEffect, useState } from "react";
 

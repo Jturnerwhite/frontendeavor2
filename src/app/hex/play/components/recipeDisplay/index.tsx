@@ -9,7 +9,7 @@ import {
 import { ALCH_ELEMENT, ITEM_TAG } from '@/app/hex/architecture/enums';
 import AlchCompWithBacking from '@/app/hex/sharedComponents/alchComponent/alchCompWithBacking';
 import * as Helpers from '@/app/hex/architecture/helpers/alchHelpers';
-import './recipe-display.css';
+import styles from './recipeDisplay.module.css';
 import PossibleComps from '@/app/hex/sharedComponents/alchComponent/possibleComps';
 import ItemTypeDisplay from '@/app/hex/sharedComponents/itemType/itemTypeDisplay';
 import { playerMeetsRequirement } from '@/app/hex/architecture/helpers/recipeRequirements';
@@ -45,7 +45,7 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({recipe, quality, currentEl
 			}
 			output.push(<span key={i} className={classString}></span>);
 		}
-		return <div className="element-score-line">
+		return <div className={styles.elementScoreLine}>
 			{output}
 		</div>;
 	}
@@ -97,9 +97,9 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({recipe, quality, currentEl
 		}
 		return recipe.elementScores.map((elementScore: RecipeElementScore, index: number) => {
 			let matchinElementComp = resultingComponents.find((component: AlchComponent) => component.element === elementScore.element);
-			return <div className="element-score" key={elementScore.element}>
-				<div className="element-score-line">
-					<label className="element-score-label"><ElementIcon element={elementScore.element} /></label>
+			return <div className={styles.elementScore} key={elementScore.element}>
+				<div className={styles.elementScoreLine}>
+					<label className={styles.elementScoreLabel}><ElementIcon element={elementScore.element} /></label>
 					{getCurrentElementScore(elementScore.element)}
 				</div>
 				<div className="element-comp-display">
@@ -125,37 +125,37 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({recipe, quality, currentEl
 	}
 
 	return (
-		<div className="recipe-display">
-			<div className="recipe-card">
-				<div className="recipe-display">
-					<div className="recipe-display-header">
+		<div className={styles.displayOuter}>
+			<div className={styles.card}>
+				<div className={styles.displayInner}>
+					<div className={styles.header}>
 						<h1>{recipe.description}</h1>
 					</div>
-					<div className="recipe-card-inner">
-						<div className="recipe-card-upper">
+					<div className={styles.cardInner}>
+						<div className={styles.cardUpper}>
 							{!hideImage && (
-								<div className="recipe-display-image">
+								<div className={styles.image}>
 									{recipe.image && (<img src={recipe.image} alt={recipe.description} />)}
 								</div>
 							)}
 							{false && (
-								<div className="recipe-display-content">
+								<div className={styles.content}>
 									{false && quality !== undefined && (
 										<div className="recipe-completion-line">
 											<label>Quality: </label>
 											<label>{quality}</label>
 										</div>
 									)}
-									<div className="recipe-element-scores">
+									<div className={styles.recipeElementScores}>
 										{getElementScores()}
 									</div>
 								</div>
 							)}
-							<div className="recipe-elements">
+							<div className={styles.recipeElements}>
 								{getRecipeElements()}
 							</div>
 						</div>
-						<div className="recipe-display-types">
+						<div className={styles.types}>
 							{recipe.types.map((type: ITEM_TAG) => (
 								<ItemTypeDisplay key={type} itemType={type} />
 							))}

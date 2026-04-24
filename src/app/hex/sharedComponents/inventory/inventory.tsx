@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import { Item, Ingredient } from "@/app/hex/architecture/typings";
 import { ComplexInventoryItem } from "@/app/hex/sharedComponents/itemDisplay/lineItem";
-import '@/app/hex/sharedComponents/inventory/inventory.css';
+import { styleHelper } from '@/app/hex/architecture/helpers/styleHelper';
+import styles from './inventory.module.css';
 
 type InventoryTab = 'ingredients' | 'crafted';
 
@@ -94,16 +95,24 @@ const InventoryDisplay: React.FC<InventoryProps> = ({
 		}
 	}, [inventoryItems, ingredients]);
 
-	return <div className="inventory-display">
+	return (
+		<div
+			className={styleHelper('inventory-display', styles.display)}
+		>
 		{showTitle && <h1>Inventory</h1>}
 		{!(onlyIngredients || onlyCrafted) && (
-		<div className="inventory-tabs" role="tablist" aria-label="Inventory category">
+		<div className={styleHelper('inventory-tabs', styles.tabs)} role="tablist" aria-label="Inventory category">
 			<button
 				type="button"
 				role="tab"
 				id="inventory-tab-ingredients"
 				aria-selected={activeTab === 'ingredients'}
-				className={'inventory-tab' + (activeTab === 'ingredients' ? ' inventory-tab--active' : '')}
+				className={styleHelper(
+					'inventory-tab',
+					activeTab === 'ingredients' && 'inventory-tab--active',
+					styles.tab,
+					activeTab === 'ingredients' && styles.tabActive,
+				)}
 				onClick={() => setActiveTab('ingredients')}
 			>
 				Ingredients
@@ -113,7 +122,12 @@ const InventoryDisplay: React.FC<InventoryProps> = ({
 				role="tab"
 				id="inventory-tab-crafted"
 				aria-selected={activeTab === 'crafted'}
-				className={'inventory-tab' + (activeTab === 'crafted' ? ' inventory-tab--active' : '')}
+				className={styleHelper(
+					'inventory-tab',
+					activeTab === 'crafted' && 'inventory-tab--active',
+					styles.tab,
+					activeTab === 'crafted' && styles.tabActive,
+				)}
 				onClick={() => setActiveTab('crafted')}
 			>
 				Crafted
@@ -122,10 +136,11 @@ const InventoryDisplay: React.FC<InventoryProps> = ({
 		)}
 		{!hideFiltering && <div><h2>Filtering</h2></div>}
 		{!hideSorting && <div><h2>Sorting</h2></div>}
-		<div className="inventory-display-items">
+		<div className={styleHelper('inventory-display-items', styles.displayItems)}>
 			{renderInventoryItems()}
 		</div>
-	</div>;
+	</div>
+	);
 };
 
 export default InventoryDisplay;

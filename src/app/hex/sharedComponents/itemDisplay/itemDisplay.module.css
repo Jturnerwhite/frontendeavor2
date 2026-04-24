@@ -1,9 +1,9 @@
 /**
- * Item / inventory line — warm parchment card style (matches the map-left-panel override in map.css).
+ * Item / inventory line — warm parchment card style
  */
 
 /* --- Complex inventory row (single item card) --- */
-.item-display-complex {
+.complex {
 	box-sizing: border-box;
 	max-width: 100%;
 	background: linear-gradient(165deg, #fff6e2 0%, #ffdab5 100%);
@@ -11,14 +11,12 @@
 	border-radius: 8px;
 	padding: 12px 14px;
 	margin-bottom: 12px;
-	box-shadow:
-		0 2px 8px rgba(44, 31, 20, 0.08),
-		inset 0 1px 0 rgba(255, 255, 255, 0.35);
+	box-shadow: 0 2px 8px rgba(44, 31, 20, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.35);
 	font-family: Georgia, 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
 	color: var(--alchemy-ink-muted);
 }
 
-.item-display-complex > summary.item-display-complex-row {
+.complex > summary.complexRow {
 	list-style: none;
 	cursor: pointer;
 	display: flex;
@@ -27,19 +25,19 @@
 	gap: 14px;
 }
 
-.item-display-complex > summary.item-display-complex-row::-webkit-details-marker {
+.complex > summary.complexRow::-webkit-details-marker {
 	display: none;
 }
 
-.item-display-complex > summary.item-display-complex-row::marker {
+.complex > summary.complexRow::marker {
 	content: '';
 }
 
-.item-display-complex[open] > summary .item-display-complex-end {
+.complex[open] > summary .complexEnd {
 	transform: rotate(180deg);
 }
 
-.item-display-complex-icon {
+.complexIcon {
 	flex-shrink: 0;
 	width: 64px;
 	height: 64px;
@@ -52,7 +50,7 @@
 	letter-spacing: 0.02em;
 }
 
-.item-display-complex-main {
+.complexMain {
 	flex: 1;
 	min-width: 0;
 	display: flex;
@@ -62,13 +60,13 @@
 	gap: 12px;
 }
 
-.item-display-complex-text {
+.complexText {
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
 }
 
-.item-display-complex-name {
+.complexName {
 	font-weight: 600;
 	font-size: 1.1rem;
 	letter-spacing: 0.02em;
@@ -76,37 +74,37 @@
 	margin: 0;
 }
 
-.item-display-complex-desc {
+.lineDesc {
 	font-size: 0.82rem;
 	color: rgba(92, 74, 58, 0.75);
 	font-weight: 400;
 	margin: 0;
 }
 
-.item-display-complex-types {
+.complexTypes {
 	flex-shrink: 0;
 	font-size: 0.88rem;
 	color: var(--alchemy-ink-muted);
 	text-align: right;
 	width: 30%;
-    justify-items: flex-end;
+	justify-items: flex-end;
 }
-.item-display-complex-types > span {
+.complexTypes > span {
 	display: block;
 }
-.item-display-complex-count {
-    font-weight: 600;
-    letter-spacing: .02em;
-    text-align: center;
-    border: 1px solid var(--alchemy-parchment-dark);
-    border-radius: 4px;
-    padding: 2px .5em 0px .5em;
-    width: 70px;
-    font-family: sans-serif;
-    line-height: 1rem;
+.complexCount {
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	text-align: center;
+	border: 1px solid var(--alchemy-parchment-dark);
+	border-radius: 4px;
+	padding: 2px 0.5em 0px 0.5em;
+	width: 70px;
+	font-family: sans-serif;
+	line-height: 1rem;
 }
 
-.item-display-complex-end {
+.complexEnd {
 	flex-shrink: 0;
 	width: 40px;
 	height: 40px;
@@ -122,11 +120,11 @@
 	transition: transform 0.15s ease;
 }
 
-.item-display-complex-tools {
+.complexTools {
 	border-top: 1px solid rgba(92, 64, 51, 0.2);
 }
 
-.item-display-complex-tools h3 {
+.complexTools h3 {
 	margin: 0 0 8px;
 	font-size: 0.8rem;
 	font-weight: 600;
@@ -135,24 +133,30 @@
 	color: rgba(92, 74, 58, 0.7);
 }
 
-.item-display-complex-tools .item-display-line {
+.complexTools .line {
 	margin-top: 8px;
 }
 
-/* --- Inventory line (hex comps strip, nested in card) --- */
-.item-display-line {
-	width: 100%;
-	
-    padding-bottom: 8px;
-    border-bottom: 4px dashed;
-    border-color: var(--alchemy-parchment-dark);
+.complexLineitems {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
 }
 
-.item-display-line:last-child {
+/* --- Inventory line (hex comps strip, nested in card) --- */
+.line {
+	width: 100%;
+
+	padding-bottom: 8px;
+	border-bottom: 4px dashed;
+	border-color: var(--alchemy-parchment-dark);
+}
+
+.line:last-child {
 	border-bottom: none;
 }
 
-.item-display-line--selectable {
+.lineSelectable {
 	display: flex;
 	flex-direction: row;
 	align-items: flex-start;
@@ -160,13 +164,13 @@
 	cursor: pointer;
 }
 
-.item-display-line-select {
+.lineSelect {
 	margin-top: 10px;
 	flex-shrink: 0;
-	display:none;
+	display: none;
 }
 
-.item-display-line-select-icon {
+.lineSelectIcon {
 	flex-shrink: 0;
 	margin-top: 10px;
 	width: 20px;
@@ -176,21 +180,21 @@
 	border-radius: 4px;
 }
 
-.item-display-line-select-icon-check {
-    width: 100%;
-    height: 100%;
-    background: #4daa00;
-    display: block;
+.lineSelectIconCheck {
+	width: 100%;
+	height: 100%;
+	background: #4daa00;
+	display: block;
 	border-radius: 2px;
 }
 
-.item-display-line-body {
+.lineBody {
 	flex: 1;
 	min-width: 0;
 	display: block;
 }
 
-.item-display-line-header {
+.lineHeader {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
@@ -200,57 +204,57 @@
 	margin-bottom: 10px;
 }
 
-.item-display-line-header label {
+.lineHeader label {
 	display: block;
 	font-weight: 600;
 	font-size: 0.95rem;
 	color: var(--alchemy-ink);
 }
 
-.item-display-line-header .item-display-line-desc {
+.lineHeader .lineDesc {
 	font-size: 0.8rem;
 	font-weight: 400;
 	color: rgba(92, 74, 58, 0.7);
 }
 
-.item-display-line-inst-data {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: stretch;
+.lineInstData {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: stretch;
 	gap: 4px;
 }
 
-.item-quality-bar {
-    display: flex;
-    height: 10px;
-    background: var(--misc-container);
-    border-radius: 4px;
-    padding: 2px 2px;
+.qualityBar {
+	display: flex;
+	height: 10px;
+	background: var(--misc-container);
+	border-radius: 4px;
+	padding: 2px 2px;
 }
-.item-quality-bar-fill {
-    border-radius: 3px;
-    height: 100%;
-    align-self: flex-end;
+.qualityBarFill {
+	border-radius: 3px;
+	height: 100%;
+	align-self: flex-end;
 }
 
-.item-quality-bar-fill.quality-100 {
+.qualityBarFill:global(.quality-100) {
 	background: #58c300;
 }
-.item-quality-bar-fill.quality-75 {
+.qualityBarFill:global(.quality-75) {
 	background: #58c300;
 }
-.item-quality-bar-fill.quality-50 {
+.qualityBarFill:global(.quality-50) {
 	background: #be8330;
 }
-.item-quality-bar-fill.quality-20 {
+.qualityBarFill:global(.quality-20) {
 	background: #be5930;
 }
-.item-quality-bar-fill.quality-10 {
+.qualityBarFill:global(.quality-10) {
 	background: #be3030;
 }
 
-.item-display-line-comps {
+.lineComps {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;

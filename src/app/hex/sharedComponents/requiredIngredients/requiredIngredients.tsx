@@ -1,11 +1,12 @@
 'use client';
 
 import type { RecipeRequiredIngredient } from '@/app/hex/architecture/typings';
+import { styleHelper } from '@/app/hex/architecture/helpers/styleHelper';
 import {
 	formatRequiredIngredientEntry,
 	getRequiredIngredientImageSrc,
 } from './requiredIngredientDisplay';
-import './requiredIngredients.css';
+import styles from './requiredIngredients.module.css';
 
 export interface RequiredIngredientsListProps {
 	requirements: RecipeRequiredIngredient[];
@@ -21,19 +22,20 @@ export default function RequiredIngredientsList({
 	className = '',
 }: RequiredIngredientsListProps): JSX.Element {
 	return (
-		<div className={`alchemy-required-list required-ingredients ${className}`.trim()}>
-			<ul className="required-ingredients-list">
+		<div className={styleHelper('alchemy-required-list', className || undefined)}>
+			<ul className={styles.list}>
 				{requirements.map((req, i) => (
 					<li
 						key={i}
-						className={
-							'required-ingredients-row' + (met[i] ? '' : ' alchemy-required-list--missing')
-						}
+						className={styleHelper(
+							styles.row,
+							!met[i] && 'alchemy-required-list--missing',
+						)}
 					>
-						<span className="required-ingredients-thumb" aria-hidden>
+						<span className={styles.thumb} aria-hidden>
 							<img src={getRequiredIngredientImageSrc(req)} alt="" />
 						</span>
-						<span className="required-ingredients-label">{formatRequiredIngredientEntry(req)}</span>
+						<span className={styles.label}>{formatRequiredIngredientEntry(req)}</span>
 					</li>
 				))}
 			</ul>

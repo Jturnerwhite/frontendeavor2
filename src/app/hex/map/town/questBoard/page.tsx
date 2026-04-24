@@ -18,7 +18,6 @@ import StagedItemSelector, {
 } from '@/app/hex/sharedComponents/stagedItemSelector/stagedItemSelector'
 import RequiredItem from '@/app/hex/sharedComponents/requiredItem/requiredItem'
 import { ITEM_TAG } from '@/app/hex/architecture/enums'
-import '@/app/hex/sharedComponents/requiredItem/requiredItem.css';
 import '@/app/hex/map/town/questBoard/questBoard.css';
 
 function isIngredientBaseReward(r: Item | IngredientBase): r is IngredientBase {

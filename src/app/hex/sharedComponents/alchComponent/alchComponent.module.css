@@ -1,0 +1,118 @@
+.node {
+	transition: fill 0.15s ease, stroke 0.15s ease;
+}
+
+.nodeSheen {
+	fill: url(#alch-node-sheen);
+	pointer-events: none;
+}
+
+:global(.placed) .node {
+	fill: #7d7d7d !important;
+	stroke: #a3a3a3 !important;
+}
+:global(.placed) .nodeSheen {
+	opacity: 0.75;
+}
+
+/* Local root so :global(.link) selectors stay "pure" for the CSS module compiler */
+.compRoot :global(.link) {
+	transition: stroke 0.15s ease;
+}
+.compRoot :global(.link.earth) {
+	stroke: var(--alch-element-earth);
+}
+.compRoot :global(.link.wind) {
+	stroke: var(--alch-element-wind);
+}
+.compRoot :global(.link.fire) {
+	stroke: var(--alch-element-fire);
+}
+.compRoot :global(.link.water) {
+	stroke: var(--alch-element-water);
+}
+.compRoot :global(.link.aether) {
+	stroke: var(--alch-element-aether);
+}
+.compRoot :global(.link.chaos) {
+	stroke: var(--alch-element-chaos);
+}
+
+.hitArea {
+	cursor: pointer;
+}
+
+.node:global(.earth) {
+	fill: var(--alch-element-earth);
+	stroke: white;
+}
+.node:global(.wind) {
+	fill: var(--alch-element-wind);
+	stroke: white;
+}
+.node:global(.fire) {
+	fill: var(--alch-element-fire);
+	stroke: white;
+}
+.node:global(.water) {
+	fill: var(--alch-element-water);
+	stroke: white;
+}
+.node:global(.aether) {
+	fill: var(--alch-element-aether);
+	stroke: white;
+}
+.node:global(.chaos) {
+	fill: var(--alch-element-chaos);
+	stroke: white;
+}
+
+.backing {
+	background-color: var(--misc-container);
+	box-shadow: rgba(44, 31, 20, 0.46) 3px 3px 6px;
+	border-radius: 6px;
+
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-content: center;
+	align-items: center;
+	width: 116px;
+	height: 70px;
+
+	clip-path: polygon(
+		0% 0%,
+		calc(100% - 20px) 0%,
+		100% 20px,
+		100% calc(100% - 20px),
+		calc(100% - 20px) 100%,
+		20px 100%,
+		0% 100%,
+		0% 0%
+	);
+}
+
+.backing > :global(.element-icon) {
+	width: 35px;
+	filter: contrast(0.75);
+	margin: 0px 0px 0px 8px;
+}
+
+.backing :global(.hex-grid) {
+	pointer-events: none;
+	fill: var(--misc-container-light);
+}
+
+.backing :global(.hex-grid) :global(.hex-tile) {
+	pointer-events: none;
+	stroke: var(--misc-container);
+	fill: var(--misc-container-light);
+}
+
+.borderFill {
+	fill: transparent;
+}
+
+.backing .borderFill {
+	fill: var(--misc-container);
+}

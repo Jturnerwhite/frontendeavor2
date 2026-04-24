@@ -4,7 +4,8 @@ import * as Helpers from "@/app/hex/architecture/helpers/alchHelpers";
 import { AlchComponentDisplay, PlaceableAlchComponent } from ".";
 import { AlchHexGrid } from "@/app/hex/sharedComponents/hex/hexGrid";
 import ElementIcon from "@/app/hex/sharedComponents/elementIcon/elementIcon";
-import "./alchComponent.css";
+import { styleHelper } from '@/app/hex/architecture/helpers/styleHelper';
+import styles from "./alchComponent.module.css";
 
 interface CompProps {
 	keyString: string;
@@ -40,7 +41,7 @@ const AlchCompWithBacking: React.FC<CompProps> = ({
 	const hexSize = displaySize / 1.7;
 
 	return (<>
-		<div className={"alch-comp-with-backing " + additionalClassString}>
+		<div className={styleHelper('alch-comp-with-backing', styles.backing, additionalClassString)}>
 			<ElementIcon element={alchData.element} />
 			<svg 
 			key={keyString} 

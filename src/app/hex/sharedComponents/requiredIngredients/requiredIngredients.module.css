@@ -1,17 +1,17 @@
-.required-ingredients-list {
+.list {
 	list-style: none;
 	margin: 0;
 	padding: 0;
 }
 
-.required-ingredients-row {
+.row {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	gap: 10px;
 }
 
-.required-ingredients-thumb {
+.thumb {
 	flex-shrink: 0;
 	width: 40px;
 	height: 40px;
@@ -23,19 +23,20 @@
 	border: 1px solid rgba(92, 64, 51, 0.2);
 }
 
-.required-ingredients-thumb img {
+.thumb img {
 	width: 100%;
 	height: 100%;
 	object-fit: contain;
 	display: block;
 }
 
-.required-ingredients-label {
+.label {
 	flex: 1;
 	min-width: 0;
 }
 
-.alchemy-required-list--missing .required-ingredients-thumb {
+/* Global hook from alchemy.css + local thumb dim for missing */
+.row:global(.alchemy-required-list--missing) .thumb {
 	opacity: 0.75;
 	filter: grayscale(0.35);
 }

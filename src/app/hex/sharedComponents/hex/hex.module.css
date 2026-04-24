@@ -1,0 +1,33 @@
+/**
+ * Hex grid + tile. Keep global `hex-tile` / `hex-grid` on nodes for map.css / alchemy.css overrides.
+ */
+
+.grid {
+	pointer-events: none;
+}
+
+.tile {
+	fill: none;
+	stroke: #e8dcc8;
+	stroke-width: 2;
+}
+
+.tile:global(.hex-tile--flash-occupied) {
+	fill: #e53935;
+	stroke: #ffcdd2;
+}
+
+.tile:global(.hex-tile--hover-valid) {
+	fill: #2e7d32;
+	stroke: #a5d6a7;
+}
+
+.tile:global(.hex-tile--hover-invalid) {
+	fill: #c62828;
+	stroke: #ffcdd2;
+}
+
+.indexText {
+	fill: #e8dcc8;
+	pointer-events: none;
+}

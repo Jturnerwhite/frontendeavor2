@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Hex from './hex';
-import './hex.css';
+import { styleHelper } from '@/app/hex/architecture/helpers/styleHelper';
+import styles from './hex.module.css';
 import type { HexTile, HexMap } from '@/app/hex/architecture/interfaces';
 import type { AlchComponent } from '@/app/hex/architecture/typings';
 import * as AlchHelpers from '@/app/hex/architecture/helpers/alchHelpers';
@@ -57,7 +58,7 @@ const HexGrid: React.FC<HexGridProps> = ({
 	}
 
 	return (
-		<g className="hex-grid">
+		<g className={styleHelper(styles.grid, 'hex-grid')}>
 			{Object.keys(hexMap).map((id) => {
 				const hex = hexMap[id];
 				return (

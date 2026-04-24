@@ -4,7 +4,8 @@ import { Recipes } from "@/app/hex/architecture/data/recipes";
 import { AlchComponent, Ingredient, IngredientBase, IngredientCompSpec, Item, Recipe } from "@/app/hex/architecture/typings";
 import { IngredientBases } from '@/app/hex/architecture/data/ingredientBases';
 import AlchCompWithBacking from "@/app/hex/sharedComponents/alchComponent/alchCompWithBacking";
-import './itemDisplay.css';
+import { styleHelper } from '@/app/hex/architecture/helpers/styleHelper';
+import styles from './itemDisplay.module.css';
 
 interface InventoryLineItemProps {
 	item?: Item;
@@ -95,12 +96,12 @@ const InventoryLineItem: React.FC<InventoryLineItemProps> = ({ item, ingredient,
 
 	const body = (
 		<>
-			<div className="item-display-line-header">
+			<div className={styles.lineHeader}>
 				{displayHeading && (
 					<>
-						<div className="item-display-complex-text">
+						<div className={styles.complexText}>
 							<label>{name}</label>
-							<label className="item-display-line-desc">description</label>
+							<label className={styles.lineDesc}>description</label>
 						</div>
 						<div>
 							<label>{types.join(', ')}</label>
@@ -108,30 +109,30 @@ const InventoryLineItem: React.FC<InventoryLineItemProps> = ({ item, ingredient,
 					</>
 				)}
 			</div>
-			<div className="item-display-line-inst-data">
+			<div className={styles.lineInstData}>
 				{quality > 0 && (
-					<div className="item-quality-bar">
-						<span className={`item-quality-bar-fill ${qualityClass}`} style={{ width: `${quality}%` }}></span>
+					<div className={styles.qualityBar}>
+						<span className={styleHelper(styles.qualityBarFill, qualityClass)} style={{ width: `${quality}%` }}></span>
 					</div>
 				)}
-				<div className="item-display-line-comps">{getCompsToDisplay()}</div>
+				<div className={styles.lineComps}>{getCompsToDisplay()}</div>
 			</div>
 		</>
 	);
 
 	if (selectable) {
 		return (
-			<label className="item-display-line item-display-line--selectable" key={name}>
+			<label className={styleHelper(styles.line, styles.lineSelectable)} key={name}>
 				<input
 					type="checkbox"
-					className="item-display-line-select"
+					className={styles.lineSelect}
 					checked={selected}
 					onChange={() => onToggle?.()}
 				/>
-				<span className="item-display-line-body">{body}</span>
-				<span className="item-display-line-select-icon">
+				<span className={styles.lineBody}>{body}</span>
+				<span className={styles.lineSelectIcon}>
 					{selected && (
-						<span className="item-display-line-select-icon-check"></span>
+						<span className={styles.lineSelectIconCheck}></span>
 					)}
 				</span>
 			</label>
@@ -139,7 +140,7 @@ const InventoryLineItem: React.FC<InventoryLineItemProps> = ({ item, ingredient,
 	}
 
 	return (
-		<div className="item-display-line" key={name}>
+		<div className={styles.line} key={name}>
 			{body}
 		</div>
 	);
@@ -233,28 +234,28 @@ const ComplexInventoryItem: React.FC<ComplexInventoryItemProps> = ({ items, disp
 
 	return (
 		<details
-			className="item-display-complex"
+			className={styles.complex}
 			open={detailsOpen}
 			onToggle={(e) => setDetailsOpen(e.currentTarget.open)}
 		>
-			<summary className="item-display-complex-row">
-				<span className="item-display-complex-icon" aria-hidden>
+			<summary className={styles.complexRow}>
+				<span className={styles.complexIcon} aria-hidden>
 					{ image && (<img src={image} alt="" style={{ height: "100%" }}/>) }
 				</span>
-				<span className="item-display-complex-main">
-					<span className="item-display-complex-text">
-						<span className="item-display-complex-name">{name}</span>
+				<span className={styles.complexMain}>
+					<span className={styles.complexText}>
+						<span className={styles.complexName}>{name}</span>
 						<span>{types.join(', ')}</span>
 					</span>
-					<span className="item-display-complex-types">
-						{items.length > 1 && (<span className="item-display-complex-count">Qty: {items.length}</span>)}
+					<span className={styles.complexTypes}>
+						{items.length > 1 && (<span className={styles.complexCount}>Qty: {items.length}</span>)}
 					</span>
 				</span>
-				<span className="item-display-complex-end" aria-hidden>
+				<span className={styles.complexEnd} aria-hidden>
 					V
 				</span>
 			</summary>
-			<div className="item-display-complex-tools">
+			<div className={styles.complexTools}>
 				{!hideFiltering && (
 					<div>
 						<h3>Filtering</h3>
@@ -266,7 +267,9 @@ const ComplexInventoryItem: React.FC<ComplexInventoryItemProps> = ({ items, disp
 					</div>
 				)}
 			</div>
-			<div className="item-display-complex-lineitems">{GetLineItems()}</div>
+			<div className={styles.complexLineitems}>
+				{GetLineItems()}
+			</div>
 		</details>
 	);
 };
