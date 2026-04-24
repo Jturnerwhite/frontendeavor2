@@ -58,11 +58,26 @@
 
 .recipe-card-upper {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
 	justify-content: space-between;
-	gap: 18px;
+	gap: 8px;
 	align-items: center;
 }
+
+.recipe-elements {
+	display: flex;
+    justify-content: center;
+
+	width: 100%;
+	height: 80px;
+
+	gap: 8px;
+}
+.recipe-elements .recipe-element {
+	height: 100%;
+	width: 80px;
+}
+
 .recipe-card-lower {
 	display: flex;
 	flex-direction: row;

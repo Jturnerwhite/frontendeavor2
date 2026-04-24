@@ -11,18 +11,6 @@ export function isIngredientBaseRef(t: IngredientBase | ITEM_TAG): t is Ingredie
 	return typeof t === 'object' && t !== null && 'name' in t;
 }
 
-export function formatRequiredIngredientEntry(req: RecipeRequiredIngredient): string {
-	const t = req.type;
-	let label = isIngredientBaseRef(t) ? t.name : String(t);
-	if (req.qty != null && req.qty !== 1) {
-		label += ` ×${req.qty}`;
-	}
-	if (req.quality != null) {
-		label += ` (min quality ${req.quality})`;
-	}
-	return label;
-}
-
 export function playerMeetsRequirement(
 	req: RecipeRequiredIngredient,
 	rawIngredients: Ingredient[],

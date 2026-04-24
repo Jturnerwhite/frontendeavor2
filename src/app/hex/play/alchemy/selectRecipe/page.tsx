@@ -6,12 +6,10 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Recipes } from '@/app/hex/architecture/data/recipes';
 import type { Recipe } from '@/app/hex/architecture/typings';
-import {
-	formatRequiredIngredientEntry,
-	playerMeetsRequirement,
-} from '@/app/hex/architecture/helpers/recipeRequirements';
+import { playerMeetsRequirement } from '@/app/hex/architecture/helpers/recipeRequirements';
 import AlchemyStoreSlice from '@/store/features/alchemySlice';
 import RecipeDisplay from '@/app/hex/play/components/recipeDisplay';
+import RequiredIngredientsList from '@/app/hex/sharedComponents/requiredIngredients/requiredIngredients';
 import '../alchemy.css';
 
 export default function SelectRecipePage() {
@@ -90,21 +88,12 @@ export default function SelectRecipePage() {
 					{selectedRecipe.requiredIngredients && selectedRecipe.requiredIngredients.length > 0 && (
 						<section className="alchemy-recipe-req-section">
 							<h3>Required Ingredients</h3>
-							<div className="alchemy-required-list">
-								<ul>
-									{selectedRecipe.requiredIngredients.map((req, i) => {
-										const met = playerMeetsRequirement(req, rawIngredients, inventoryItems);
-										return (
-											<li
-												key={i}
-												className={met ? undefined : 'alchemy-required-list--missing'}
-											>
-												{formatRequiredIngredientEntry(req)}
-											</li>
-										);
-									})}
-								</ul>
-							</div>
+							<RequiredIngredientsList
+								requirements={selectedRecipe.requiredIngredients}
+								met={selectedRecipe.requiredIngredients.map((req) =>
+									playerMeetsRequirement(req, rawIngredients, inventoryItems),
+								)}
+							/>
 						</section>
 					)}
 					<button

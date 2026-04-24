@@ -20,10 +20,10 @@ import RequiredItem from '@/app/hex/sharedComponents/requiredItem/requiredItem';
 import {
 	countSelectionUnits,
 	filterInventoryAfterConsumption,
-	formatRequiredIngredientEntry,
 	getInventoryForRequirement,
 	partitionInventorySelectionKeys,
 } from '@/app/hex/architecture/helpers/recipeRequirements';
+import { formatRequiredIngredientEntry } from '@/app/hex/sharedComponents/requiredIngredients/requiredIngredientDisplay';
 import {
 	dedupeLabSources,
 	labSourcesFromInventorySelection,

@@ -116,6 +116,14 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({recipe, quality, currentEl
 		});
 	}
 
+	function getRecipeElements(): Array<JSX.Element> {
+		return recipe.elementScores.map((elementScore: RecipeElementScore) => {
+			return <div className="recipe-element" key={elementScore.element}>
+				<ElementIcon element={elementScore.element} />
+			</div>
+		});
+	}
+
 	return (
 		<div className="recipe-display">
 			<div className="recipe-card">
@@ -130,16 +138,21 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({recipe, quality, currentEl
 									{recipe.image && (<img src={recipe.image} alt={recipe.description} />)}
 								</div>
 							)}
-							<div className="recipe-display-content">
-								{false && quality !== undefined && (
-									<div className="recipe-completion-line">
-										<label>Quality: </label>
-										<label>{quality}</label>
+							{false && (
+								<div className="recipe-display-content">
+									{false && quality !== undefined && (
+										<div className="recipe-completion-line">
+											<label>Quality: </label>
+											<label>{quality}</label>
+										</div>
+									)}
+									<div className="recipe-element-scores">
+										{getElementScores()}
 									</div>
-								)}
-								<div className="recipe-element-scores">
-									{getElementScores()}
 								</div>
+							)}
+							<div className="recipe-elements">
+								{getRecipeElements()}
 							</div>
 						</div>
 						<div className="recipe-display-types">
