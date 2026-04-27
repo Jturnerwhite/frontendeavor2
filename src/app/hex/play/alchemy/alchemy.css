@@ -65,6 +65,36 @@
 	box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.25);
 }
 
+/* Help (crafting) — top-right of main panel; see play/alchemy/page.tsx */
+.alchemy-floating-actions {
+	position: absolute;
+	top: 12px;
+	right: 12px;
+	z-index: 20;
+	pointer-events: auto;
+}
+
+.alchemy-help-button {
+	padding: 8px 12px;
+	font-size: 12px;
+	font-family: system-ui, sans-serif;
+	color: #1a1a1a;
+	background: rgba(200, 210, 220, 0.95);
+	border: 1px solid rgba(100, 120, 140, 0.45);
+	border-radius: 6px;
+	cursor: pointer;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.alchemy-help-button:hover {
+	background: rgba(220, 230, 240, 0.98);
+}
+
+.alchemy-help-button:focus-visible {
+	outline: 2px solid #6b9ef5;
+	outline-offset: 2px;
+}
+
 .alchemy-undo-redo {
 	position: absolute;
 	left: 12px;

@@ -18,6 +18,10 @@ import '@/app/hex/map/map.css';
 import { publicAsset } from '@/lib/publicAsset';
 import { hardResetPersistedGameState } from '@/store/store';
 import MapStoreSlice from '@/store/features/mapSlice';
+import {
+	ExplanationHelpDialog,
+	ExplanationMapSection,
+} from '@/app/hex/sharedComponents/explanationHelp';
 import HexTimerOverlay from './components/hexTimerOverlay';
 
 export default function MapPage() {
@@ -58,6 +62,7 @@ export default function MapPage() {
 	const [hexMap, setHexMap] = useState<HexMap | undefined>(undefined);
 	const [centerHexGridX, setCenterHexGridX] = useState<number>(0);
 	const [centerHexGridY, setCenterHexGridY] = useState<number>(0);
+	const [mapHelpOpen, setMapHelpOpen] = useState(false);
 
 	const FISHING_TERRAINS = new Set<MAP_TERRAIN>([
 		MAP_TERRAIN.LAKE,
@@ -213,7 +218,14 @@ export default function MapPage() {
 			)}
 		</aside>
 		<main className="map-main-panel" onContextMenu={(e: React.MouseEvent) => {}}>
-			{(
+			<div className="map-bottom-actions" role="group" aria-label="Map help and dev tools">
+				<button
+					type="button"
+					className="map-help-button"
+					onClick={() => setMapHelpOpen(true)}
+				>
+					Help
+				</button>
 				<button
 					type="button"
 					className="map-dev-hard-reset"
@@ -230,7 +242,10 @@ export default function MapPage() {
 				>
 					Dev: reset save
 				</button>
-			)}
+			</div>
+			<ExplanationHelpDialog open={mapHelpOpen} onClose={() => setMapHelpOpen(false)} title="Help">
+				<ExplanationMapSection />
+			</ExplanationHelpDialog>
 			{hexMap && (<>
 				<svg
 					className="map-hex-svg"

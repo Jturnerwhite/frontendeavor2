@@ -25,6 +25,10 @@ import RecipeDisplay from '@/app/hex/play/components/recipeDisplay';
 import { ALCH_ELEMENT, COMPONENT_SHAPE_VALUES } from '@/app/hex/architecture/enums';
 import BoardHex from '@/app/hex/play/components/board';
 import { publicAsset } from '@/lib/publicAsset';
+import {
+	ExplanationCraftingSection,
+	ExplanationHelpDialog,
+} from '@/app/hex/sharedComponents/explanationHelp';
 import './alchemy.css';
 
 export default function Page() {
@@ -45,6 +49,7 @@ export default function Page() {
 	const [centerHexGridX, setCenterHexGridX] = useState<number>(0);
 	const [centerHexGridY, setCenterHexGridY] = useState<number>(0);
 	const [crossComponentLinks, setLinks] = useState<LinkedComponents[]>([]);
+	const [craftingHelpOpen, setCraftingHelpOpen] = useState(false);
 
 	const playGridLayers = 4;
 	const size = 40;
@@ -240,6 +245,22 @@ export default function Page() {
 					)}
 			</aside>
 			<main className="alchemy-main-panel" onContextMenu={(e: React.MouseEvent) => e.preventDefault()}>
+				<div className="alchemy-floating-actions" role="group" aria-label="Crafting help">
+					<button
+						type="button"
+						className="alchemy-help-button"
+						onClick={() => setCraftingHelpOpen(true)}
+					>
+						Help
+					</button>
+				</div>
+				<ExplanationHelpDialog
+					open={craftingHelpOpen}
+					onClose={() => setCraftingHelpOpen(false)}
+					title="Help"
+				>
+					<ExplanationCraftingSection />
+				</ExplanationHelpDialog>
 				<div className="alchemy-undo-redo" role="group" aria-label="Placement undo and redo">
 					<button
 						type="button"

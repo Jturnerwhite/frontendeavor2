@@ -1,0 +1,253 @@
+/**
+ * Shared styles for full Explanation page and per-section Help popups.
+ */
+
+/* —— Modal (map / alchemy help) —— */
+.help-dialog-backdrop {
+	position: fixed;
+	inset: 0;
+	z-index: 2000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 16px;
+	box-sizing: border-box;
+	background: rgba(0, 0, 0, 0.5);
+	backdrop-filter: blur(1px);
+}
+
+.help-dialog-panel {
+	width: 100%;
+	max-width: min(50rem, 100vw);
+	max-height: min(85vh, 100%);
+	display: flex;
+	flex-direction: column;
+	background: var(--alchemy-parchment);
+	color: var(--alchemy-ink);
+	border: 1px solid var(--alchemy-frame);
+	border-radius: 12px;
+	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+	font-family: Georgia, 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+}
+
+.help-dialog-header {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	padding: 10px 12px 8px 14px;
+	border-bottom: 1px solid rgba(92, 64, 51, 0.28);
+	flex-shrink: 0;
+}
+
+.help-dialog-title {
+	margin: 0;
+	font-size: 1.15rem;
+	font-weight: 700;
+	letter-spacing: 0.02em;
+	color: var(--alchemy-ink);
+}
+
+/* Visually hidden label for `aria-labelledby` on the dialog (when no visible header) */
+.help-dialog-sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+.help-dialog-close {
+	margin: 0;
+	padding: 2px 10px 4px;
+	font-size: 1.4rem;
+	line-height: 1;
+	color: var(--alchemy-ink);
+	background: transparent;
+	border: none;
+	border-radius: 6px;
+	cursor: pointer;
+}
+
+.help-dialog-close:hover {
+	background: rgba(44, 31, 20, 0.08);
+}
+
+.help-dialog-close:focus-visible {
+	outline: 2px solid var(--alchemy-accent);
+	outline-offset: 2px;
+}
+
+.help-dialog-body {
+	overflow: auto;
+	padding: 8px 10px 12px 12px;
+	min-height: 0;
+	-webkit-overflow-scrolling: touch;
+}
+
+/* Section headings in dialog: designed for wood page; use dark text on parchment */
+.explanation-help-dialog-scrolled .explanation-section-heading {
+	color: var(--alchemy-ink);
+	border-bottom-color: rgba(92, 64, 51, 0.35);
+	text-shadow: none;
+	margin-bottom: 0.5rem;
+	padding-bottom: 4px;
+}
+
+/* In dialog: no nested “card” frame — matches full page content without extra box */
+.explanation-help-dialog-scrolled .explanation-card {
+	background: transparent;
+	border: none;
+	border-radius: 0;
+	box-shadow: none;
+	padding: 0 !important;
+}
+
+.explanation-help-dialog-scrolled .explanation-card h3 {
+	margin-top: 0.75rem;
+	border-bottom-color: rgba(92, 64, 51, 0.18);
+}
+
+.explanation-help-dialog-scrolled .explanation-figure {
+	border: none;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+}
+
+.explanation-help-dialog-scrolled section + section {
+	margin-top: 1rem;
+}
+
+.explanation-root {
+	min-height: 100vh;
+	box-sizing: border-box;
+	font-family: Georgia, 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+	background: linear-gradient(
+		180deg,
+		var(--alchemy-wood-light) 0%,
+		var(--alchemy-wood) 45%,
+		var(--alchemy-wood-mid) 100%
+	);
+	box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.2);
+}
+
+.explanation-title {
+	margin: 0 0 10px;
+	font-size: clamp(1.75rem, 4vw, 2.125rem);
+	font-weight: 700;
+	letter-spacing: 0.02em;
+	line-height: 1.2;
+	color: var(--alchemy-parchment);
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+.explanation-subtitle {
+	margin: 0;
+	font-size: 1.05rem;
+	line-height: 1.6;
+	color: #d4c4a8;
+	max-width: 42rem;
+}
+
+.explanation-section-heading {
+	margin: 0 0 14px;
+	font-size: 1.35rem;
+	font-weight: 650;
+	line-height: 1.25;
+	color: var(--alchemy-parchment);
+	letter-spacing: 0.03em;
+	padding-bottom: 8px;
+	border-bottom: 1px solid var(--alchemy-frame);
+	text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+}
+
+.explanation-card {
+	background: var(--alchemy-parchment);
+	color: var(--alchemy-ink);
+	border: 1px solid var(--alchemy-frame);
+	border-radius: 10px;
+	box-shadow:
+		0 4px 14px rgba(0, 0, 0, 0.22),
+		inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+.explanation-card h3 {
+	margin: 1rem 0 0.375rem;
+	padding-bottom: 6px;
+	font-size: 1.125rem;
+	font-weight: 600;
+	line-height: 1.35;
+	letter-spacing: 0.02em;
+	color: var(--alchemy-ink);
+	border-bottom: 1px solid rgba(92, 64, 51, 0.32);
+}
+
+.explanation-card h3:first-child {
+	margin-top: 0;
+}
+
+.explanation-prose {
+	margin: 0;
+	font-size: 1rem;
+	line-height: 1.65;
+	color: var(--alchemy-ink);
+}
+
+.explanation-prose + .explanation-prose {
+	margin-top: 0.75rem;
+}
+
+.explanation-figure {
+	margin: 0;
+	border-radius: 10px;
+	overflow: hidden;
+	border: 1px solid var(--alchemy-frame);
+	background: var(--misc-container-dark);
+	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+.explanation-figure img {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+.explanation-back--top {
+	margin: 0;
+	padding: 0;
+	border: none;
+}
+
+.explanation-back a {
+	color: #e8dcc8;
+	font-weight: 600;
+	text-decoration: none;
+	transition: color 0.15s ease;
+}
+
+.explanation-back a:hover {
+	color: var(--alchemy-parchment);
+	text-decoration: underline;
+}
+
+.explanation-back a:focus-visible {
+	outline: 2px solid var(--alchemy-accent);
+	outline-offset: 3px;
+	border-radius: 2px;
+}
+
+/* Lists inside help cards (Items section) */
+.explanation-card ul {
+	margin: 0.5rem 0 0;
+	padding-left: 1.25rem;
+	color: var(--alchemy-ink);
+	line-height: 1.5;
+}
+
+.explanation-card li {
+	margin: 0.25rem 0;
+}
