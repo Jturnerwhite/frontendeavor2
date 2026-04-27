@@ -151,6 +151,8 @@ export default function Page() {
 			types: [...recipe.types],
 			quality,
 			ingredients: flattenLabSourcesToIngredients(ingredients),
+			saleValue: 0,
+			aspects: [],
 		};
 		const { rawIds, craftedItemIds } = collectConsumptionFromLabSources(ingredients);
 		if (rawIds.length > 0 || craftedItemIds.length > 0) {
