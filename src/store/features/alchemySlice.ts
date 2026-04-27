@@ -25,7 +25,30 @@ interface CursorState {
 	rotation: number;
 }
 
+/** In-progress "select ingredients" step (staged or legacy) before the lab is committed. */
+export type IngredientSelectionSetupState = {
+	stageIndex: number
+	/** One batch per completed stage in a staged recipe (same order as `consumptionLog`). */
+	committedBatches: AlchemyLabSource[][]
+	consumptionLog: Array<{ rawIds: string[]; craftedItemIds: string[] }>
+	consumedRawIds: string[]
+	consumedCraftedItemIds: string[]
+	selectedKeys: string[]
+}
+
+export const initialIngredientSelectionSetup: IngredientSelectionSetupState = {
+	stageIndex: 0,
+	committedBatches: [],
+	consumptionLog: [],
+	consumedRawIds: [],
+	consumedCraftedItemIds: [],
+	selectedKeys: [],
+}
+
 interface AlchemyState {
+	/** While choosing ingredients for a craft; cleared when the lab session starts or setup is reset. */
+	setupRecipeId?: string
+	ingredientSelectionSetup: IngredientSelectionSetupState
 	currentRecipe?: string;
 	playGrid?: HexMap;
 	/** Lab sidebar rows: raw ingredients and/or crafted items used as sources. */
@@ -42,6 +65,8 @@ interface AlchemyState {
 export type PersistedAlchemyState = Omit<AlchemyState, 'cursor'>;
 
 export const initialAlchemyState: AlchemyState = {
+	setupRecipeId: undefined,
+	ingredientSelectionSetup: { ...initialIngredientSelectionSetup },
 	currentRecipe: undefined,
 	playGrid: undefined,
 	ingredients: [],
@@ -61,6 +86,20 @@ const alchemySlice = createSlice({
 	initialState: initialAlchemyState,
 	reducers: {
 		hydrateFromStorage: (state, action: PayloadAction<PersistedAlchemyState>) => {
+			state.setupRecipeId = action.payload.setupRecipeId
+			if (action.payload.ingredientSelectionSetup) {
+				state.ingredientSelectionSetup = {
+					...initialIngredientSelectionSetup,
+					...action.payload.ingredientSelectionSetup,
+					committedBatches: action.payload.ingredientSelectionSetup.committedBatches ?? [],
+					consumptionLog: action.payload.ingredientSelectionSetup.consumptionLog ?? [],
+					consumedRawIds: action.payload.ingredientSelectionSetup.consumedRawIds ?? [],
+					consumedCraftedItemIds: action.payload.ingredientSelectionSetup.consumedCraftedItemIds ?? [],
+					selectedKeys: action.payload.ingredientSelectionSetup.selectedKeys ?? [],
+				}
+			} else {
+				state.ingredientSelectionSetup = { ...initialIngredientSelectionSetup }
+			}
 			state.currentRecipe = action.payload.currentRecipe;
 			state.playGrid = action.payload.playGrid;
 			const ing = action.payload.ingredients as unknown;
@@ -162,12 +201,26 @@ const alchemySlice = createSlice({
 		removePlacedComponent: (state, action: PayloadAction<string>) => {
 			//delete state.placedComponents[action.payload];
 		},
+		// Ingredient selection (pre-lab) — also cleared by `clearRecipe` and when entering the lab
+		startIngredientSelection: (state, action: PayloadAction<string>) => {
+			state.setupRecipeId = action.payload
+			state.ingredientSelectionSetup = { ...initialIngredientSelectionSetup }
+		},
+		replaceIngredientSelectionSetup: (state, action: PayloadAction<IngredientSelectionSetupState>) => {
+			state.ingredientSelectionSetup = action.payload
+		},
+		clearIngredientSelectionSetup: (state) => {
+			state.setupRecipeId = undefined
+			state.ingredientSelectionSetup = { ...initialIngredientSelectionSetup }
+		},
 		// Recipe
 		setCurrentRecipe: (state, action: PayloadAction<string>) => {
 			state.currentRecipe = action.payload;
 		},
 		clearRecipe: (state) => {
-			state.currentRecipe = undefined;
+			state.currentRecipe = undefined
+			state.setupRecipeId = undefined
+			state.ingredientSelectionSetup = { ...initialIngredientSelectionSetup }
 		},
 		/** Full reset to `initialAlchemyState` (abandon session / pick another recipe). */
 		resetSliceToInitial: (): AlchemyState => structuredClone(initialAlchemyState),

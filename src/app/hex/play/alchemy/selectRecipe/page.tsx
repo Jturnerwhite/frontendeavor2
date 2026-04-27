@@ -34,7 +34,8 @@ export default function SelectRecipePage() {
 	}
 
 	function chooseRecipe(recipe: Recipe) {
-		router.push(`/hex/play/alchemy/selectIngredients?recipeId=${encodeURIComponent(recipe.id)}`);
+		dispatch(AlchemyStoreSlice.actions.startIngredientSelection(recipe.id));
+		router.push('/hex/play/alchemy/selectIngredients');
 	}
 
 	if (Recipes.length === 0 || !selectedRecipe) {

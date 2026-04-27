@@ -106,14 +106,60 @@ function pruneExpiredMapState(persisted: PersistedMapState | null): PersistedMap
 	return { hexesOnCooldown: kept }
 }
 
-const persistedAlchemy = readPersistedAlchemy()
-const persistedPlayerBundle = readPersistedPlayer()
-const persistedHistory = readPersistedHistory()
-const persistedSettings = readPersistedSettings()
-const persistedMap = pruneExpiredMapState(readPersistedMap())
+export const store = configureStore({
+	reducer: {
+		Alchemy: Alchemy.reducer,
+		Player: Player.reducer,
+		History: History.reducer,
+		Toastify: Toastify.reducer,
+		Settings: Settings.reducer,
+		Map: Map.reducer,
+	},
+})
 
-function buildHistoryState(): typeof initialHistoryState {
-	let base =
+/**
+ * Read persisted slices from localStorage and dispatch hydrate actions.
+ *
+ * Must be invoked on the client AFTER React hydration (e.g. from a mount effect).
+ * Reading at module load made the server tree (always empty) diverge from the
+ * client tree (populated from localStorage), causing hydration mismatches anywhere
+ * UI was gated on persisted state. Starting empty and filling in post-hydration
+ * keeps the first client render byte-identical to SSR.
+ */
+export function hydratePersistedSlicesFromStorage() {
+	if (typeof window === 'undefined') return
+
+	const persistedAlchemy = readPersistedAlchemy()
+	if (persistedAlchemy !== null) {
+		const alchemyPayload: PersistedAlchemyState = {
+			setupRecipeId: persistedAlchemy.setupRecipeId ?? initialAlchemyState.setupRecipeId,
+			ingredientSelectionSetup: persistedAlchemy.ingredientSelectionSetup ?? {
+				...initialAlchemyState.ingredientSelectionSetup,
+			},
+			currentRecipe: persistedAlchemy.currentRecipe ?? initialAlchemyState.currentRecipe,
+			playGrid: persistedAlchemy.playGrid ?? initialAlchemyState.playGrid,
+			ingredients: persistedAlchemy.ingredients ?? initialAlchemyState.ingredients,
+			placedComponents: persistedAlchemy.placedComponents ?? initialAlchemyState.placedComponents,
+			placementUndoPast:
+				persistedAlchemy.placementUndoPast ?? initialAlchemyState.placementUndoPast,
+			placementUndoFuture:
+				persistedAlchemy.placementUndoFuture ?? initialAlchemyState.placementUndoFuture,
+		}
+		store.dispatch(Alchemy.actions.hydrateFromStorage(alchemyPayload))
+	}
+
+	const persistedPlayerBundle = readPersistedPlayer()
+	if (persistedPlayerBundle !== null) {
+		store.dispatch(
+			Player.actions.hydrateFromStorage({
+				...initialPlayerState,
+				...persistedPlayerBundle.player,
+			}),
+		)
+	}
+
+	const persistedHistory = readPersistedHistory()
+	let baseHistory: PersistedHistoryState =
 		persistedHistory !== null
 			? {
 					...initialHistoryState,
@@ -126,66 +172,41 @@ function buildHistoryState(): typeof initialHistoryState {
 	// One-time migration: last craft only lived on Player blob
 	if (
 		persistedPlayerBundle?.legacyLastCraft &&
-		base.completedCrafts.length === 0 &&
-		base.lastCompletedCraft === null
+		baseHistory.completedCrafts.length === 0 &&
+		baseHistory.lastCompletedCraft === null
 	) {
-		base = {
-			...base,
+		baseHistory = {
+			...baseHistory,
 			completedCrafts: [persistedPlayerBundle.legacyLastCraft],
 			lastCompletedCraft: persistedPlayerBundle.legacyLastCraft,
 		}
 	}
 
-	return base
-}
+	if (persistedHistory !== null || persistedPlayerBundle?.legacyLastCraft) {
+		store.dispatch(History.actions.hydrateFromStorage(baseHistory))
+	}
 
-/** Full root preload: merge persisted slices when present, else reducer defaults (avoids partial-preload typing issues). */
-const preloadedState = {
-	Alchemy:
-		persistedAlchemy !== null
-			? {
-					...initialAlchemyState,
-					...persistedAlchemy,
-					cursor: initialAlchemyState.cursor,
-				}
-			: initialAlchemyState,
-	Player:
-		persistedPlayerBundle !== null
-			? {
-					...initialPlayerState,
-					...persistedPlayerBundle.player,
-				}
-			: initialPlayerState,
-	History: buildHistoryState(),
-	Toastify: initialToastifyState,
-	Settings:
-		persistedSettings !== null
-			? {
-					...initialSettingsState,
-					...persistedSettings,
-					isFirstVisit: persistedSettings.isFirstVisit ?? initialSettingsState.isFirstVisit,
-				}
-			: initialSettingsState,
-	Map:
-		persistedMap !== null
-			? {
-					...initialMapState,
-					hexesOnCooldown: persistedMap.hexesOnCooldown ?? {},
-				}
-			: initialMapState,
-}
+	const persistedSettings = readPersistedSettings()
+	if (persistedSettings !== null) {
+		store.dispatch(
+			Settings.actions.hydrateFromStorage({
+				...initialSettingsState,
+				...persistedSettings,
+				isFirstVisit: persistedSettings.isFirstVisit ?? initialSettingsState.isFirstVisit,
+			}),
+		)
+	}
 
-export const store = configureStore({
-	reducer: {
-		Alchemy: Alchemy.reducer,
-		Player: Player.reducer,
-		History: History.reducer,
-		Toastify: Toastify.reducer,
-		Settings: Settings.reducer,
-		Map: Map.reducer,
-	},
-	preloadedState,
-})
+	const persistedMap = pruneExpiredMapState(readPersistedMap())
+	if (persistedMap !== null) {
+		store.dispatch(
+			Map.actions.hydrateFromStorage({
+				...initialMapState,
+				hexesOnCooldown: persistedMap.hexesOnCooldown ?? {},
+			}),
+		)
+	}
+}
 
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
@@ -197,6 +218,8 @@ export function hardResetPersistedGameState() {
 	if (typeof window === 'undefined') return
 
 	const alchemyPayload: PersistedAlchemyState = {
+		setupRecipeId: initialAlchemyState.setupRecipeId,
+		ingredientSelectionSetup: { ...initialAlchemyState.ingredientSelectionSetup },
 		currentRecipe: initialAlchemyState.currentRecipe,
 		playGrid: initialAlchemyState.playGrid,
 		ingredients: initialAlchemyState.ingredients,
@@ -231,6 +254,8 @@ let pageLifecycleHandlersRegistered = false
 
 function writePersistedSlices(state: RootState) {
 	const alchemyPersisted: PersistedAlchemyState = {
+		setupRecipeId: state.Alchemy.setupRecipeId,
+		ingredientSelectionSetup: state.Alchemy.ingredientSelectionSetup,
 		currentRecipe: state.Alchemy.currentRecipe,
 		playGrid: state.Alchemy.playGrid,
 		ingredients: state.Alchemy.ingredients,
@@ -302,7 +327,9 @@ function registerPersistPageLifecycleFlush() {
 }
 
 /**
- * Enables debounced localStorage writes for Alchemy, Player, History, Settings, and Map after synchronous preload (call once on mount).
+ * Enables debounced localStorage writes for Alchemy, Player, History, Settings, and Map.
+ * Call once on mount, after `hydratePersistedSlicesFromStorage()` so the immediate flush
+ * mirrors the just-rehydrated state rather than overwriting persisted data with empty initial state.
  * Writes are batched (~400ms) to avoid work on every dispatch; tab close triggers an immediate flush.
  */
 export function enableAlchemyPersistence() {

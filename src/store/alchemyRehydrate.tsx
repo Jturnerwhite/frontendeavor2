@@ -1,14 +1,20 @@
 'use client';
 
 import { useLayoutEffect } from 'react';
-import { enableAlchemyPersistence } from '@/store/store';
+import {
+	enableAlchemyPersistence,
+	hydratePersistedSlicesFromStorage,
+} from '@/store/store';
 
 /**
- * Enables debounced localStorage persistence after the store is created with synchronous preloaded state from
- * [store.ts](store.ts). No dispatch here — avoids racing sibling effects on refresh.
+ * Reads persisted slices from localStorage and dispatches their hydrate actions, then enables
+ * debounced persistence. Runs in a layout effect so the rehydrate dispatches commit before paint —
+ * the first React render still matches SSR output (empty initial state), avoiding hydration
+ * mismatches on any UI gated on persisted data.
  */
 export function AlchemyRehydrate() {
 	useLayoutEffect(() => {
+		hydratePersistedSlicesFromStorage();
 		enableAlchemyPersistence();
 	}, []);
 

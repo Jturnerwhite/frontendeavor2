@@ -1,9 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useCallback, useMemo } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import type { AppDispatch } from '@/store/store';
 import AlchemyStoreSlice from '@/store/features/alchemySlice';
 import { Recipes } from '@/app/hex/architecture/data/recipes';
 import type {
@@ -23,7 +24,6 @@ import {
 	getInventoryForRequirement,
 	partitionInventorySelectionKeys,
 } from '@/app/hex/architecture/helpers/recipeRequirements';
-import { formatRequiredIngredientEntry } from '@/app/hex/sharedComponents/requiredIngredients/requiredIngredientDisplay';
 import {
 	dedupeLabSources,
 	labSourcesFromInventorySelection,
@@ -64,43 +64,45 @@ function buildStageInventory(
 	};
 }
 
-function SelectIngredientsPageContent() {
+function enterLab(dispatch: AppDispatch, recipeId: string, sources: AlchemyLabSource[]) {
+	dispatch(AlchemyStoreSlice.actions.clearPlayGrid());
+	dispatch(AlchemyStoreSlice.actions.clearIngredientSelectionSetup());
+	dispatch(AlchemyStoreSlice.actions.setCurrentRecipe(recipeId));
+	dispatch(AlchemyStoreSlice.actions.addIngredients(dedupeLabSources(sources)));
+}
+
+export default function SelectIngredientsPage() {
 	const router = useRouter();
-	const searchParams = useSearchParams();
 	const dispatch = useAppDispatch();
-	const recipeId = searchParams.get('recipeId');
+	const setupRecipeId = useAppSelector((s) => s.Alchemy.setupRecipeId);
+	const ingredientSelectionSetup = useAppSelector((s) => s.Alchemy.ingredientSelectionSetup);
 
 	const inventoryItems = useAppSelector((state) => state.Player.inventory.crafted);
 	const rawIngredients = useAppSelector((state) => state.Player.inventory.raw);
 
 	const recipe = useMemo(
-		() => (recipeId ? Recipes.find((r) => r.id === recipeId) : undefined),
-		[recipeId],
+		() => (setupRecipeId ? Recipes.find((r) => r.id === setupRecipeId) : undefined),
+		[setupRecipeId],
 	);
 
 	const requiredList = recipe?.requiredIngredients ?? [];
 	const isStaged = requiredList.length > 0;
 
-	const [stageIndex, setStageIndex] = useState(0);
-	/** One batch per completed stage (same order as `consumptionLog`). */
-	const [committedBatches, setCommittedBatches] = useState<AlchemyLabSource[][]>([]);
-	const [consumptionLog, setConsumptionLog] = useState<Array<{ rawIds: string[]; craftedItemIds: string[] }>>([]);
-	const [consumedRawIds, setConsumedRawIds] = useState<Set<string>>(() => new Set());
-	const [consumedCraftedItemIds, setConsumedCraftedItemIds] = useState<Set<string>>(() => new Set());
-	const [selectedKeys, setSelectedKeys] = useState<Set<string>>(() => new Set());
-
-	useEffect(() => {
-		setSelectedKeys(new Set());
-	}, [stageIndex]);
-
-	useEffect(() => {
-		setStageIndex(0);
-		setCommittedBatches([]);
-		setConsumptionLog([]);
-		setConsumedRawIds(new Set());
-		setConsumedCraftedItemIds(new Set());
-		setSelectedKeys(new Set());
-	}, [recipeId]);
+	const stageIndex = ingredientSelectionSetup.stageIndex;
+	const committedBatches = ingredientSelectionSetup.committedBatches;
+	const consumptionLog = ingredientSelectionSetup.consumptionLog;
+	const consumedRawIds = useMemo(
+		() => new Set(ingredientSelectionSetup.consumedRawIds),
+		[ingredientSelectionSetup.consumedRawIds],
+	);
+	const consumedCraftedItemIds = useMemo(
+		() => new Set(ingredientSelectionSetup.consumedCraftedItemIds),
+		[ingredientSelectionSetup.consumedCraftedItemIds],
+	);
+	const selectedKeys = useMemo(
+		() => new Set(ingredientSelectionSetup.selectedKeys),
+		[ingredientSelectionSetup.selectedKeys],
+	);
 
 	const currentReq = isStaged ? requiredList[stageIndex] : undefined;
 
@@ -111,7 +113,14 @@ function SelectIngredientsPageContent() {
 				craftedItems: [] as Item[],
 			};
 		}
-		return buildStageInventory(recipe, stageIndex, rawIngredients, inventoryItems, consumedRawIds, consumedCraftedItemIds);
+		return buildStageInventory(
+			recipe,
+			stageIndex,
+			rawIngredients,
+			inventoryItems,
+			consumedRawIds,
+			consumedCraftedItemIds,
+		);
 	}, [recipe, stageIndex, rawIngredients, inventoryItems, consumedRawIds, consumedCraftedItemIds]);
 
 	const needForStage = currentReq ? (currentReq.qty ?? 1) : 0;
@@ -121,25 +130,43 @@ function SelectIngredientsPageContent() {
 		[selectedKeys, inventoryItems, rawIngredients],
 	);
 
+	const patchSetup = useCallback(
+		(patch: Partial<typeof ingredientSelectionSetup>) => {
+			dispatch(
+				AlchemyStoreSlice.actions.replaceIngredientSelectionSetup({
+					...ingredientSelectionSetup,
+					...patch,
+					// nested arrays: always pass full new setup from callers that replace wholesale
+				}),
+			);
+		},
+		[dispatch, ingredientSelectionSetup],
+	);
+
 	const toggleKey = useCallback(
 		(key: string) => {
-			setSelectedKeys((prev) => {
-				const next = new Set(prev);
-				if (next.has(key)) {
-					next.delete(key);
-					return next;
-				}
-				if (isStaged && currentReq) {
-					const cap = currentReq.qty ?? 1;
-					if (countSelectionUnits(prev, inventoryItems, rawIngredients) >= cap) {
-						return prev;
-					}
+			const next = new Set(ingredientSelectionSetup.selectedKeys);
+			if (next.has(key)) {
+				next.delete(key);
+			} else if (isStaged && currentReq) {
+				const cap = currentReq.qty ?? 1;
+				if (countSelectionUnits(new Set(ingredientSelectionSetup.selectedKeys), inventoryItems, rawIngredients) >= cap) {
+					return;
 				}
 				next.add(key);
-				return next;
-			});
+			} else {
+				next.add(key);
+			}
+			patchSetup({ selectedKeys: [...next] });
 		},
-		[isStaged, currentReq, inventoryItems, rawIngredients],
+		[
+			ingredientSelectionSetup.selectedKeys,
+			isStaged,
+			currentReq,
+			inventoryItems,
+			rawIngredients,
+			patchSetup,
+		],
 	);
 
 	const hasAnythingInStage =
@@ -165,9 +192,7 @@ function SelectIngredientsPageContent() {
 		if (!recipe) return;
 		if (!isStaged) {
 			if (chosenLabSourcesLegacy.length === 0) return;
-			dispatch(AlchemyStoreSlice.actions.clearPlayGrid());
-			dispatch(AlchemyStoreSlice.actions.setCurrentRecipe(recipe.id));
-			dispatch(AlchemyStoreSlice.actions.addIngredients(dedupeLabSources(chosenLabSourcesLegacy)));
+			enterLab(dispatch, recipe.id, chosenLabSourcesLegacy);
 			router.push('/hex/play/alchemy');
 			return;
 		}
@@ -178,28 +203,28 @@ function SelectIngredientsPageContent() {
 			stageInventory.ingredients,
 			stageInventory.craftedItems,
 		);
-		setConsumedRawIds((prev) => {
-			const n = new Set(prev);
-			consumption.rawIds.forEach((id) => n.add(id));
-			return n;
-		});
-		setConsumedCraftedItemIds((prev) => {
-			const n = new Set(prev);
-			consumption.craftedItemIds.forEach((id) => n.add(id));
-			return n;
-		});
-		setSelectedKeys(new Set());
+		const newConsumedRaw = new Set(ingredientSelectionSetup.consumedRawIds);
+		consumption.rawIds.forEach((id) => newConsumedRaw.add(id));
+		const newConsumedCrafted = new Set(ingredientSelectionSetup.consumedCraftedItemIds);
+		consumption.craftedItemIds.forEach((id) => newConsumedCrafted.add(id));
+
 		const isLast = stageIndex + 1 >= requiredList.length;
 		if (isLast) {
 			const allSources = dedupeLabSources([...committedBatches.flat(), ...batch]);
-			dispatch(AlchemyStoreSlice.actions.clearPlayGrid());
-			dispatch(AlchemyStoreSlice.actions.setCurrentRecipe(recipe.id));
-			dispatch(AlchemyStoreSlice.actions.addIngredients(allSources));
+			enterLab(dispatch, recipe.id, allSources);
 			router.push('/hex/play/alchemy');
 		} else {
-			setCommittedBatches((prev) => [...prev, batch]);
-			setConsumptionLog((prev) => [...prev, consumption]);
-			setStageIndex((i) => i + 1);
+			dispatch(
+				AlchemyStoreSlice.actions.replaceIngredientSelectionSetup({
+					...ingredientSelectionSetup,
+					stageIndex: stageIndex + 1,
+					committedBatches: [...ingredientSelectionSetup.committedBatches, batch],
+					consumptionLog: [...ingredientSelectionSetup.consumptionLog, consumption],
+					consumedRawIds: [...newConsumedRaw],
+					consumedCraftedItemIds: [...newConsumedCrafted],
+					selectedKeys: [],
+				}),
+			);
 		}
 	}, [
 		recipe,
@@ -217,6 +242,7 @@ function SelectIngredientsPageContent() {
 		requiredList.length,
 		dispatch,
 		router,
+		ingredientSelectionSetup,
 	]);
 
 	const handleBack = useCallback(() => {
@@ -229,21 +255,22 @@ function SelectIngredientsPageContent() {
 			router.push('/hex/play/alchemy/selectRecipe');
 			return;
 		}
-		setCommittedBatches((prev) => prev.slice(0, -1));
-		setConsumptionLog((prev) => prev.slice(0, -1));
-		setConsumedRawIds((prev) => {
-			const n = new Set(prev);
-			last.rawIds.forEach((id) => n.delete(id));
-			return n;
-		});
-		setConsumedCraftedItemIds((prev) => {
-			const n = new Set(prev);
-			last.craftedItemIds.forEach((id) => n.delete(id));
-			return n;
-		});
-		setStageIndex((i) => i - 1);
-		setSelectedKeys(new Set());
-	}, [isStaged, stageIndex, consumptionLog, router]);
+		const newConsumedRaw = new Set(ingredientSelectionSetup.consumedRawIds);
+		last.rawIds.forEach((id) => newConsumedRaw.delete(id));
+		const newConsumedCrafted = new Set(ingredientSelectionSetup.consumedCraftedItemIds);
+		last.craftedItemIds.forEach((id) => newConsumedCrafted.delete(id));
+		dispatch(
+			AlchemyStoreSlice.actions.replaceIngredientSelectionSetup({
+				...ingredientSelectionSetup,
+				stageIndex: stageIndex - 1,
+				committedBatches: ingredientSelectionSetup.committedBatches.slice(0, -1),
+				consumptionLog: ingredientSelectionSetup.consumptionLog.slice(0, -1),
+				consumedRawIds: [...newConsumedRaw],
+				consumedCraftedItemIds: [...newConsumedCrafted],
+				selectedKeys: [],
+			}),
+		);
+	}, [isStaged, stageIndex, consumptionLog, router, dispatch, ingredientSelectionSetup]);
 
 	const primaryDisabled = isStaged ? !canProceedStaged : !canProceedLegacy;
 
@@ -292,7 +319,7 @@ function SelectIngredientsPageContent() {
 		);
 	}
 
-	if (!recipeId || !recipe) {
+	if (!setupRecipeId || !recipe) {
 		return (
 			<div className="alchemy-setup-flow">
 				<h1>Invalid recipe</h1>
@@ -367,13 +394,5 @@ function SelectIngredientsPageContent() {
 				/>
 			)}
 		</div>
-	);
-}
-
-export default function SelectIngredientsPage() {
-	return (
-		<Suspense fallback={<div style={{ padding: '1rem' }}>Loading…</div>}>
-			<SelectIngredientsPageContent />
-		</Suspense>
 	);
 }
