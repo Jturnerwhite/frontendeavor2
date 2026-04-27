@@ -2,7 +2,7 @@ import { ALCH_ELEMENT, ITEM_TAG, SHAPE_NAME } from '@/app/hex/architecture/enums
 import { publicAsset } from '@/lib/publicAsset'
 import { ItemAspectComp, Recipe } from '@/app/hex/architecture/typings'
 import { IngredientBases } from './ingredientBases';
-import { SharedComponentAspects, ItemAspects } from '@/app/hex/architecture/data/itemAspects';
+import { SharedComponentAspects, AllItemAspects, ASPECT_CATEGORY } from '@/app/hex/architecture/data/itemAspects';
 
 const IMAGE_PATH = publicAsset("/art/potions/");
 
@@ -24,12 +24,14 @@ export const Recipes:Array<Recipe> = [
 		],
 		goalsAndRewards: {
 			[ALCH_ELEMENT.WATER]: [
-				{ goal: 1, reward: SharedComponentAspects['sharedWater1'] },
+				{ goal: 1, reward: { ...SharedComponentAspects['sharedWater1'], weighting: 0, category: ASPECT_CATEGORY.CUSTOM } },
 				{
 					goal: 4,
 					reward: {
 						id: 'HP-1-CUST-WATER-2',
 						name: 'Water Infusion 2',
+						weighting: 0,
+						category: ASPECT_CATEGORY.CUSTOM,
 						description: `An item's additional water component.`,
 						type: 'component',
 						value: {
@@ -44,6 +46,8 @@ export const Recipes:Array<Recipe> = [
 					reward: {
 						id: 'HP-1-CUST-WATER-3',
 						name: 'Water Infusion 3',
+						weighting: 0,
+						category: ASPECT_CATEGORY.CUSTOM,
 						description: `An item's additional water component.`,
 						type: 'component',
 						value: {
@@ -60,6 +64,8 @@ export const Recipes:Array<Recipe> = [
 					reward: {
 						id: 'HP-1-EARTH-1',
 						name: 'Earth Infusion 1',
+						weighting: 0,
+						category: ASPECT_CATEGORY.CUSTOM,
 						description: `An item's additional earth component.`,
 						type: 'component',
 						value: {
@@ -73,6 +79,8 @@ export const Recipes:Array<Recipe> = [
 					reward: {
 						id: 'HP-1-EARTH-2',
 						name: 'Earth Infusion 2',
+						weighting: 0,
+						category: ASPECT_CATEGORY.CUSTOM,
 						description: `An item's additional earth component.`,
 						type: 'component',
 						value: {
@@ -86,6 +94,8 @@ export const Recipes:Array<Recipe> = [
 					reward: {
 						id: 'HP-1-EARTH-3',
 						name: 'Earth Infusion 3',
+						weighting: 0,
+						category: ASPECT_CATEGORY.CUSTOM,
 						description: `An item's additional earth component.`,
 						type: 'component',
 						value: {
@@ -102,6 +112,8 @@ export const Recipes:Array<Recipe> = [
 					reward: {
 						id: 'HP-1-WIND-1',
 						name: 'Wind Infusion 1',
+						weighting: 0,
+						category: ASPECT_CATEGORY.CUSTOM,
 						description: `An item's additional wind component.`,
 						type: 'component',
 						value: {
@@ -116,6 +128,8 @@ export const Recipes:Array<Recipe> = [
 					reward: {
 						id: 'HP-1-WIND-2',
 						name: 'Wind Infusion 2',
+						weighting: 0,
+						category: ASPECT_CATEGORY.CUSTOM,
 						description: `An item's additional wind component.`,
 						type: 'component',
 						value: {
@@ -130,6 +144,8 @@ export const Recipes:Array<Recipe> = [
 					reward: {
 						id: 'HP-1-WIND-3',
 						name: 'Wind Infusion 3',
+						weighting: 0,
+						category: ASPECT_CATEGORY.CUSTOM,
 						description: `An item's additional wind component.`,
 						type: 'component',
 						value: {
@@ -174,6 +190,8 @@ export const Recipes:Array<Recipe> = [
 					reward: {
 						id: 'MANA-W-1',
 						name: 'Mana water tier 1',
+						weighting: 0,
+						category: ASPECT_CATEGORY.CUSTOM,
 						description: '',
 						type: 'component',
 						value: { element: ALCH_ELEMENT.WATER, shape: SHAPE_NAME.HALFLINE } as ItemAspectComp,
@@ -184,6 +202,8 @@ export const Recipes:Array<Recipe> = [
 					reward: {
 						id: 'MANA-W-2',
 						name: 'Mana water tier 2',
+						weighting: 0,
+						category: ASPECT_CATEGORY.CUSTOM,
 						description: '',
 						type: 'component',
 						value: {
@@ -198,6 +218,8 @@ export const Recipes:Array<Recipe> = [
 					reward: {
 						id: 'MANA-W-3',
 						name: 'Mana water tier 3',
+						weighting: 0,
+						category: ASPECT_CATEGORY.CUSTOM,
 						description: '',
 						type: 'component',
 						value: {
@@ -214,6 +236,8 @@ export const Recipes:Array<Recipe> = [
 					reward: {
 						id: 'MANA-WI-1',
 						name: 'Mana wind tier 1',
+						weighting: 0,
+						category: ASPECT_CATEGORY.CUSTOM,
 						description: '',
 						type: 'component',
 						value: {
@@ -228,6 +252,8 @@ export const Recipes:Array<Recipe> = [
 					reward: {
 						id: 'MANA-WI-2',
 						name: 'Mana wind tier 2',
+						weighting: 0,
+						category: ASPECT_CATEGORY.CUSTOM,
 						description: '',
 						type: 'component',
 						value: {
@@ -242,6 +268,8 @@ export const Recipes:Array<Recipe> = [
 					reward: {
 						id: 'MANA-WI-3',
 						name: 'Mana wind tier 3',
+						weighting: 0,
+						category: ASPECT_CATEGORY.CUSTOM,
 						description: '',
 						type: 'component',
 						value: {
@@ -258,6 +286,8 @@ export const Recipes:Array<Recipe> = [
 					reward: {
 						id: 'MANA-A-1',
 						name: 'Mana aether tier 1',
+						weighting: 0,
+						category: ASPECT_CATEGORY.CUSTOM,
 						description: '',
 						type: 'component',
 						value: {
@@ -272,6 +302,8 @@ export const Recipes:Array<Recipe> = [
 					reward: {
 						id: 'MANA-A-2',
 						name: 'Mana aether tier 2',
+						weighting: 0,
+						category: ASPECT_CATEGORY.CUSTOM,
 						description: '',
 						type: 'component',
 						value: {
@@ -286,6 +318,8 @@ export const Recipes:Array<Recipe> = [
 					reward: {
 						id: 'MANA-A-3',
 						name: 'Mana aether tier 3',
+						weighting: 0,
+						category: ASPECT_CATEGORY.CUSTOM,
 						description: '',
 						type: 'component',
 						value: {
@@ -320,6 +354,8 @@ export const Recipes:Array<Recipe> = [
 					reward: {
 						id: 'FSH-CH-1',
 						name: 'Chaos component 1',
+						weighting: 0,
+						category: ASPECT_CATEGORY.CUSTOM,
 						description: '',
 						type: 'component',
 						value: {
@@ -334,6 +370,8 @@ export const Recipes:Array<Recipe> = [
 					reward: {
 						id: 'FSH-CH-2',
 						name: 'Chaos component 2',
+						weighting: 0,
+						category: ASPECT_CATEGORY.CUSTOM,
 						description: '',
 						type: 'component',
 						value: {
@@ -348,6 +386,8 @@ export const Recipes:Array<Recipe> = [
 					reward: {
 						id: 'FSH-CH-3',
 						name: 'Chaos component 3',
+						weighting: 0,
+						category: ASPECT_CATEGORY.CUSTOM,
 						description: '',
 						type: 'component',
 						value: {
@@ -359,14 +399,14 @@ export const Recipes:Array<Recipe> = [
 				},
 			],
 			[ALCH_ELEMENT.WATER]: [
-				{ goal: 0, reward: ItemAspects['castingAccuracy1'] },
-				{ goal: 5, reward: ItemAspects['castingAccuracy2'] },
-				{ goal: 10, reward: ItemAspects['castingAccuracy3'] },
+				{ goal: 0, reward: { ...AllItemAspects['castingAccuracy1'], weighting: 0, category: ASPECT_CATEGORY.CUSTOM } },
+				{ goal: 5, reward: { ...AllItemAspects['castingAccuracy2'], weighting: 0, category: ASPECT_CATEGORY.CUSTOM } },
+				{ goal: 10, reward: { ...AllItemAspects['castingAccuracy3'], weighting: 0, category: ASPECT_CATEGORY.CUSTOM } },
 			],
 			[ALCH_ELEMENT.WIND]: [
-				{ goal: 0, reward: ItemAspects['reelSpeed1'] },
-				{ goal: 5, reward: ItemAspects['reelSpeed2'] },
-				{ goal: 10, reward: ItemAspects['reelSpeed3'] },
+				{ goal: 0, reward: { ...AllItemAspects['reelSpeed1'], weighting: 0, category: ASPECT_CATEGORY.CUSTOM } },
+				{ goal: 5, reward: { ...AllItemAspects['reelSpeed2'], weighting: 0, category: ASPECT_CATEGORY.CUSTOM } },
+				{ goal: 10, reward: { ...AllItemAspects['reelSpeed3'], weighting: 0, category: ASPECT_CATEGORY.CUSTOM } },
 			],
 		},
 	}

@@ -1,6 +1,6 @@
-import { ALCH_ELEMENT, ITEM_TAG, SHAPE_NAME } from '@/app/hex/architecture/enums'
 import { publicAsset } from '@/lib/publicAsset'
-import { AlchComponent, IngredientBase, IngredientCompSpec } from '../typings';
+import { ALCH_ELEMENT, ITEM_TAG, SHAPE_NAME } from '@/app/hex/architecture/enums'
+import { AlchComponent, IngredientBase, IngredientCompSpec } from '@/app/hex/architecture/typings';
 import { GrowthPaths } from '@/app/hex/architecture/data/growthPaths';
 
 const IMAGE_PATH = publicAsset("/art/ingredients/");
@@ -10,6 +10,7 @@ export const IngredientBases:Record<string, IngredientBase> = {
 		id: "JarbaLeaf",
 		name: "Jarba Leaf",
 		ingTier: 0,
+		baseSaleValue: 1,
 		image: IMAGE_PATH + "jarba.png",
 		types: [ITEM_TAG.PLANT],
 		possibleComps: [
@@ -28,12 +29,13 @@ export const IngredientBases:Record<string, IngredientBase> = {
 				possibleShapes: GrowthPaths.WAVY.slice(0, 2),
 				chance: 0.5
 			}
-		]
+		],
 	},
 	FruguBerry: {
 		id: "FruguBerry",
 		name: "Frugu Berry",
 		ingTier: 0,
+		baseSaleValue: 2,
 		image: IMAGE_PATH + "frugu.png",
 		types: [ITEM_TAG.PLANT],
 		possibleComps: [
@@ -50,12 +52,13 @@ export const IngredientBases:Record<string, IngredientBase> = {
 				possibleShapes: GrowthPaths.SPIRAL.slice(0, 2),
 				chance: 0.25
 			}
-		]
+		],
 	},
 	AeridGrass: {
 		id: "AeridGrass",
 		name: "Aerid Grass",
 		ingTier: 0,
+		baseSaleValue: 2,
 		image: IMAGE_PATH + "aerid.png",
 		types: [ITEM_TAG.PLANT],
 		possibleComps: [
@@ -73,12 +76,13 @@ export const IngredientBases:Record<string, IngredientBase> = {
 				possibleShapes: GrowthPaths.WAVY.slice(0, 2),
 				chance: 0.25
 			}
-		]
+		],
 	},
 	Pinecap: {
 		id: "Pinecap",
 		name: "Pinecap",
 		ingTier: 0,
+		baseSaleValue: 3,
 		image: IMAGE_PATH + "pinecap.png",
 		types: [ITEM_TAG.PLANT],
 		possibleComps: [
@@ -101,6 +105,7 @@ export const IngredientBases:Record<string, IngredientBase> = {
 		id: "CragLichen",
 		name: "Crag Lichen",
 		ingTier: 0,
+		baseSaleValue: 2,
 		image: IMAGE_PATH + "crag.png",
 		types: [ITEM_TAG.PLANT],
 		possibleComps: [
@@ -123,6 +128,7 @@ export const IngredientBases:Record<string, IngredientBase> = {
 		id: "Sunpetal",
 		name: "Sunpetal",
 		ingTier: 0,
+		baseSaleValue: 2,
 		image: IMAGE_PATH + "sunpetal.png",
 		types: [ITEM_TAG.PLANT, ITEM_TAG.MAGICAL],
 		possibleComps: [
@@ -145,6 +151,7 @@ export const IngredientBases:Record<string, IngredientBase> = {
 		id: "PineWood",
 		name: "Pine Wood",
 		ingTier: 0,
+		baseSaleValue: 5,
 		image: IMAGE_PATH + "pinewood.png",
 		types: [ITEM_TAG.PLANT],
 		possibleComps: [
@@ -168,6 +175,7 @@ export const IngredientBases:Record<string, IngredientBase> = {
 		id: "Frillish",
 		name: "Frillish",
 		ingTier: 0,
+		baseSaleValue: 3,
 		image: IMAGE_PATH + "/fish/frilled.png",
 		types: [ITEM_TAG.ANIMAL_MAT],
 		possibleComps: [
@@ -191,6 +199,7 @@ export const IngredientBases:Record<string, IngredientBase> = {
 		id: "JusThead",
 		name: "Jus Thead",
 		ingTier: 0,
+		baseSaleValue: 1,
 		image: IMAGE_PATH + "/fish/justhead.png",
 		types: [ITEM_TAG.ANIMAL_MAT],
 		possibleComps: [
@@ -230,6 +239,7 @@ export const IngredientBases:Record<string, IngredientBase> = {
 		id: "Grumbo",
 		name: "Grumbo",
 		ingTier: 0,
+		baseSaleValue: 10,
 		image: IMAGE_PATH + "/fish/simple.png",
 		types: [ITEM_TAG.ANIMAL_MAT],
 		possibleComps: [

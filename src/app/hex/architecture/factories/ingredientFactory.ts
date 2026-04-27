@@ -1,6 +1,8 @@
 import { COMPONENT_SHAPE_VALUES, SHAPE_NAME } from '@/app/hex/architecture/enums';
 import { GenerateTempId } from '@/app/hex/architecture/helpers/alchHelpers';
-import type { AlchComponent, Ingredient, IngredientBase, IngredientCompSpec } from '@/app/hex/architecture/typings';
+import type { AlchComponent, Ingredient, IngredientAspectSpec, IngredientBase, IngredientCompSpec, ItemAspect } from '@/app/hex/architecture/typings';
+import { GetItemsByWeight } from '@/app/hex/architecture/helpers/miscUtils';
+import { ASPECT_CATEGORY, AspectCategoryWeightModifiers, BaseIngredientAspects } from '@/app/hex/architecture/data/itemAspects';
 
 /**
  * Sets the quality breakpoints for node and link generation.
@@ -90,7 +92,6 @@ function GenerateShape(ingBase: IngredientBase, compSpec: IngredientCompSpec, qu
 
 function GenerateLinkSpots(shapeName: SHAPE_NAME, quality: number): number[]|undefined {
 	let linkSpots:number[] = [];
-	console.log('shapeName', shapeName);
 	const nodes = Object.values(COMPONENT_SHAPE_VALUES[shapeName]).reduce((acc, curr) => acc + curr, 0);
 	// return a [] of 1 or 0 where 1 represents a link, but only if the shape has a link spot
 	const shape = Object.values(COMPONENT_SHAPE_VALUES[shapeName]);
@@ -124,7 +125,6 @@ export function GenerateSizeRating(ingBase: IngredientBase, quality: number): nu
 	const tierModifier = ING_TIER_QUALITY_MODIFIERS[ingBase.ingTier];
 	// Roll a new number for size
 	const sizeNumber = randomBell0to100(20, 14);
-	console.log('sizeNumber', sizeNumber);
 	if(quality <= 1) {
 		return 0;
 	} else if(quality == 100) {
@@ -144,20 +144,75 @@ export function GenerateSizeRating(ingBase: IngredientBase, quality: number): nu
 	}
 }
 
+function GetAspectPools(ingBase: IngredientBase): Array<ItemAspect> {
+	let aspectPools = [...Object.values(BaseIngredientAspects)];
+	if(ingBase.additionalAspectPools) {
+		aspectPools = [...aspectPools, ...ingBase.additionalAspectPools.reduce((acc, curr) => {
+			return [...acc, ...Object.values(curr)];
+		}, [] as Array<ItemAspect>)];
+	}
+	return aspectPools.map(aspect => {
+		return {
+			...aspect,
+			weighting: aspect.weighting * (AspectCategoryWeightModifiers[aspect.category as ASPECT_CATEGORY] ?? 10),
+		} as ItemAspect;
+	});
+}
+
+function GenerateAspects(ingBase: IngredientBase): Array<ItemAspect> {
+	// The pool of all aspects ingredients are allowed to pull from
+	const aspectPools = GetAspectPools(ingBase);
+
+	// Roll 1-100, to get a number of aspects to generate
+	const numberOfAspects = Math.min(4, Math.floor(randomBell0to100(20, 14) / 20));
+
+	const aspects: Array<ItemAspect> = [];
+	GetItemsByWeight<ItemAspect>(aspectPools, 'weighting', 'id', numberOfAspects, true).forEach(aspect => {
+		aspects.push(aspect);
+	});
+
+	return aspects;
+}
+
+function GenerateSaleValue(ingredient: Ingredient, baseIngredient: IngredientBase): number {
+	let output = ingredient.saleValue;
+	output *= ((baseIngredient.ingTier + 1) * ((ingredient.quality / 15) + 1));
+	output = Math.floor(output);
+
+	return output;
+}
+
 export function CreateIngredient(ingBase: IngredientBase): Ingredient {
 	const newIng = {
 		id: GenerateTempId(),
 		baseIngId: ingBase.id,
-		quality: 1,
+		quality: GenerateQuality(),
+		saleValue: ingBase.baseSaleValue ?? 1,
 		comps: [],
 		sizeRating: 0,
+		aspects: GenerateAspects(ingBase),
 	} as Ingredient;
+
+	newIng.sizeRating = GenerateSizeRating(ingBase, newIng.quality);
+
+	// Apply ItemAspect Adjustments to the ingredient quality
+	newIng.aspects.forEach(aspectSpec => {
+		if(aspectSpec.category === ASPECT_CATEGORY.QUALITY) {
+			newIng.quality = Math.min(100, Math.max(0, newIng.quality + (aspectSpec.value as number)));
+		}
+	});
+
+	newIng.saleValue = GenerateSaleValue(newIng, ingBase);
+
+	// Apply ItemAspect Adjustments to the ingredient sale value
+	newIng.aspects.forEach(aspectSpec => {
+		if(aspectSpec.category === ASPECT_CATEGORY.SALE_VALUE) {
+			newIng.saleValue *= aspectSpec.value as number;
+		}
+	});
+
 	ingBase.possibleComps.forEach((compSpec, index) => {
 		let newComp = null as AlchComponent | null;
-		newIng.quality = GenerateQuality();
-		newIng.sizeRating = GenerateSizeRating(ingBase, newIng.quality);
-		console.log('newIng.sizeRating', newIng.sizeRating);
-		console.log('shapeName', compSpec);
 
 		if ('possibleShapes' in compSpec) {
 			if (
@@ -186,6 +241,11 @@ export function CreateIngredient(ingBase: IngredientBase): Ingredient {
 			newIng.comps.push(newComp);
 		}
 	});
+
+	newIng.saleValue = GenerateSaleValue(newIng, ingBase);
+
+	
+	console.log(newIng.aspects.map(aspect => aspect.id).join(', '));
 
 	return newIng;
 }

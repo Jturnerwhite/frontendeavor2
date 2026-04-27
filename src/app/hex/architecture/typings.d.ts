@@ -22,13 +22,23 @@ export type IngredientCompSpec = {
 	chance?: number // If not defined, assumed to be 100%
 }
 
+export type IngredientAspectSpec = {
+	id: string,
+	aspect: ItemAspect,
+	weighting: number
+}
+
 export type IngredientBase = {
 	id: string,
 	name: string,
-	ingTier: number, // A metric for identifying better ingredients, affects comp creation / link generation
 	image?: string,
+
+	ingTier: number, // A metric for identifying better ingredients, affects comp creation / link generation
+	baseSaleValue?: number,
 	types: ITEM_TAG[]
 	possibleComps: Array<IngredientCompSpec|AlchComponent>
+	additionalAspectPools?: Array<Record<string, ItemAspect>>
+
 }
 
 /**
@@ -38,8 +48,10 @@ export type Ingredient = {
 	id: string,
 	baseIngId: string,
 	quality: number,
+	saleValue: number,
 	comps: AlchComponent[],
 	sizeRating: number, // 1 to 5, small to large, used to determine comp creation / link generation
+	aspects: Array<ItemAspect>
 }
 
 export type Item = {
@@ -48,9 +60,11 @@ export type Item = {
 	baseRecipeId?: string,
 	description: string,
 	quality: number,
+	saleValue: number,
 	comps: AlchComponent[],
 	types: ITEM_TAG[],
 	ingredients: Ingredient[],
+	aspects: Array<ItemAspect>
 }
 
 export type Equipment = Item & {
@@ -60,6 +74,8 @@ export type Equipment = Item & {
 
 export type ItemAspect = {
 	id: string,
+	category: string,
+	weighting: number, // Base weight is 1000
 	name:string,
 	description:string,
 	type: 'stat' | 'functional' | 'flag' | 'component'

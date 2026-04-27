@@ -17,6 +17,7 @@
 
 .map-left-panel {
 	width: 25%;
+    min-width: 600px;
 	flex-shrink: 0;
 	box-sizing: border-box;
 	padding: 16px 18px;

@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from "react";
 import { Recipes } from "@/app/hex/architecture/data/recipes";
-import { AlchComponent, Ingredient, IngredientBase, IngredientCompSpec, Item, Recipe } from "@/app/hex/architecture/typings";
+import { AlchComponent, Ingredient, IngredientAspectSpec, IngredientBase, IngredientCompSpec, Item, ItemAspect, Recipe } from "@/app/hex/architecture/typings";
 import { IngredientBases } from '@/app/hex/architecture/data/ingredientBases';
 import AlchCompWithBacking from "@/app/hex/sharedComponents/alchComponent/alchCompWithBacking";
 import { styleHelper } from '@/app/hex/architecture/helpers/styleHelper';
@@ -33,27 +33,35 @@ const InventoryLineItem: React.FC<InventoryLineItemProps> = ({ item, ingredient,
 
 	let key = '';
 	let name = '';
-	let quality = 0;
+	let quality = -1;
 	let types: string[] = [];
 	let comps: AlchComponent[] = [];
 	let possibleComps: (IngredientCompSpec|AlchComponent)[] = [];
+	let possibleAspects: (ItemAspect)[] = [];
+	let saleValue = 0;
 	if(item) {
 		key = item.name;
 		name = item.name;
 		quality = item.quality;
 		types = item.types;
 		comps = item.comps;
+		possibleAspects = item.aspects ?? [];
+		saleValue = item.saleValue;
 	} else if(ingredient) {
 		key = ingredient.id;
 		name = IngredientBases[ingredient.baseIngId].name;
 		quality = ingredient.quality;
 		types = IngredientBases[ingredient.baseIngId].types;
 		comps = ingredient.comps;
+		possibleAspects = ingredient.aspects ?? [];
+		saleValue = ingredient.saleValue;
 	} else if(ingredientBase) {
 		key = ingredientBase.id;
 		name = ingredientBase.name;
 		types = ingredientBase.types;
 		possibleComps = ingredientBase.possibleComps;
+		possibleAspects = [];//ingredientBase.additionalAspectPools ? Object.values(ingredientBase.additionalAspectPools).flat() : [];
+		saleValue = ingredientBase.baseSaleValue ?? 1;
 	}
 
 	function getCompsToDisplay():Array<JSX.Element> {
@@ -76,6 +84,13 @@ const InventoryLineItem: React.FC<InventoryLineItemProps> = ({ item, ingredient,
 
 			return (<AlchCompWithBacking key={'possible-' + name + '-' + compIndex} keyString={'possible-' + name + '-' + compIndex} alchData={alchData} displaySize={displaySize} />);
 		}));
+		return output;
+	}
+
+	function getAspectsToDisplay():Array<JSX.Element> {
+		let output:Array<JSX.Element> = possibleAspects.map((aspect, aspectIndex) => {
+			return (<label key={'aspect-' + name + '-' + aspectIndex}>{aspect.name}</label>);
+		});
 		return output;
 	}
 
@@ -110,12 +125,21 @@ const InventoryLineItem: React.FC<InventoryLineItemProps> = ({ item, ingredient,
 				)}
 			</div>
 			<div className={styles.lineInstData}>
-				{quality > 0 && (
-					<div className={styles.qualityBar}>
-						<span className={styleHelper(styles.qualityBarFill, qualityClass)} style={{ width: `${quality}%` }}></span>
+				{quality > -1 && (<>
+					<div className={styles.lineQualityValue}>
+						<div className={styles.qualityBar}>
+							<span className={styleHelper(styles.qualityBarFill, qualityClass)} style={{ width: `${quality}%` }}></span>
+						</div>
+						<label className={styles.lineQualityText}>{quality}%</label>
+						<label className={styles.lineValueText}>${saleValue}</label>
+					</div>
+				</>)}
+				<div className={styles.lineComps}>{getCompsToDisplay()}</div>
+				{possibleAspects.length > 0 && (
+					<div className={styles.lineAspects}>
+						{getAspectsToDisplay()}
 					</div>
 				)}
-				<div className={styles.lineComps}>{getCompsToDisplay()}</div>
 			</div>
 		</>
 	);
@@ -252,7 +276,7 @@ const ComplexInventoryItem: React.FC<ComplexInventoryItemProps> = ({ items, disp
 					</span>
 				</span>
 				<span className={styles.complexEnd} aria-hidden>
-					V
+					❯
 				</span>
 			</summary>
 			<div className={styles.complexTools}>
