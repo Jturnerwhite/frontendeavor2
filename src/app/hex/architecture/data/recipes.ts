@@ -2,11 +2,11 @@ import { ALCH_ELEMENT, ITEM_TAG, SHAPE_NAME } from '@/app/hex/architecture/enums
 import { publicAsset } from '@/lib/publicAsset'
 import { ItemAspectComp, Recipe } from '@/app/hex/architecture/typings'
 import { IngredientBases } from './ingredientBases';
-import { SharedComponentAspects, AllItemAspects, ASPECT_CATEGORY } from '@/app/hex/architecture/data/itemAspects';
+import { AllItemAspects, ASPECT_CATEGORY } from '@/app/hex/architecture/data/itemAspects';
 
 const IMAGE_PATH = publicAsset("/art/potions/");
 
-export const Recipes:Array<Recipe> = [
+const PotionRecipes:Array<Recipe> = [
 	{
 		id: 'HP-1', 
 		description: 'Healing Potion', 
@@ -24,7 +24,7 @@ export const Recipes:Array<Recipe> = [
 		],
 		goalsAndRewards: {
 			[ALCH_ELEMENT.WATER]: [
-				{ goal: 1, reward: { ...SharedComponentAspects['sharedWater1'], weighting: 0, category: ASPECT_CATEGORY.CUSTOM } },
+				{ goal: 1, reward: AllItemAspects.sharedWater1 },
 				{
 					goal: 4,
 					reward: {
@@ -332,9 +332,12 @@ export const Recipes:Array<Recipe> = [
 			],
 		},
 	},
+];
+
+const FishingRodRecipes:Array<Recipe> = [
 	{
 		id: 'FSH-R-1',
-		image: IMAGE_PATH + 'mana.png',
+		image: publicAsset("/art/") + 'equipment/bad-rod.png',
 		description: 'Janky Fishing Rod',
 		types: [ITEM_TAG.FISHING_ROD],
 		elementScores: [
@@ -348,6 +351,16 @@ export const Recipes:Array<Recipe> = [
 			{ type: ITEM_TAG.PLANT },
 		],
 		goalsAndRewards: {
+			[ALCH_ELEMENT.WATER]: [
+				{ goal: 0, reward: AllItemAspects.castingAccuracy1 },
+				{ goal: 5, reward: AllItemAspects.castingAccuracy2 },
+				{ goal: 10, reward: AllItemAspects.castingAccuracy3 },
+			],
+			[ALCH_ELEMENT.WIND]: [
+				{ goal: 0, reward: AllItemAspects.reelSpeed1 },
+				{ goal: 5, reward: AllItemAspects.reelSpeed2 },
+				{ goal: 10, reward: AllItemAspects.reelSpeed3 },
+			],
 			[ALCH_ELEMENT.CHAOS]: [
 				{
 					goal: 1,
@@ -398,16 +411,50 @@ export const Recipes:Array<Recipe> = [
 					},
 				},
 			],
-			[ALCH_ELEMENT.WATER]: [
-				{ goal: 0, reward: { ...AllItemAspects['castingAccuracy1'], weighting: 0, category: ASPECT_CATEGORY.CUSTOM } },
-				{ goal: 5, reward: { ...AllItemAspects['castingAccuracy2'], weighting: 0, category: ASPECT_CATEGORY.CUSTOM } },
-				{ goal: 10, reward: { ...AllItemAspects['castingAccuracy3'], weighting: 0, category: ASPECT_CATEGORY.CUSTOM } },
-			],
-			[ALCH_ELEMENT.WIND]: [
-				{ goal: 0, reward: { ...AllItemAspects['reelSpeed1'], weighting: 0, category: ASPECT_CATEGORY.CUSTOM } },
-				{ goal: 5, reward: { ...AllItemAspects['reelSpeed2'], weighting: 0, category: ASPECT_CATEGORY.CUSTOM } },
-				{ goal: 10, reward: { ...AllItemAspects['reelSpeed3'], weighting: 0, category: ASPECT_CATEGORY.CUSTOM } },
-			],
 		},
 	}
 ];
+
+const GatheringToolRecipes:Array<Recipe> = [
+	{
+		id: 'GTH-T-1',
+		image: publicAsset("/art/") + 'equipment/bad-scythe.png',
+		description: 'Janky Sickle',
+		types: [ITEM_TAG.GATHER_TOOL],
+		elementScores: [
+			{ element: ALCH_ELEMENT.EARTH, softCap: 3, cap: 8 },
+			{ element: ALCH_ELEMENT.FIRE, softCap: 3, cap: 8 },
+			{ element: ALCH_ELEMENT.WIND, softCap: 3, cap: 8 },
+		],
+		requiredIngredients: [
+			{ type: IngredientBases['PineWood'], qty: 1 },
+			{ type: ITEM_TAG.PLANT },
+			{ type: ITEM_TAG.MAGICAL },
+		],
+		goalsAndRewards: {
+			[ALCH_ELEMENT.EARTH]: [
+				{ goal: 1, reward: AllItemAspects.gatheringQuality1 },
+				{ goal: 4, reward: AllItemAspects.gatheringQuality2 },
+				{ goal: 8, reward: AllItemAspects.gatheringQuality3 },
+			],
+			[ALCH_ELEMENT.FIRE]: [
+				{ goal: 1, reward: AllItemAspects.gatheringToolComp1 },
+				{ goal: 4, reward: AllItemAspects.gatheringToolComp2 },
+				{ goal: 8, reward: AllItemAspects.gatheringToolComp3 },
+			],
+			[ALCH_ELEMENT.WIND]: [
+				{ goal: 1, reward: AllItemAspects.gatheringAspect1 },
+				{ goal: 4, reward: AllItemAspects.gatheringAspect2 },
+				{ goal: 8, reward: AllItemAspects.gatheringAspect3 },
+			],
+		},
+	},
+];
+
+const Recipes:Array<Recipe> = [
+	...PotionRecipes,
+	...FishingRodRecipes,
+	...GatheringToolRecipes,
+];
+
+export { Recipes };

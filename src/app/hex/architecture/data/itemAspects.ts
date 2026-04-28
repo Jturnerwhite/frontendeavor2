@@ -4,10 +4,16 @@ import { ALCH_ELEMENT, SHAPE_NAME } from "@/app/hex/architecture/enums";
 export enum ASPECT_CATEGORY {
 	CUSTOM = "custom",
 	SHARED_COMPONENT = "sharedComponent",
-	CASTING_ACCURACY = "castingAccuracy",
-	REEL_SPEED = "reelSpeed",
 	SALE_VALUE = "saleValue",
 	QUALITY = "quality",
+
+	// Equipment Aspects
+	GATHER_QUALITY = "gatherQuality",
+	GATHER_COMP = "gatherComp",
+	GATHER_ASPECT = "gatherAspect",
+
+	CASTING_ACCURACY = "castingAccuracy",
+	REEL_SPEED = "reelSpeed",
 }
 
 /**
@@ -19,10 +25,15 @@ export enum ASPECT_CATEGORY {
 export const AspectCategoryWeightModifiers = {
 	[ASPECT_CATEGORY.CUSTOM]: 0,
 	[ASPECT_CATEGORY.SHARED_COMPONENT]: 0,
-	[ASPECT_CATEGORY.CASTING_ACCURACY]: 5,
-	[ASPECT_CATEGORY.REEL_SPEED]: 5,
 	[ASPECT_CATEGORY.SALE_VALUE]: 10,
 	[ASPECT_CATEGORY.QUALITY]: 10,
+
+	// Equipment Aspects
+	[ASPECT_CATEGORY.GATHER_QUALITY]: 5,
+	[ASPECT_CATEGORY.GATHER_COMP]: 5,
+	[ASPECT_CATEGORY.GATHER_ASPECT]: 5,
+	[ASPECT_CATEGORY.CASTING_ACCURACY]: 5,
+	[ASPECT_CATEGORY.REEL_SPEED]: 5,
 }
 
 export const SharedComponentAspects:Record<string, ItemAspect> = {
@@ -98,6 +109,96 @@ export const FishingReelSpeedAspects:Record<string, ItemAspect> = {
 		type: 'stat',
 		description: 'Basic Reel Speed',
 		value: 5,
+	},
+}
+
+export const GatheringToolQualityAspects:Record<string, ItemAspect> = {
+	gatheringQuality1: {
+		id: 'gatheringQuality1',
+		category: ASPECT_CATEGORY.GATHER_QUALITY,
+		weighting: 1000,
+		name: 'Gather Quality: 1',
+		type: 'stat',
+		description: 'Poor Gathering Quality',
+		value: 1,
+	},
+	gatheringQuality2: {
+		id: 'gatheringQuality2',
+		category: ASPECT_CATEGORY.GATHER_QUALITY,
+		weighting: 1000,
+		name: 'Gather Quality: 2',
+		type: 'stat',
+		description: 'Fair Gathering Quality',
+		value: 3,
+	},
+	gatheringQuality3: {
+		id: 'gatheringQuality3',
+		category: ASPECT_CATEGORY.GATHER_QUALITY,
+		weighting: 1000,
+		name: 'Gather Quality: 3',
+		type: 'stat',
+		description: 'Good Gathering Quality',
+		value: 5,
+	},
+}
+
+export const GatheringToolCompAspects:Record<string, ItemAspect> = {
+	gatheringToolComp1: {
+		id: 'gatheringToolComp1',
+		category: ASPECT_CATEGORY.GATHER_COMP,
+		weighting: 1000,
+		name: 'Rough Harvester',
+		type: 'stat',
+		description: 'Poorly gathers ingredients, has a chance of reducing the number of nodes of components on gathered ingredients.',
+		value: 1
+	},
+	gatheringToolComp2: {
+		id: 'gatheringToolComp2',
+		category: ASPECT_CATEGORY.GATHER_COMP,
+		weighting: 1000,
+		name: 'Average Harvester',
+		type: 'stat',
+		description: 'Adequately gathers ingredients. (Same as gathering without a tool)',
+		value: 1
+	},
+	gatheringToolComp3: {
+		id: 'gatheringToolComp3',
+		category: ASPECT_CATEGORY.GATHER_COMP,
+		weighting: 1000,
+		name: 'Fine Harvester',
+		type: 'stat',
+		description: 'Fine gathers ingredients, has a chance of slightly increasing the number of nodes of components on gathered ingredients.',
+		value: 2
+	},
+}
+
+export const GatheringAspectAspects:Record<string, ItemAspect> = {
+	gatheringAspect1: {
+		id: 'gatheringAspect1',
+		category: ASPECT_CATEGORY.GATHER_ASPECT,
+		weighting: 1000,
+		name: 'Aspect Hunter: 1',
+		type: 'stat',
+		description: 'Very slightly increases the chances of finding rarer aspects. (Adds 5% to the weighting of rarer aspects)',
+		value: 1
+	},
+	gatheringAspect2: {
+		id: 'gatheringAspect2',
+		category: ASPECT_CATEGORY.GATHER_ASPECT,
+		weighting: 1000,
+		name: 'Aspect Hunter: 2',
+		type: 'stat',
+		description: 'Slightly increases the chances of finding rarer aspects. (Adds 10% to the weighting of rarer aspects)',
+		value: 10
+	},
+	gatheringAspect3: {
+		id: 'gatheringAspect3',
+		category: ASPECT_CATEGORY.GATHER_ASPECT,
+		weighting: 1000,
+		name: 'Aspect Hunter: 3',
+		type: 'stat',
+		description: 'Somewhat increases the chances of finding rarer aspects. (Adds 15% to the weighting of rarer aspects)',
+		value: 15
 	},
 }
 
@@ -197,6 +298,11 @@ export const QualityAspects:Record<string, ItemAspect> = {
 	},
 }
 
+export const EquipmentAspects:Record<string, ItemAspect> = {
+	...FishingCastingAccuracyAspects,
+	...FishingReelSpeedAspects,
+}
+
 export const BaseIngredientAspects:Record<string, ItemAspect> = {
 	...SaleValueAspects,
 	...QualityAspects
@@ -206,6 +312,12 @@ export const AllItemAspects:Record<string, ItemAspect> = {
 	...SharedComponentAspects,
 	...SaleValueAspects,
 	...QualityAspects,
+
+	// Equipment Aspects
+	...GatheringToolQualityAspects,
+	...GatheringToolCompAspects,
+	...GatheringAspectAspects,
+
 	...FishingCastingAccuracyAspects,
 	...FishingReelSpeedAspects,
 }

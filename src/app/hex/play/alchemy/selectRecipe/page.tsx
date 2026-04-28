@@ -8,7 +8,7 @@ import { Recipes } from '@/app/hex/architecture/data/recipes';
 import type { Recipe } from '@/app/hex/architecture/typings';
 import { playerMeetsRequirement } from '@/app/hex/architecture/helpers/recipeRequirements';
 import AlchemyStoreSlice from '@/store/features/alchemySlice';
-import RecipeDisplay from '@/app/hex/play/components/recipeDisplay';
+import RecipeDisplay from '@/app/hex/sharedComponents/recipe/recipeDisplay';
 import RequiredIngredientsList from '@/app/hex/sharedComponents/requiredIngredients/requiredIngredients';
 import '../alchemy.css';
 

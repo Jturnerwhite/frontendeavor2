@@ -152,7 +152,7 @@ export const IngredientBases:Record<string, IngredientBase> = {
 		name: "Pine Wood",
 		ingTier: 0,
 		baseSaleValue: 5,
-		image: IMAGE_PATH + "pinewood.png",
+		image: IMAGE_PATH + "pine-log.png",
 		types: [ITEM_TAG.PLANT],
 		possibleComps: [
 			{

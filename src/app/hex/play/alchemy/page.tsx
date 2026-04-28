@@ -21,7 +21,7 @@ import CraftedItemLabDisplay from '@/app/hex/play/components/ingredientDisplay/c
 import { HexTile, LinkedComponents, Position } from '@/app/hex/architecture/interfaces';
 import { AlchComponentDisplay } from '@/app/hex/sharedComponents/alchComponent';
 import { Recipes } from '@/app/hex/architecture/data/recipes';
-import RecipeDisplay from '@/app/hex/play/components/recipeDisplay';
+import RecipeDisplay from '@/app/hex/sharedComponents/recipe/recipeDisplay';
 import { ALCH_ELEMENT, COMPONENT_SHAPE_VALUES } from '@/app/hex/architecture/enums';
 import BoardHex from '@/app/hex/play/components/board';
 import { publicAsset } from '@/lib/publicAsset';
@@ -109,6 +109,14 @@ export default function Page() {
 			[ALCH_ELEMENT.CHAOS]: { nodes: 0, links: 0 },
 		};
 
+		crossComponentLinks.forEach((link: LinkedComponents) => {
+			output[link.element].links++;
+		});
+
+		Object.keys(output).forEach((key:string) => {
+			output[key as ALCH_ELEMENT].links = output[key as ALCH_ELEMENT].links / 2;
+		});
+
 		placedComponents.forEach((component: {
 			comp: AlchComponent;
 			position: Position;
@@ -119,9 +127,6 @@ export default function Page() {
 			output[component.comp.element].links += AlchHelpers.CalculateLinksInComponent(component.comp);
 		});
 
-		crossComponentLinks.forEach((link: LinkedComponents) => {
-			output[link.element].links++;
-		});
 
 		return output;
 	}
@@ -152,6 +157,7 @@ export default function Page() {
 			quality,
 			ingredients: flattenLabSourcesToIngredients(ingredients),
 			saleValue: 0,
+			innateAspects: [],
 			aspects: [],
 		};
 		const { rawIds, craftedItemIds } = collectConsumptionFromLabSources(ingredients);
@@ -358,7 +364,7 @@ export default function Page() {
 				<ComponentCursorGhost displaySize={alchCompSize} />
 			</main>
 			<aside className="alchemy-right-panel" onContextMenu={(e: React.MouseEvent) => e.preventDefault()}>
-				<RecipeDisplay recipe={recipe} quality={recipeQuality} currentElementScores={currentElementScores} hideImage={true} />
+				<RecipeDisplay recipe={recipe} quality={recipeQuality} currentElementScores={currentElementScores} hideImage={false} />
 				<button
 					type="button"
 					className="alchemy-complete-button"

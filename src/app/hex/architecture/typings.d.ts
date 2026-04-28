@@ -1,4 +1,4 @@
-import { ALCH_ELEMENT, SHAPE_NAME, ITEM_TAG } from '@/app/hex/architecture/enums'
+import { ALCH_ELEMENT, SHAPE_NAME, ITEM_TAG, EQUIPMENT_TYPE } from '@/app/hex/architecture/enums'
 import { HexTile } from './interfaces'
 
 /**
@@ -64,12 +64,12 @@ export type Item = {
 	comps: AlchComponent[],
 	types: ITEM_TAG[],
 	ingredients: Ingredient[],
-	aspects: Array<ItemAspect>
+	innateAspects: Array<ItemAspect>, // Aspects that are inherent to the item, and are independant of an item's ingredients' aspects
+	aspects: Array<ItemAspect>,
 }
 
 export type Equipment = Item & {
 	equipmentType: EQUIPMENT_TYPE,
-	stats: Array<string, ItemAspect>,
 }
 
 export type ItemAspect = {

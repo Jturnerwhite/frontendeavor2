@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useAppSelector } from '@/store/hooks';
-import RecipeDisplay from '@/app/hex/play/components/recipeDisplay';
+import RecipeDisplay from '@/app/hex/sharedComponents/recipe/recipeDisplay';
 import '../play/alchemy/alchemy.css';
 
 export default function HistoryPage() {

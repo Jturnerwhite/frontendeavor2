@@ -1,23 +1,38 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { Ingredient, Item } from '@/app/hex/architecture/typings'
 import { defaultAvailableQuestIds } from '@/app/hex/architecture/data/quests'
+import { EQUIPMENT_TYPE } from '@/app/hex/architecture/enums'
+
+export interface EquipmentSlots {
+	[EQUIPMENT_TYPE.GATHER_TOOL]: string | null,
+	[EQUIPMENT_TYPE.FISHING_ROD]: string | null,
+}
 
 export interface PlayerState {
-	inventory: { raw: Ingredient[]; crafted: Item[] }
+	inventory: { raw: Ingredient[]; crafted: Item[] },
+	/** Ids of items that are in the player's inventory that are equipped. */
+	equipmentSlots: {
+		[EQUIPMENT_TYPE.GATHER_TOOL]: string | null,
+		[EQUIPMENT_TYPE.FISHING_ROD]: string | null,
+	},
 	/** Quest ids currently available on the board (catalog resolved via `BaseQuests` / game data). */
-	availableQuestIds: string[]
-	xp: number
-	gold: number
+	availableQuestIds: string[],
+	xp: number,
+	gold: number,
 }
 
 /** Serializable player slice (same shape as full state). */
 export type PersistedPlayerState = PlayerState
 
 const XP_PER_CRAFT = 10
-const GOLD_PER_CRAFT = 1
+const GOLD_PER_CRAFT = 0
 
 export const initialPlayerState: PlayerState = {
 	inventory: { raw: [], crafted: [] },
+	equipmentSlots: {
+		[EQUIPMENT_TYPE.GATHER_TOOL]: null,
+		[EQUIPMENT_TYPE.FISHING_ROD]: null,
+	},
 	availableQuestIds: [...defaultAvailableQuestIds],
 	xp: 0,
 	gold: 0,
@@ -76,6 +91,12 @@ const playerSlice = createSlice({
 			if (xp != null) state.xp += xp
 			if (items?.length) state.inventory.crafted.push(...items)
 			if (ingredients?.length) state.inventory.raw.push(...ingredients)
+		},
+		equipItem: (state, action: PayloadAction<{ itemId: string, equipmentType: EQUIPMENT_TYPE }>) => {
+			state.equipmentSlots = {...state.equipmentSlots, [action.payload.equipmentType]: action.payload.itemId};
+		},
+		unequipItem: (state, action: PayloadAction<{ equipmentType: EQUIPMENT_TYPE }>) => {
+			state.equipmentSlots = {...state.equipmentSlots, [action.payload.equipmentType]: null};
 		},
 	},
 })
