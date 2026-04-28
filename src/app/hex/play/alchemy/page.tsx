@@ -51,7 +51,7 @@ export default function Page() {
 	const [crossComponentLinks, setLinks] = useState<LinkedComponents[]>([]);
 	const [craftingHelpOpen, setCraftingHelpOpen] = useState(false);
 
-	const playGridLayers = 4;
+	const playGridLayers = 2;
 	const size = 40;
 	const alchCompSize = 2 * AlchHelpers.GetApothem(size);
 
@@ -157,7 +157,7 @@ export default function Page() {
 			quality,
 			ingredients: flattenLabSourcesToIngredients(ingredients),
 			saleValue: 0,
-			innateAspects: [],
+			innateAspects: AlchHelpers.GetResultingInnateAspects(recipe, elementScores),
 			aspects: [],
 		};
 		const { rawIds, craftedItemIds } = collectConsumptionFromLabSources(ingredients);

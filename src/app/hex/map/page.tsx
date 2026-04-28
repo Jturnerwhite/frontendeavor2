@@ -23,10 +23,12 @@ import {
 	ExplanationMapSection,
 } from '@/app/hex/sharedComponents/explanationHelp';
 import HexTimerOverlay from './components/hexTimerOverlay';
+import EquipmentSlotsDisplay from './components/equipmentSlots';
 
 export default function MapPage() {
 	const router = useRouter();
 	const dispatch = useAppDispatch();
+	const player = useAppSelector((state) => state.Player);
 	const inventoryItems = useAppSelector((state) => state.Player.inventory.crafted);
 	const ingredients = useAppSelector((state) => state.Player.inventory.raw);
 	const hexesOnCooldown = useAppSelector((state) => state.Map.hexesOnCooldown);
@@ -219,6 +221,7 @@ export default function MapPage() {
 		</aside>
 		<main className="map-main-panel" onContextMenu={(e: React.MouseEvent) => {}}>
 			<div className="map-bottom-actions" role="group" aria-label="Map help and dev tools">
+				{hexMap !== undefined && inventoryItems !== undefined && (<EquipmentSlotsDisplay inventoryItems={inventoryItems} equipmentSlots={player.equipmentSlots} />)}
 				<button
 					type="button"
 					className="map-help-button"

@@ -22,10 +22,10 @@ export interface PlayerState {
 }
 
 /** Serializable player slice (same shape as full state). */
-export type PersistedPlayerState = PlayerState
+export type PersistedPlayerState = PlayerState;
 
-const XP_PER_CRAFT = 10
-const GOLD_PER_CRAFT = 0
+const XP_PER_CRAFT = 10;
+const GOLD_PER_CRAFT = 0;
 
 export const initialPlayerState: PlayerState = {
 	inventory: { raw: [], crafted: [] },

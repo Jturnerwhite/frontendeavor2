@@ -21,6 +21,8 @@ const RewardLine: React.FC<RewardLineProps> = ({ displaySize, baseRecipe, elemen
 	const activeScore = Math.min(currentNodes, elementScore.softCap + currentLinks);
 	const hasActiveScore = currentElementScore !== undefined;
 	const isCompReward = baseGoalsAndRewards?.some((g) => g.reward.type === 'component');
+	const sortedGoalsAndRewards = baseGoalsAndRewards ? [...baseGoalsAndRewards].sort((a, b) => b.goal - a.goal) : [];
+	let highestCompletedGoal = sortedGoalsAndRewards.find((g) => g.goal <= activeScore)?.reward;
 
 	function aspectValueToAlchComponent(value: unknown): AlchComponent | null {
 		if (
@@ -104,19 +106,11 @@ const RewardLine: React.FC<RewardLineProps> = ({ displaySize, baseRecipe, elemen
 		</>);
 	}
 
-	function getRewardName(): string {
-		if(!hasActiveScore || baseGoalsAndRewards === undefined) {
-			return 'None';
-		}
-
-		return [...baseGoalsAndRewards.sort((a, b) => b.goal - a.goal)].find((g) => g.goal <= activeScore)?.reward.name ?? 'None';
-	}
-
 	return (<>
 		<div className={styles.elementScoreLine} key={element}>
 			<label className={styles.elementScoreLabel}><ElementIcon element={element} /></label>
 			<div className={styles.elementScoreAndReward}>
-				<label className={styles.elementRewardLabel}>{getRewardName()}</label>
+				<label className={styles.elementRewardLabel} title={highestCompletedGoal?.description ?? ''}>{highestCompletedGoal?.name ?? 'None'}</label>
 				{getCurrentElementScoreLine()}
 			</div>
 			{isCompReward && (

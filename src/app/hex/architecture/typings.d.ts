@@ -68,10 +68,6 @@ export type Item = {
 	aspects: Array<ItemAspect>,
 }
 
-export type Equipment = Item & {
-	equipmentType: EQUIPMENT_TYPE,
-}
-
 export type ItemAspect = {
 	id: string,
 	category: string,

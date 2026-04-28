@@ -376,14 +376,8 @@ function GetResultingComponents(recipe: Recipe, elementScores: Record<ALCH_ELEME
 	return output;
 }
 
-
-
-/** Winning stat / non-component aspects per element (same tier resolution as component goals). */
-function GetResultingStatAspects(
-	recipe: Recipe,
-	elementScores: Record<ALCH_ELEMENT, { nodes: number; links: number }>,
-): ItemAspect[] {
-	const output: ItemAspect[] = [];
+function GetResultingInnateAspects(recipe: Recipe, elementScores: Record<ALCH_ELEMENT, { nodes: number, links: number }>): Array<ItemAspect> {
+	const output: Array<ItemAspect> = [];
 	for (const { element } of recipe.elementScores) {
 		const rows = getSortedGoalRowsForElement(recipe, element, 'stat');
 		let finalAspect: ItemAspect | null = null;
@@ -397,9 +391,7 @@ function GetResultingStatAspects(
 					maxScorePossible,
 					matchingElementScoreRequirements.softCap + elementScores[element].links,
 				);
-				if (
-					Math.min(elementScores[element].nodes, maxScorePossible) >= row.goal
-				) {
+				if (Math.min(elementScores[element].nodes, maxScorePossible) >= row.goal) {
 					finalAspect = row.reward;
 				}
 			}
@@ -422,6 +414,6 @@ export {
 	GetPlacementHexIds,
 	GetResultingComponent,
 	GetResultingComponents,
-	GetResultingStatAspects,
+	GetResultingInnateAspects,
 	OccupyHexes,
 };

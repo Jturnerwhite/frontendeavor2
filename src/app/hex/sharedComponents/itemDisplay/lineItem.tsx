@@ -38,7 +38,9 @@ const InventoryLineItem: React.FC<InventoryLineItemProps> = ({ item, ingredient,
 	let comps: AlchComponent[] = [];
 	let possibleComps: (IngredientCompSpec|AlchComponent)[] = [];
 	let possibleAspects: (ItemAspect)[] = [];
+	let innateAspects: (ItemAspect)[] = [];
 	let saleValue = 0;
+
 	if(item) {
 		key = item.name;
 		name = item.name;
@@ -47,6 +49,7 @@ const InventoryLineItem: React.FC<InventoryLineItemProps> = ({ item, ingredient,
 		comps = item.comps;
 		possibleAspects = item.aspects ?? [];
 		saleValue = item.saleValue;
+		innateAspects = item.innateAspects ?? [];
 	} else if(ingredient) {
 		key = ingredient.id;
 		name = IngredientBases[ingredient.baseIngId].name;
@@ -60,7 +63,7 @@ const InventoryLineItem: React.FC<InventoryLineItemProps> = ({ item, ingredient,
 		name = ingredientBase.name;
 		types = ingredientBase.types;
 		possibleComps = ingredientBase.possibleComps;
-		possibleAspects = [];//ingredientBase.additionalAspectPools ? Object.values(ingredientBase.additionalAspectPools).flat() : [];
+		possibleAspects = [];
 		saleValue = ingredientBase.baseSaleValue ?? 1;
 	}
 
@@ -93,6 +96,14 @@ const InventoryLineItem: React.FC<InventoryLineItemProps> = ({ item, ingredient,
 		});
 		return output;
 	}
+
+	function getInnateAspectsToDisplay():Array<JSX.Element> {
+		let output:Array<JSX.Element> = innateAspects.map((aspect, aspectIndex) => {
+			return (<label key={'aspect-' + name + '-' + aspectIndex}>{aspect.name}</label>);
+		});
+		return output;
+	}
+
 
 	let qualityClass = 'quality-10';
 	if(quality > 0) {
@@ -135,6 +146,11 @@ const InventoryLineItem: React.FC<InventoryLineItemProps> = ({ item, ingredient,
 					</div>
 				</>)}
 				<div className={styles.lineComps}>{getCompsToDisplay()}</div>
+				{innateAspects.length > 0 && (
+					<div className={styles.lineAspects}>
+						{getInnateAspectsToDisplay()}
+					</div>
+				)}
 				{possibleAspects.length > 0 && (
 					<div className={styles.lineAspects}>
 						{getAspectsToDisplay()}
