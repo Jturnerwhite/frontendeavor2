@@ -49,6 +49,7 @@ function readPersistedPlayer(): {
 		const legacyLastCraft = parsed.lastCompletedCraft ?? null
 		const player: PersistedPlayerState = {
 			inventory: parsed.inventory ?? initialPlayerState.inventory,
+			equipmentSlots: parsed.equipmentSlots ?? initialPlayerState.equipmentSlots,
 			availableQuestIds:
 				parsed.availableQuestIds ?? [...initialPlayerState.availableQuestIds],
 			xp: parsed.xp ?? initialPlayerState.xp,
@@ -265,6 +266,7 @@ function writePersistedSlices(state: RootState) {
 	}
 	const playerPersisted: PersistedPlayerState = {
 		inventory: state.Player.inventory,
+		equipmentSlots: state.Player.equipmentSlots,
 		availableQuestIds: state.Player.availableQuestIds,
 		xp: state.Player.xp,
 		gold: state.Player.gold,
