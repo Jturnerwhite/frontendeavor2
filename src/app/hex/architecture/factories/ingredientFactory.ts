@@ -208,7 +208,7 @@ function GenerateSaleValue(ingredient: Ingredient, baseIngredient: IngredientBas
 	return output;
 }
 
-export function CreateIngredient(ingBase: IngredientBase, toolUsed: Item|undefined): Ingredient {
+export function CreateIngredient(ingBase: IngredientBase, toolUsed: Item|undefined = undefined): Ingredient {
 	const newIng = {
 		id: GenerateTempId(),
 		baseIngId: ingBase.id,
