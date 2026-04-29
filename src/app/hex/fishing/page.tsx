@@ -183,7 +183,7 @@ function FishingContent() {
 			catchLockRef.current = false;
 			return;
 		}
-		const ing = CreateIngredient(base);
+		const ing = CreateIngredient(base, undefined);
 		const fid = ac.fishId;
 		setFishes((prev) => {
 			const n = prev.filter((f) => f.id !== fid);
