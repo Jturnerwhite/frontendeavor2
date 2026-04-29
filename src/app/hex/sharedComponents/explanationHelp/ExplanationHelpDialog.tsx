@@ -1,9 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { useEffect } from 'react';
-import { createPortal } from 'react-dom';
-import './explanationHelp.css';
+import { GenericDialog } from '@/app/hex/sharedComponents/genericDialog';
 
 export interface ExplanationHelpDialogProps {
 	open: boolean;
@@ -19,38 +17,15 @@ export function ExplanationHelpDialog({
 	title = 'Help',
 	children,
 }: ExplanationHelpDialogProps) {
-	useEffect(() => {
-		if (!open) return;
-		const onKey = (e: KeyboardEvent) => {
-			if (e.key === 'Escape') onClose();
-		};
-		window.addEventListener('keydown', onKey);
-		return () => window.removeEventListener('keydown', onKey);
-	}, [open, onClose]);
-
-	if (!open || typeof document === 'undefined') {
-		return null;
-	}
-
-	return createPortal(
-		<div
-			className="help-dialog-backdrop"
-			role="presentation"
-			onClick={onClose}
+	return (
+		<GenericDialog
+			open={open}
+			onClose={onClose}
+			title={title}
+			titleId="explanation-help-dialog-title"
+			bodyClassName="help-dialog-body explanation-help-dialog-scrolled"
 		>
-			<div
-				className="help-dialog-panel"
-				role="dialog"
-				aria-modal="true"
-				aria-labelledby="explanation-help-dialog-title"
-				onClick={(e) => e.stopPropagation()}
-			>
-				<p id="explanation-help-dialog-title" className="help-dialog-sr-only">
-					{title}
-				</p>
-				<div className="help-dialog-body explanation-help-dialog-scrolled">{children}</div>
-			</div>
-		</div>,
-		document.body,
+			{children}
+		</GenericDialog>
 	);
 }

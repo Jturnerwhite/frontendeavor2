@@ -1,0 +1,35 @@
+.slotRow {
+	display: flex;
+	flex-direction: row;
+	gap: 0;
+}
+
+.dialogBody {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	max-height: 70vh;
+}
+
+.dialogHeading {
+	margin-top: 0;
+	font-size: 1.25rem;
+}
+
+.itemList {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	overflow-y: auto;
+}
+
+.itemListItem {
+	margin-bottom: 6px;
+    padding-bottom: 8px;
+    border-bottom: 4px dashed;
+    border-color: var(--alchemy-parchment-dark);
+}
+
+.itemListItem:last-child {
+	border-bottom: none;
+}

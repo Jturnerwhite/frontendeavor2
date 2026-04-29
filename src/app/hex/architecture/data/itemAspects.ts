@@ -1,6 +1,8 @@
 import { ItemAspect, ItemAspectComp } from "@/app/hex/architecture/typings";
 import { ALCH_ELEMENT, SHAPE_NAME } from "@/app/hex/architecture/enums";
 
+export const BASE_ASPECT_WEIGHTING = 1000;
+
 export enum ASPECT_CATEGORY {
 	CUSTOM = "custom",
 	SHARED_COMPONENT = "sharedComponent",
@@ -120,7 +122,7 @@ export const GatheringToolQualityAspects:Record<string, ItemAspect> = {
 		name: 'Gather Quality: 1',
 		type: 'stat',
 		description: 'Poor Gathering Quality',
-		value: 1,
+		value: 0.9,
 	},
 	gatheringQuality2: {
 		id: 'gatheringQuality2',
@@ -128,8 +130,8 @@ export const GatheringToolQualityAspects:Record<string, ItemAspect> = {
 		weighting: 1000,
 		name: 'Gather Quality: 2',
 		type: 'stat',
-		description: 'Fair Gathering Quality',
-		value: 3,
+		description: 'Mediocre Gathering Quality (Same as gathering without a tool)',
+		value: 1,
 	},
 	gatheringQuality3: {
 		id: 'gatheringQuality3',
@@ -137,8 +139,8 @@ export const GatheringToolQualityAspects:Record<string, ItemAspect> = {
 		weighting: 1000,
 		name: 'Gather Quality: 3',
 		type: 'stat',
-		description: 'Good Gathering Quality',
-		value: 5,
+		description: 'Decent Gathering Quality',
+		value: 1.5,
 	},
 }
 
@@ -180,7 +182,7 @@ export const GatheringAspectAspects:Record<string, ItemAspect> = {
 		name: 'Aspect Hunter: 1',
 		type: 'stat',
 		description: 'Very slightly increases the chances of finding rarer aspects. (Adds 5% to the weighting of rarer aspects)',
-		value: 1
+		value: 5
 	},
 	gatheringAspect2: {
 		id: 'gatheringAspect2',

@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import * as AlchHelpers from '@/app/hex/architecture/helpers/alchHelpers';
 import * as SVGHelpers from '@/app/hex/architecture/helpers/svgHelpers';
 import Biomes from '@/app/hex/architecture/data/biomes';
-import { MAP_TERRAIN } from '@/app/hex/architecture/enums';
+import { EQUIPMENT_TYPE, MAP_TERRAIN } from '@/app/hex/architecture/enums';
 import { HexMap, HexTile } from '@/app/hex/architecture/interfaces';
 import { HexGrid } from '@/app/hex/sharedComponents/hex/hexGrid';
 import InventoryDisplay from '@/app/hex/sharedComponents/inventory/inventory';
@@ -23,7 +23,7 @@ import {
 	ExplanationMapSection,
 } from '@/app/hex/sharedComponents/explanationHelp';
 import HexTimerOverlay from './components/hexTimerOverlay';
-import EquipmentSlotsDisplay from './components/equipmentSlots';
+import EquipmentSlotsDisplay from './components/equipmentSlots/equipmentSlots';
 
 export default function MapPage() {
 	const router = useRouter();
@@ -103,7 +103,9 @@ export default function MapPage() {
 
 			if (hexesOnCooldown[hex.id]) return;
 
-			const ingredients = GatherIngredientsInBiome(content.biome, 1);
+			const gatherToolId = player.equipmentSlots[EQUIPMENT_TYPE.GATHER_TOOL];
+			const gatherTool = gatherToolId !== null ? player.inventory.crafted.find((item) => item.id === gatherToolId) : undefined;
+			const ingredients = GatherIngredientsInBiome(content.biome, 1, gatherTool);
 
 			dispatch(PlayerStoreSlice.actions.addGatheredIngredients({ ingredients }));
 			ingredients.forEach((ing) => {

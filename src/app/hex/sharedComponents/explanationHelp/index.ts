@@ -1,9 +1,11 @@
 export type { ExplanationSectionProps } from './explanationSectionProps';
 export type { ExplanationHelpPageHeaderProps } from './ExplanationHelpPageHeader';
 export type { ExplanationHelpDialogProps } from './ExplanationHelpDialog';
+export type { GenericDialogProps } from '@/app/hex/sharedComponents/genericDialog';
 export { ExplanationHelpPageShell } from './ExplanationHelpPageShell';
 export { ExplanationHelpPageHeader } from './ExplanationHelpPageHeader';
 export { ExplanationHelpDialog } from './ExplanationHelpDialog';
+export { GenericDialog } from '@/app/hex/sharedComponents/genericDialog';
 export { ExplanationOverviewSection } from './ExplanationOverviewSection';
 export { ExplanationMapSection } from './ExplanationMapSection';
 export { ExplanationItemsSection } from './ExplanationItemsSection';

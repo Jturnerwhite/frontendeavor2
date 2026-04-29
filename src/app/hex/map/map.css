@@ -132,6 +132,10 @@
 	stroke: rgb(26, 16, 25);
 }
 
+.map-main-panel .hex-tile {
+	cursor: pointer;
+}
+
 .map-main-panel .hex-tile.PineBarrens {
 	fill: var(--biome-PineBarrens);
 }

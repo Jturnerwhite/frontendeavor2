@@ -44,6 +44,10 @@ const playerSlice = createSlice({
 	reducers: {
 		hydrateFromStorage: (state, action: PayloadAction<PersistedPlayerState>) => {
 			state.inventory = action.payload.inventory
+			state.equipmentSlots = {
+				...initialPlayerState.equipmentSlots,
+				...(action.payload.equipmentSlots ?? {}),
+			}
 			state.availableQuestIds = action.payload.availableQuestIds
 			state.xp = action.payload.xp
 			state.gold = action.payload.gold

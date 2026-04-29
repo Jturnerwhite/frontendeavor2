@@ -1,8 +1,8 @@
 import { COMPONENT_SHAPE_VALUES, SHAPE_NAME } from '@/app/hex/architecture/enums';
 import { GenerateTempId } from '@/app/hex/architecture/helpers/alchHelpers';
-import type { AlchComponent, Ingredient, IngredientAspectSpec, IngredientBase, IngredientCompSpec, ItemAspect } from '@/app/hex/architecture/typings';
+import type { AlchComponent, Ingredient, IngredientAspectSpec, IngredientBase, IngredientCompSpec, Item, ItemAspect } from '@/app/hex/architecture/typings';
 import { GetItemsByWeight } from '@/app/hex/architecture/helpers/miscUtils';
-import { ASPECT_CATEGORY, AspectCategoryWeightModifiers, BaseIngredientAspects } from '@/app/hex/architecture/data/itemAspects';
+import { ASPECT_CATEGORY, AspectCategoryWeightModifiers, BaseIngredientAspects, BASE_ASPECT_WEIGHTING } from '@/app/hex/architecture/data/itemAspects';
 
 /**
  * Sets the quality breakpoints for node and link generation.
@@ -46,6 +46,15 @@ function GenerateQuality(): number {
 	return randomBell0to100(20, 14);
 }
 
+function GenerateQualityWithTool(toolUsed: Item|undefined): number {
+	if(toolUsed !== undefined) {
+		let qualityModifier = (toolUsed.aspects.find(aspect => aspect.category === ASPECT_CATEGORY.GATHER_QUALITY)?.value ?? 0) as number;
+		qualityModifier += (toolUsed.innateAspects.find(aspect => aspect.category === ASPECT_CATEGORY.GATHER_QUALITY)?.value ?? 0) as number;
+		return randomBell0to100(20 * qualityModifier, 14);
+	}
+
+	return randomBell0to100(20, 14);
+}
 /**
  * Currently deprecated but kept for reference
  * @deprecated
@@ -159,15 +168,32 @@ function GetAspectPools(ingBase: IngredientBase): Array<ItemAspect> {
 	});
 }
 
-function GenerateAspects(ingBase: IngredientBase): Array<ItemAspect> {
+function GenerateAspects(ingBase: IngredientBase, toolUsed: Item|undefined): Array<ItemAspect> {
 	// The pool of all aspects ingredients are allowed to pull from
-	const aspectPools = GetAspectPools(ingBase);
+	const aspectPool = GetAspectPools(ingBase);
 
 	// Roll 1-100, to get a number of aspects to generate
 	const numberOfAspects = Math.min(4, Math.floor(randomBell0to100(20, 14) / 20));
+	let aspectWeightingModifier = toolUsed !== undefined ? (toolUsed.aspects.find(aspect => aspect.category === ASPECT_CATEGORY.GATHER_ASPECT)?.value ?? 0) as number : 0;
+	aspectWeightingModifier = 100;
+
+	const weightAdjustedAspects = aspectPool.map(aspect => {
+		let newWeighting = aspect.weighting;
+		// Makes rarer aspects more common, and more common aspects rarer
+		if(aspect.weighting > BASE_ASPECT_WEIGHTING) {
+			newWeighting = aspect.weighting * (1 + (aspectWeightingModifier / 100));
+		} else if(aspect.weighting <= BASE_ASPECT_WEIGHTING) {
+			newWeighting = aspect.weighting * (1 - (aspectWeightingModifier / 100));
+		}
+
+		return {
+			...aspect,
+			weighting: newWeighting,
+		} as ItemAspect;
+	});
 
 	const aspects: Array<ItemAspect> = [];
-	GetItemsByWeight<ItemAspect>(aspectPools, 'weighting', 'id', numberOfAspects, true).forEach(aspect => {
+	GetItemsByWeight<ItemAspect>(weightAdjustedAspects, 'weighting', 'id', numberOfAspects, true).forEach(aspect => {
 		aspects.push(aspect);
 	});
 
@@ -182,15 +208,15 @@ function GenerateSaleValue(ingredient: Ingredient, baseIngredient: IngredientBas
 	return output;
 }
 
-export function CreateIngredient(ingBase: IngredientBase): Ingredient {
+export function CreateIngredient(ingBase: IngredientBase, toolUsed: Item|undefined): Ingredient {
 	const newIng = {
 		id: GenerateTempId(),
 		baseIngId: ingBase.id,
-		quality: GenerateQuality(),
+		quality: GenerateQualityWithTool(toolUsed),
 		saleValue: ingBase.baseSaleValue ?? 1,
 		comps: [],
 		sizeRating: 0,
-		aspects: GenerateAspects(ingBase),
+		aspects: GenerateAspects(ingBase, toolUsed),
 	} as Ingredient;
 
 	newIng.sizeRating = GenerateSizeRating(ingBase, newIng.quality);
@@ -243,9 +269,6 @@ export function CreateIngredient(ingBase: IngredientBase): Ingredient {
 	});
 
 	newIng.saleValue = GenerateSaleValue(newIng, ingBase);
-
-	
-	console.log(newIng.aspects.map(aspect => aspect.id).join(', '));
 
 	return newIng;
 }
