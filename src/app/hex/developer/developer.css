@@ -1,0 +1,122 @@
+.dev-page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, monospace;
+  color: #e2e8f0;
+  background: #0f172a;
+  min-height: 100vh;
+}
+
+.dev-heading {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+
+/* Chart area */
+.dev-chart-area {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+  min-height: 360px;
+  display: flex;
+  flex-direction: column;
+}
+
+.dev-chart-empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+/* Tabs */
+.dev-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid #334155;
+}
+
+.dev-tab {
+  padding: 0.6rem 1rem;
+  font-family: inherit;
+  font-size: 0.8rem;
+  color: #64748b;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s;
+  margin-bottom: -1px;
+}
+
+.dev-tab:hover {
+  color: #94a3b8;
+}
+
+.dev-tab--active {
+  color: #e2e8f0;
+  border-bottom-width: 2px;
+  border-bottom-style: solid;
+}
+
+.dev-chart {
+  padding: 1rem 0.5rem 0.5rem;
+  flex: 1;
+}
+
+/* Controls */
+.dev-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.dev-control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 180px;
+}
+
+.dev-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.dev-input,
+.dev-select {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 5px;
+  color: #e2e8f0;
+  font-family: inherit;
+  font-size: 0.875rem;
+  padding: 0.45rem 0.65rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.dev-input:focus,
+.dev-select:focus {
+  border-color: #6366f1;
+}
+
+.dev-input {
+  width: 100px;
+}
+
+.dev-select option:disabled {
+  color: #475569;
+}

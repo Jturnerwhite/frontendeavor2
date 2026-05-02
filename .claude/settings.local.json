@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Recurse -Directory)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "PowerShell(Get-ChildItem -Path \"e:\\\\Repos\\\\frontendeavor\\\\frontendeavor\\\\src\\\\app\\\\hex\" -Directory | Select-Object Name | ForEach-Object { \"  /hex/\" + $_.Name })",
+      "PowerShell(Get-ChildItem \"e:\\\\Repos\\\\frontendeavor\\\\frontendeavor\\\\src\\\\app\\\\hex\\\\developer\" -ErrorAction SilentlyContinue; if \\(-not \\(Test-Path \"e:\\\\Repos\\\\frontendeavor\\\\frontendeavor\\\\src\\\\app\\\\hex\\\\developer\"\\)\\) { \"does not exist\" })",
+      "Bash(npm install *)",
+      "Bash(npx tsc *)"
+    ]
+  }
+}
